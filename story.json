@@ -1,0 +1,145 @@
+{
+  "intro": {
+    "id": 0,
+    "title": "La calle sin principio",
+    "text": "Despertás de pie. No sabés si estabas caminando o si alguien te dejó ahí. La calle parece infinita en ambas direcciones. Hay faroles, pero ninguno encendido. Una brisa te empuja apenas hacia adelante.\n\nA tu izquierda, una esquina con una vidriera rota. A tu derecha, un callejón estrecho que huele a lluvia antigua.\n\nUna voz que no se oye pero se siente murmura: \"Elegí un camino.\"",
+    "choices": [
+      { "text": "Doblar a la izquierda", "nextScene": 1 },
+      { "text": "Doblar a la derecha", "nextScene": 1 }
+    ]
+  },
+
+  "scenes": [
+    {
+      "id": 1,
+      "title": "El cartel luminoso",
+      "text": "Caminás despacio. Los charcos reflejan letras que se encienden solas. Un cartel parpadea con insistencia: '2x + 3 = 7'. Un número se esconde entre los destellos. Si lo hallás, el cartel se abrirá como una puerta.",
+      "type": "input",
+      "question": "2x + 3 = 7",
+      "answer": "2",
+      "transitionSuccess": "El cartel se funde en luz blanca. Al avanzar, escuchás un tic-tac de reloj en la distancia.",
+      "transitionFail": "Las luces del cartel se apagan. Cuando volvés a mirar, el cartel ya no está.",
+      "nextScene": 2
+    },
+
+    {
+      "id": 2,
+      "title": "El reloj detenido",
+      "text": "Un reloj de torre marca las tres, pero sus agujas tiemblan, incapaces de avanzar. Un eco metálico repite una frase: 'Solo el número exacto mueve el tiempo.' En la base, alguien grabó: 3x - 6 = 9.",
+      "type": "input",
+      "question": "3x - 6 = 9",
+      "answer": "5",
+      "transitionSuccess": "El reloj emite un chasquido. Por un instante, sentís que el suelo vibra y la escena cambia de color.",
+      "transitionFail": "El reloj retrocede una hora. Te alejás, confundido, sin mirar atrás.",
+      "nextScene": 3
+    },
+
+    {
+      "id": 3,
+      "title": "El espejo roto",
+      "text": "En la siguiente esquina hay un espejo apoyado contra una pared. Refleja la calle, pero invertida. En su superficie, una frase aparece como si alguien la escribiera con vapor: '-2x + 1 < 5'. Tu reflejo sonríe antes de vos.",
+      "type": "input",
+      "question": "-2x + 1 < 5",
+      "answer": "x > -2",
+      "transitionSuccess": "El espejo se agrieta. De sus fragmentos cae polvo luminoso que dibuja un sendero nuevo.",
+      "transitionFail": "El espejo se oscurece y solo queda tu sombra. Caminás sin verla.",
+      "nextScene": 4
+    },
+
+    {
+      "id": 4,
+      "title": "El anciano del banco",
+      "text": "En una plaza sin hojas, un anciano te mira con atención. —Todo número tiene su equilibrio, dice. Luego escribe en el aire: 'x + 2 = 2x − 3'. —¿Quién está del otro lado de la balanza?",
+      "type": "input",
+      "question": "x + 2 = 2x − 3",
+      "answer": "5",
+      "transitionSuccess": "El anciano asiente y desaparece como si nunca hubiera estado.",
+      "transitionFail": "El anciano ríe suavemente y dice: 'A veces la balanza se inclina por costumbre.'",
+      "nextScene": 5
+    },
+
+    {
+      "id": 5,
+      "title": "La puerta del teatro",
+      "text": "Una marquesina antigua titila. En el cartel, letras que cambian de orden sin parar. Una voz invisible susurra: 'Cada paso cuenta, pero solo si los das en orden.' En la puerta, una ecuación fragmentada: (3x − 2)/4 + 5 = 8.",
+      "type": "ordering",
+      "steps": [
+        "Restar 5 en ambos lados",
+        "Multiplicar por 4",
+        "Sumar 2",
+        "Dividir por 3"
+      ],
+      "correctOrder": [0, 1, 2, 3],
+      "answer": "x = 6",
+      "transitionSuccess": "La puerta se abre sola y el aire del interior huele a madera húmeda y números escritos con tiza.",
+      "transitionFail": "Un aplauso lejano resuena desde el escenario vacío.",
+      "nextScene": 6
+    },
+
+    {
+      "id": 6,
+      "title": "El tren fantasma",
+      "text": "En las vías oxidadas hay un cartel con una inscripción: 'x ≤ 4'. Un vagón sin conductor se detiene frente a vos. En el costado, cuatro luces encendidas y una apagada. ¿Qué significa este signo? ¿Hasta qué punto es seguro avanzar?",
+      "type": "multipleChoice",
+      "choices": [
+        { "text": "Incluye el 4 y todos los menores", "correct": true },
+        { "text": "Incluye solo números menores a 4", "correct": false },
+        { "text": "Incluye solo el número 4", "correct": false }
+      ],
+      "transitionSuccess": "Subís al vagón y este se mueve suavemente.",
+      "transitionFail": "El tren se detiene antes del túnel. Caminás el resto del camino en silencio.",
+      "nextScene": 7
+    },
+
+    {
+      "id": 7,
+      "title": "El libro rasgado",
+      "text": "Encontrás un cuaderno abierto sobre una banca. Una ecuación está escrita con una pequeña trampa:\n\n2x + 3 = 7\n2x = 4\nx = 4\n\nEl papel tiembla. Algo no encaja.",
+      "type": "detectError",
+      "question": "¿Dónde está el error?",
+      "answer": "El error está en el último paso: x = 2, no 4.",
+      "transitionSuccess": "El cuaderno se recompone y las páginas vuelven a unirse.",
+      "transitionFail": "El papel se deshace en tus manos.",
+      "nextScene": 8
+    },
+
+    {
+      "id": 8,
+      "title": "El eco del túnel",
+      "text": "Entrás a un pasaje de ladrillo. Tu voz rebota con retardo. Cada palabra que decís vuelve convertida en número.\n\n'Si el triple de un número, menos seis, da nueve… ¿cuál era el número?'",
+      "type": "input",
+      "question": "3x - 6 = 9",
+      "answer": "5",
+      "transitionSuccess": "El eco se apaga y adelante ves una puerta familiar.",
+      "transitionFail": "El eco te responde con tu propio nombre, repetido mil veces.",
+      "nextScene": 9
+    },
+
+    {
+      "id": 9,
+      "title": "La puerta de casa",
+      "text": "Frente a vos, una puerta que reconocés, aunque no sabés de dónde. En la cerradura hay una inscripción grabada: '2(x − 3) + 4 = 8'. Un susurro te dice: 'Tu salida depende de este número.'",
+      "type": "input",
+      "question": "2(x − 3) + 4 = 8",
+      "answer": "5",
+      "transitionSuccess": "La llave gira sin resistencia. Luz. Calor.",
+      "transitionFail": "La llave se parte. Un silencio espeso lo cubre todo.",
+      "nextScene": "final"
+    }
+  ],
+
+  "finals": {
+    "good": {
+      "title": "Despertar",
+      "text": "Abrís la puerta. Una luz cálida te envuelve. Afuera hay pájaros y una taza de café humeante. No recordás haberla preparado. Todo parece en orden. Demasiado en orden."
+    },
+    "neutral": {
+      "title": "Bucle onírico",
+      "text": "Al cruzar la puerta, la misma calle te espera. Todo está igual, pero los faroles ahora están encendidos. En el suelo, una marca: tus propias pisadas, recién hechas."
+    },
+    "bad": {
+      "title": "Sombra perpetua",
+      "text": "La cerradura no cede. La calle se pliega sobre sí misma. Ya no hay arriba ni abajo, ni puerta ni casa. Solo números flotando en la oscuridad."
+    }
+  }
+}
