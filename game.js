@@ -42,17 +42,21 @@ function showScene(scene) {
     return;
   }
 
-  // --- NUEVO: escenas de ordenamiento ---
+  // --- Escenas de ordenamiento (nuevo tipo) ---
   if (scene.type === 'ordering') {
     const container = document.createElement('div');
     container.classList.add('ordering-container');
 
-    // Mezclar los pasos
+    // Mezclamos los pasos
     const steps = scene.steps.map((step, i) => ({ text: step, index: i }));
     steps.sort(() => Math.random() - 0.5);
 
     const picked = [];
+    const orderDisplay = document.createElement('p');
+    orderDisplay.classList.add('order-display');
+    orderDisplay.textContent = 'Tu orden: (vacío)';
 
+    // Renderizar botones de pasos
     steps.forEach(step => {
       const btn = document.createElement('button');
       btn.textContent = step.text;
@@ -61,6 +65,9 @@ function showScene(scene) {
         if (!picked.includes(step.index)) {
           picked.push(step.index);
           btn.disabled = true;
+          btn.classList.add('picked');
+          orderDisplay.textContent =
+            'Tu orden: ' + picked.map(i => scene.steps[i]).join(' → ');
         }
       });
       container.appendChild(btn);
@@ -71,26 +78,37 @@ function showScene(scene) {
     done.classList.add('btn-done');
     done.addEventListener('click', () => {
       const correct = scene.correctOrder;
-      const ok = picked.length === correct.length && picked.every((v, i) => v === correct[i]);
+      const ok =
+        picked.length === correct.length &&
+        picked.every((v, i) => v === correct[i]);
 
       if (ok) {
         score++;
-        narrative.textContent = scene.transitionSuccess || 'El orden es correcto.';
+        narrative.textContent =
+          scene.transitionSuccess || 'El orden es correcto.';
       } else {
-        narrative.textContent = scene.transitionFail || 'El orden no es correcto.';
+        narrative.textContent =
+          scene.transitionFail || 'El orden no es correcto.';
       }
 
+      // Limpia botones y muestra transición antes de continuar
       container.remove();
-      nextBtn.style.display = 'block';
+      orderDisplay.remove();
+
+      // Pequeña pausa antes de mostrar "Siguiente"
+      setTimeout(() => {
+        nextBtn.style.display = 'block';
+      }, 1000);
     });
 
     container.appendChild(done);
     choicesDiv.appendChild(container);
+    choicesDiv.appendChild(orderDisplay);
+
     nextBtn.onclick = () => loadNextScene(scene.nextScene);
     return;
   }
 }
-
 
 function checkAnswer() {
   const userAns = document.getElementById('answerInput').value.trim();
@@ -110,7 +128,11 @@ function checkAnswer() {
 
   question.textContent = '';
   inputArea.style.display = 'none';
-  nextBtn.style.display = 'block';
+
+  // breve pausa antes del botón siguiente
+  setTimeout(() => {
+    nextBtn.style.display = 'block';
+  }, 1000);
 }
 
 function loadNextScene(id) {
@@ -118,7 +140,7 @@ function loadNextScene(id) {
     showFinal();
   } else {
     const next = storyData.scenes.find(s => s.id === id);
-    showScene(next);
+    if (next) showScene(next);
   }
 }
 
