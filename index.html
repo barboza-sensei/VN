@@ -1,23 +1,83 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sueño Algebraico</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="engine/ui.css">
+  <style>
+    body {
+      background: url('assets/bg/intro_noche.jpg') center/cover no-repeat;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+      background-color: black;
+      overflow: hidden;
+    }
+
+    h1 {
+      font-family: 'Cinzel Decorative', serif;
+      color: #f1f1f1;
+      font-size: 3em;
+      text-shadow: 0 0 10px #66ccff;
+      animation: pulse 3s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { text-shadow: 0 0 10px #66ccff; }
+      50% { text-shadow: 0 0 25px #aaffff; }
+    }
+
+    #menu {
+      display: flex;
+      flex-direction: column;
+      gap: 1em;
+      margin-top: 2em;
+    }
+
+    .menu-btn {
+      font-size: 1.2em;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid #aaa;
+      color: #fff;
+      padding: 0.8em 1.5em;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 220px;
+    }
+
+    .menu-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+      transform: scale(1.05);
+    }
+
+    footer {
+      position: absolute;
+      bottom: 2%;
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 0.8em;
+    }
+  </style>
 </head>
 <body>
-  <div id="game-container">
-    <div id="narrative"></div>
-    <div id="question"></div>
-    <div id="choices"></div>
-    <div id="input-area">
-      <input type="text" id="answerInput" placeholder="Escribí tu respuesta..." />
-      <button id="submitBtn">Responder</button>
-    </div>
-    <button id="nextBtn" style="display:none;">Continuar</button>
+  <h1>Sueño Algebraico</h1>
+
+  <div id="menu">
+    <button class="menu-btn" onclick="startGame()">Iniciar</button>
+    <button class="menu-btn" onclick="window.location.href='credits.html'">Créditos</button>
   </div>
 
-  <script src="game.js"></script>
+  <footer>Un proyecto didáctico gamificado</footer>
+
+  <script>
+    function startGame() {
+      // Aquí comienza la historia
+      window.location.href = 'escenas/01_intro/index.html';
+    }
+  </script>
 </body>
 </html>
