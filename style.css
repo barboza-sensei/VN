@@ -1,3 +1,53 @@
+body {
+  background: #0b0c10 url('assets/bg.jpg') center/cover no-repeat;
+  color: #f8f8f2;
+  font-family: 'Georgia', serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  overflow: hidden;
+}
+
+#game-container {
+  background: rgba(20, 20, 30, 0.8);
+  padding: 2rem;
+  border-radius: 12px;
+  max-width: 600px;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+}
+
+#narrative, #question {
+  white-space: pre-line;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+  font-size: 1.1rem;
+}
+
+button {
+  background-color: #6272a4;
+  border: none;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  margin-top: 0.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #7081c7;
+}
+
+#answerInput {
+  width: 80%;
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: none;
+  margin-right: 0.5rem;
+}
+
+
 .ordering-container {
   display: flex;
   flex-direction: column;
