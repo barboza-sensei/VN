@@ -19,23 +19,78 @@ function showScene(scene) {
   narrative.textContent = scene.text || '';
   question.textContent = scene.question || '';
 
-  inputArea.style.display = scene.type === 'input' ? 'block' : 'none';
+  inputArea.style.display = 'none';
   choicesDiv.innerHTML = '';
   nextBtn.style.display = 'none';
 
+  // --- Escenas con opciones múltiples ---
   if (scene.choices) {
-    inputArea.style.display = 'none';
     scene.choices.forEach(choice => {
       const btn = document.createElement('button');
       btn.textContent = choice.text;
       btn.onclick = () => loadNextScene(choice.nextScene);
       choicesDiv.appendChild(btn);
     });
+    return;
   }
 
-  document.getElementById('submitBtn').onclick = checkAnswer;
-  nextBtn.onclick = () => loadNextScene(scene.nextScene);
+  // --- Escenas de respuesta escrita ---
+  if (scene.type === 'input') {
+    inputArea.style.display = 'block';
+    document.getElementById('submitBtn').onclick = checkAnswer;
+    nextBtn.onclick = () => loadNextScene(scene.nextScene);
+    return;
+  }
+
+  // --- NUEVO: escenas de ordenamiento ---
+  if (scene.type === 'ordering') {
+    const container = document.createElement('div');
+    container.classList.add('ordering-container');
+
+    // Mezclar los pasos
+    const steps = scene.steps.map((step, i) => ({ text: step, index: i }));
+    steps.sort(() => Math.random() - 0.5);
+
+    const picked = [];
+
+    steps.forEach(step => {
+      const btn = document.createElement('button');
+      btn.textContent = step.text;
+      btn.classList.add('ordering-step');
+      btn.addEventListener('click', () => {
+        if (!picked.includes(step.index)) {
+          picked.push(step.index);
+          btn.disabled = true;
+        }
+      });
+      container.appendChild(btn);
+    });
+
+    const done = document.createElement('button');
+    done.textContent = 'Confirmar orden';
+    done.classList.add('btn-done');
+    done.addEventListener('click', () => {
+      const correct = scene.correctOrder;
+      const ok = picked.length === correct.length && picked.every((v, i) => v === correct[i]);
+
+      if (ok) {
+        score++;
+        narrative.textContent = scene.transitionSuccess || 'El orden es correcto.';
+      } else {
+        narrative.textContent = scene.transitionFail || 'El orden no es correcto.';
+      }
+
+      container.remove();
+      nextBtn.style.display = 'block';
+    });
+
+    container.appendChild(done);
+    choicesDiv.appendChild(container);
+    nextBtn.onclick = () => loadNextScene(scene.nextScene);
+    return;
+  }
 }
+
 
 function checkAnswer() {
   const userAns = document.getElementById('answerInput').value.trim();
