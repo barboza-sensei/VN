@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Créditos - Sueño Algebraico</title>
+  <link rel="stylesheet" href="engine/ui.css">
+  <style>
+    body {
+      background: radial-gradient(ellipse at center, #0a0a0a 0%, #000000 100%);
+      color: #f0f0f0;
+      font-family: 'Courier New', monospace;
+      text-align: center;
+      padding: 5vh 10vw;
+      overflow: hidden;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      text-shadow: 0 0 15px #66ccff;
+      margin-bottom: 1em;
+    }
+
+    .credit-block {
+      margin-bottom: 2em;
+    }
+
+    .credit-block h2 {
+      color: #aaffff;
+      font-size: 1.2em;
+      margin-bottom: 0.3em;
+    }
+
+    .credit-block p {
+      margin: 0.2em 0;
+      opacity: 0.85;
+    }
+
+    .back-btn {
+      margin-top: 3em;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid #aaa;
+      color: #fff;
+      padding: 0.7em 1.5em;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .back-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    footer {
+      position: absolute;
+      bottom: 1%;
+      width: 100%;
+      font-size: 0.8em;
+      color: rgba(255,255,255,0.6);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    body > * {
+      animation: fadeIn 1s ease forwards;
+    }
+  </style>
+</head>
+<body>
+  <h1>Créditos</h1>
+
+  <div class="credit-block">
+    <h2>Concepto y Narrativa</h2>
+    <p>Pablo Fernández</p>
+  </div>
+
+  <div class="credit-block">
+    <h2>Diseño Didáctico y Contenidos Matemáticos</h2>
+    <p>Pablo Fernández</p>
+  </div>
+
+  <div class="credit-block">
+    <h2>Programación y Arte</h2>
+    <p>ChatGPT + Pablo Fernández</p>
+  </div>
+
+  <div class="credit-block">
+    <h2>Música y Sonido</h2>
+    <p>Fuentes libres - Freesound.org</p>
+  </div>
+
+  <button class="back-btn" onclick="window.location.href='index.html'">Volver</button>
+
+  <footer>© 2025 Sueño Algebraico — Proyecto educativo libre</footer>
+</body>
+</html>
