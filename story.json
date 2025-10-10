@@ -77,19 +77,21 @@
     },
 
     {
-      "id": 6,
-      "title": "El tren fantasma",
-      "text": "En las vías oxidadas hay un cartel con una inscripción: 'x ≤ 4'. Un vagón sin conductor se detiene frente a vos. En el costado, cuatro luces encendidas y una apagada. ¿Qué significa este signo? ¿Hasta qué punto es seguro avanzar?",
-      "type": "multipleChoice",
-      "choices": [
-        { "text": "Incluye el 4 y todos los menores", "correct": true },
-        { "text": "Incluye solo números menores a 4", "correct": false },
-        { "text": "Incluye solo el número 4", "correct": false }
-      ],
-      "transitionSuccess": "Subís al vagón y este se mueve suavemente.",
-      "transitionFail": "El tren se detiene antes del túnel. Caminás el resto del camino en silencio.",
-      "nextScene": 7
-    },
+  "id": 6,
+  "title": "La puerta del teatro",
+  "text": "Una marquesina antigua titila. En el cartel, letras que cambian de orden sin parar. Una voz invisible susurra: 'Cada paso cuenta, pero solo si los das en orden.' En la puerta, una ecuación fragmentada: (3x − 2)/4 + 5 = 8.",
+  "type": "ordering",
+  "steps": [
+    "Restar 5 a ambos lados",
+    "Multiplicar por 4",
+    "Sumar 2",
+    "Dividir por 3"
+  ],
+  "correctOrder": [0, 1, 2, 3],
+  "transitionSuccess": "La ecuación se ilumina y la puerta se abre.",
+  "transitionFail": "El cartel se apaga. Algo en el orden no encaja.",
+  "nextScene": 7
+},
 
     {
       "id": 7,
