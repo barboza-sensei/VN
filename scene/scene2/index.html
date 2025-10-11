@@ -1,1 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Escena 2 — El reloj detenido</title>
+  <link rel="stylesheet" href="../../style.css"> <!-- style global -->
+</head>
+<body>
 
+  <div id="game-container">
+    <div id="narrative"></div>
+
+    <div id="choices" style="display:none;">
+      <button data-correct="false">x = 3</button>
+      <button data-correct="true">x = 5</button>
+      <button data-correct="false">x = 6</button>
+    </div>
+
+    <div id="feedback" style="margin-top: 1rem; min-height: 2em;"></div>
+
+    <button id="nextBtn" style="float:right;">⋯</button>
+  </div>
+
+<script>
+const narrativeEl = document.getElementById('narrative');
+const choicesDiv = document.getElementById('choices');
+const feedback = document.getElementById('feedback');
+const nextBtn = document.getElementById('nextBtn');
+
+// párrafos de narrativa
+const paragraphs = [
+  "Siguiendo el sonido que te llegó desde la distancia, llegás a una torre con un reloj cuya aguja tiembla.",
+  "El eco metálico repite una frase: 'Solo el número exacto mueve el tiempo.'",
+  "En la base, alguien grabó la ecuación: 3x - 6 = 9."
+];
+
+let currentPara = 0;
+
+function showNextParagraph() {
+  if (currentPara < paragraphs.length) {
+    const p = document.createElement('p');
+    p.textContent = paragraphs[currentPara];
+    narrativeEl.appendChild(p);
+    currentPara++;
+  } 
+  if (currentPara === paragraphs.length) {
+    // mostrar opciones de elección
+    choicesDiv.style.display = 'block';
+    nextBtn.style.display = 'none';
+  }
+}
+
+nextBtn.addEventListener('click', showNextParagraph);
+
+// manejo de elección múltiple
+const choices = choicesDiv.querySelectorAll('button');
+choices.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const correct = btn.dataset.correct === 'true';
+    feedback.textContent = correct
+      ? "El reloj emite un chasquido. Por un instante, sentís que el suelo vibra y la escena cambia de color."
+      : "El reloj retrocede una hora. Te alejás, confundido, sin mirar atrás.";
+    // desactivar botones
+    choices.forEach(b => b.disabled = true);
+    // mostrar botón de continuar a la siguiente escena
+    nextBtn.textContent = "⋯";
+    nextBtn.style.display = 'inline-block';
+    nextBtn.addEventListener('click', () => {
+      window.location.href = '../scene3/index.html';
+    }, { once: true });
+  });
+});
+
+// inicializamos mostrando el primer párrafo
+showNextParagraph();
+</script>
+
+</body>
+  </html>
