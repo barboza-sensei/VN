@@ -8,16 +8,15 @@
   <style>
     /* Estilos locales para la atmósfera de esta escena */
     body {
-        /* RUTA CORREGIDA: Usando assets/bg/ y extensión .png */
+        /* IMAGEN INICIAL (Imagen 1) */
         background-image: url('assets/bg/calle_oscura_sin_luces_inicio.png'); 
         background-color: #0d0d0d;
         background-size: cover; 
         background-position: center;
-        /* La transición se mantiene, aunque no haya cambios de fondo por ahora */
         transition: background-image 1s ease-in-out; 
     }
     
-    /* [Resto de estilos de posicionamiento y botones aquí...] */
+    /* [Resto de estilos de posicionamiento y botones...] */
 
     #main-dialogue-box {
         position: absolute; 
@@ -84,13 +83,13 @@
       id: 0,
       title: "La calle sin principio",
       text: [
-        { type: 'narrative', content: "Despertás de pie, en el centro exacto de la calle. No hay rastro de si estabas caminando, ni memoria de haber llegado aquí."},
-        { type: 'narrative', content: "La calle es una línea perfecta, fríamente recta, que se extiende hasta desvanecerse en la oscuridad."},
-        { type: 'narrative', content: "Los faroles son meros bocetos de metal, estructuras desnudas y sin luz."},
-        { type: 'narrative', content: "Una brisa tenue, predecible, te empuja con una insistencia sutil hacia adelante."},
-        { type: 'narrative', content: "A tu izquierda, la esquina. Una vidriera opaca, rota por una grieta que parece un error en el patrón del mundo."},
-        { type: 'narrative', content: "A tu derecha, un callejón estrecho y oscuro. Su hedor a lluvia antigua es lo único que ancla este lugar a lo orgánico."},
-        { type: 'voice', speaker: 'Murmullo', content: "La elección define el primer movimiento en esta realidad."} 
+        { type: 'narrative', content: "Despertás de pie, en el centro exacto de la calle. No hay rastro de si estabas caminando, ni memoria de haber llegado aquí."}, // i=0
+        { type: 'narrative', content: "La calle es una línea perfecta, fríamente recta, que se extiende hasta desvanecerse en la oscuridad."}, // i=1
+        { type: 'narrative', content: "Los faroles son meros bocetos de metal, estructuras desnudas y sin luz."}, // i=2
+        { type: 'narrative', content: "Una brisa tenue, predecible, te empuja con una insistencia sutil hacia adelante."}, // i=3
+        { type: 'narrative', content: "A tu izquierda, la esquina. Una vidriera opaca, rota por una grieta que parece un error en el patrón del mundo."}, // i=4 (Cambia a Imagen 2)
+        { type: 'narrative', content: "A tu derecha, un callejón estrecho y oscuro. Su hedor a lluvia antigua es lo único que ancla este lugar a lo orgánico."}, // i=5 (Mantiene Imagen 2, ya que Imagen 3 no está)
+        { type: 'voice', speaker: 'Murmullo', content: "La elección define el primer movimiento en esta realidad."} // i=6 (Mantiene Imagen 2)
       ],
       choices: [
         { text: "Doblar a la izquierda (La Grieta en el Patrón)", nextScene: "../scene1/index.html" },
@@ -104,10 +103,13 @@
 
     let i = 0;
     
-    // Función para cambiar el fondo (desactivada por ahora, solo mantiene el fondo inicial)
+    // Rutas de imagen
+    const IMG_GENERAL = 'assets/bg/calle_oscura_sin_luces_inicio.png';
+    const IMG_CALLEJON = 'assets/bg/calle_oscura_sin_luces_cerca_callejon.png'; 
+    // const IMG_CALLEJON = 'assets/bg/calle_oscura_sin_luces_cerca_callejon.png'; // Usaremos IMG_GENERAL como fallback
+
     function changeBackground(imageUrl) {
-        // Mantenemos la imagen inicial hasta que se cargue la Imagen 3
-        // document.body.style.backgroundImage = `url('${imageUrl}')`;
+        document.body.style.backgroundImage = `url('${imageUrl}')`;
     }
 
     function showLine() {
@@ -115,10 +117,15 @@
           return;
       }
       
-      // LÓGICA DE CAMBIO DE FONDO (desactivada hasta tener la imagen 3)
-      // if (i === 4) { 
-      //     changeBackground('assets/bg/calle_oscura_sin_luces_cerca_callejon.png');
-      // }
+      // LÓGICA DE CAMBIO DE FONDO EJECUTADA
+      if (i === 4) { 
+          // Al llegar a la descripción de la callejon, mostramos la vista más cercana/de detalle (Imagen 2)
+          changeBackground(IMG_CALLEJON);
+      } else if (i === 5) {
+          // Si el jugador tuviera la Imagen 3, la cambiaríamos aquí. Por ahora, usamos la Imagen 2 como fallback, ya que es la vista más cercana.
+          // changeBackground(IMG_CALLEJON); 
+      }
+      // Nota: Si solo tiene dos fondos, es más eficiente usar la imagen 2 para las descripciones y la elección.
 
       const lineData = scene0.text[i];
       textEl.className = 'fade-text';
