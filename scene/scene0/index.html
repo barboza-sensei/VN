@@ -23,7 +23,6 @@
         width: 90%;
         max-width: 800px;
         padding: 1.5em;
-        /* IMPORTANTE: Si dialogue-box tiene una opacidad o color, asegúrese de que esté definido en style.css */
     }
     
     /* ******************************************************* */
@@ -61,13 +60,16 @@
     }
     /* ******************************************************* */
 
-    /* OCULTAR EL TEXTO EXPLÍCITO DEL BOTÓN DE CONTINUAR */
+    /* CORRECCIÓN: ESTILOS PARA OCULTAR FLECHA ::AFTER */
+    #nextBtn::after {
+        content: none !important; /* Forzamos la eliminación del contenido ::after */
+        visibility: hidden;
+    }
+
+    /* Aseguramos que la flecha del texto se vea */
     #nextBtn {
-        /* Aseguramos que solo el contenido del ::after sea visible, si existe */
-        text-indent: -9999px; 
-        overflow: hidden; 
-        position: relative;
-        /* Y cualquier otro estilo de dimensionamiento que nextBtn tenga en style.css */
+        text-indent: 0; /* Aseguramos que el texto sea visible */
+        overflow: visible; 
     }
   </style>
 </head>
@@ -76,7 +78,7 @@
   <div class="dialogue-box" id="main-dialogue-box">
     <p id="text"></p>
     <div id="choices"></div>
-    <button id="nextBtn" title="Continuar"></button> 
+    <button id="nextBtn" title="Continuar">➤</button> 
   </div>
 
   <script>
