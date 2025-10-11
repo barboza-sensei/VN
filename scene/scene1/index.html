@@ -1,1 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Escena 1 — El cartel luminoso</title>
+  <link rel="stylesheet" href="../style.css" />
+</head>
 
+<body>
+  <div class="scene">
+    <p id="text"></p>
+    <div id="question"></div>
+    <div id="choices"></div>
+    <button id="nextBtn" title="Continuar">➤</button>
+  </div>
+
+  <script>
+    // Definición de la escena
+    const scene1 = {
+      id: 1,
+      title: "El cartel luminoso",
+      text: [
+        "Caminás despacio.",
+        "Los charcos reflejan letras que se encienden solas.",
+        "Un cartel parpadea con insistencia: '2x + 3 = 7'.",
+        "Un número se esconde entre los destellos.",
+        "Si lo hallás, el cartel se abrirá como una puerta."
+      ],
+      question: "¿Qué valor de x hace verdadera la ecuación 2x + 3 = 7?",
+      choices: [
+        { text: "x = 1", correct: false },
+        { text: "x = 2", correct: true },
+        { text: "x = 3", correct: false }
+      ],
+      transitionSuccess: "El cartel se funde en luz blanca. Al avanzar, escuchás un tic-tac de reloj en la distancia.",
+      transitionFail: "Las luces del cartel se apagan. Cuando volvés a mirar, el cartel ya no está.",
+      nextScene: "../scene3/index.html"
+    };
+
+    const textEl = document.getElementById("text");
+    const questionEl = document.getElementById("question");
+    const choicesEl = document.getElementById("choices");
+    const nextBtn = document.getElementById("nextBtn");
+
+    let i = 0;
+    let answered = false;
+
+    function showLine() {
+      textEl.textContent = scene1.text[i];
+      nextBtn.style.display = i < scene1.text.length - 1 ? "inline-flex" : "none";
+
+      if (i === scene1.text.length - 1) {
+        showQuestion();
+      }
+    }
+
+    nextBtn.addEventListener("click", () => {
+      if (i < scene1.text.length - 1) {
+        i++;
+        showLine();
+      }
+    });
+
+    function showQuestion() {
+      questionEl.textContent = scene1.question;
+      choicesEl.innerHTML = "";
+
+      scene1.choices.forEach(c => {
+        const btn = document.createElement("button");
+        btn.textContent = c.text;
+        btn.onclick = () => handleAnswer(c.correct);
+        choicesEl.appendChild(btn);
+      });
+    }
+
+    function handleAnswer(isCorrect) {
+      choicesEl.innerHTML = "";
+      questionEl.textContent = "";
+
+      if (isCorrect) {
+        textEl.textContent = scene1.transitionSuccess;
+      } else {
+        textEl.textContent = scene1.transitionFail;
+      }
+
+      const contBtn = document.createElement("button");
+      contBtn.textContent = "Continuar ➤";
+      contBtn.onclick = () => goTo(scene1.nextScene);
+      choicesEl.appendChild(contBtn);
+    }
+
+    function goTo(relativePath) {
+      const base = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+      const resolved = new URL(relativePath, base).href;
+      window.location.href = resolved;
+    }
+
+    window.onload = showLine;
+  </script>
+</body>
+  </html>
