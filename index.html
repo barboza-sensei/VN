@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sueño Algebraico</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="engine/ui.css">
   
   <link href="https://fonts.googleapis.com/css2?family=Georgia&family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet">
   
@@ -15,12 +15,13 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;
+      min-height: 100vh; /* Usamos min-height para permitir el scroll */
       text-align: center;
       background-color: black;
-      overflow: hidden;
-      /* Usa la fuente base de la VN si no se especifica otra */
+      overflow-x: hidden;
+      overflow-y: auto; /* Permitir scroll vertical si el contenido es largo */
       font-family: 'Georgia', serif; 
+      padding: 1em 0; /* Pequeño padding para que el contenido no se pegue al borde */
     }
 
     h1 {
@@ -29,8 +30,8 @@
       font-size: 3em;
       text-shadow: 0 0 10px #66ccff;
       animation: pulse 3s infinite;
-      /* Ajuste responsive para que el título no sea gigantesco en móviles */
       font-size: clamp(2em, 8vw, 3em); 
+      margin-top: 1em; /* Margen superior para centrar mejor en pantallas pequeñas */
     }
 
     @keyframes pulse {
@@ -43,9 +44,8 @@
       flex-direction: column;
       gap: 1em;
       margin-top: 2em;
-      /* Asegura que el menú no sea demasiado ancho, pero es flexible */
       width: 90%; 
-      max-width: 300px; /* Ancho máximo estético */
+      max-width: 300px; 
     }
 
     .menu-btn {
@@ -57,8 +57,6 @@
       border-radius: 10px;
       cursor: pointer;
       transition: all 0.3s ease;
-      
-      /* MODIFICACIÓN CLAVE: Hacemos el botón 100% adaptable dentro del #menu */
       width: 100%; 
       box-sizing: border-box; 
     }
@@ -68,7 +66,6 @@
       transform: scale(1.05);
     }
     
-    /* Media Query para mejorar la estética en pantallas grandes, si es necesario */
     @media (min-width: 768px) {
         .menu-btn {
             font-size: 1.4em;
@@ -76,10 +73,15 @@
     }
 
     footer {
-      position: absolute;
-      bottom: 2%;
+      /* SOLUCIÓN: Quitamos 'position: absolute' para que el footer fluya con el contenido */
+      /* Usamos margin-top: auto para empujarlo al final si hay espacio */
+      margin-top: auto; 
+      padding-top: 3em; 
+      padding-bottom: 1em;
       color: rgba(255, 255, 255, 0.6);
       font-size: 0.8em;
+      width: 100%; 
+      text-align: center;
     }
   </style>
 </head>
@@ -96,8 +98,7 @@
   <script>
     function startGame() {
       // Aquí comienza la historia
-      // Asegúrese de que la ruta sea correcta (su carpeta de escenas)
-      window.location.href = 'scene/scene0/index.html'; 
+      window.location.href = 'scene/scene0/index.html';
     }
   </script>
 </body>
