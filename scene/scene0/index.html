@@ -5,6 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Escena 0 — La calle sin principio</title>
   <link rel="stylesheet" href="../../style.css" />
+  <style>
+    /* Estilos locales para la atmósfera de esta escena */
+    body {
+        background-image: url('../../assets/bg/calle_oscura_sin_luces.jpg'); 
+        background-color: #0d0d0d;
+    }
+    .dialogue-box {
+        position: absolute; 
+        bottom: 5vh; 
+        left: 50%;
+        transform: translateX(-50%);
+        width: 90%;
+        max-width: 800px;
+        padding: 1.5em;
+    }
+  </style>
 </head>
 
 <body>
@@ -20,18 +36,19 @@
     const scene0 = {
       id: 0,
       title: "La calle sin principio",
+      // NARRATIVA REVISADA: Suavizando la terminología matemática
       text: [
-        "Despertás de pie. No sabés si estabas caminando o si alguien te dejó ahí.",
-        "La calle parece infinita en ambas direcciones.",
-        "Hay faroles, pero ninguno encendido.",
-        "Una brisa te empuja apenas hacia adelante.",
-        "A tu izquierda, una esquina con una vidriera rota.",
-        "A tu derecha, un callejón estrecho que huele a lluvia antigua.",
-        "Una voz que no se oye pero se siente murmura: \"Elegí un camino.\""
+        { type: 'narrative', content: "Despertás de pie, en el centro exacto de la calle. No hay rastro de si estabas caminando, ni memoria de haber llegado aquí."},
+        { type: 'narrative', content: "La calle es una línea perfecta, fríamente recta, que se extiende hasta desvanecerse en la oscuridad."},
+        { type: 'narrative', content: "Los faroles son meros bocetos de metal, estructuras desnudas y sin luz."},
+        { type: 'narrative', content: "Una brisa tenue, predecible, te empuja con una insistencia sutil hacia adelante."},
+        { type: 'narrative', content: "A tu izquierda, la esquina. Una vidriera opaca, rota por una grieta que parece un error en el patrón del mundo."},
+        { type: 'narrative', content: "A tu derecha, un callejón estrecho y oscuro. Su hedor a lluvia antigua es lo único que ancla este lugar a lo orgánico."},
+        { type: 'voice', speaker: 'Murmullo', content: "La elección define el primer movimiento en esta realidad."} 
       ],
       choices: [
-        { text: "Doblar a la izquierda", nextScene: "../scene1/index.html" },
-        { text: "Doblar a la derecha", nextScene: "../scene1/index.html" }
+        { text: "Doblar a la izquierda (Esquina)", nextScene: "../scene1/index.html" },
+        { text: "Doblar a la derecha (Callejón)", nextScene: "../scene1/index.html" }
       ]
     };
 
@@ -42,12 +59,27 @@
     let i = 0;
 
     function showLine() {
-      textEl.textContent = scene0.text[i];
+      if (i >= scene0.text.length) {
+          return;
+      }
+      
+      const lineData = scene0.text[i];
+      textEl.className = 'fade-text';
+
+      if (lineData.type === 'voice') {
+          const voiceClass = 'disparia-voice';
+          textEl.innerHTML = `<span class="${voiceClass}">${lineData.speaker}: ${lineData.content}</span>`;
+      } else {
+          textEl.textContent = lineData.content;
+      }
+
       nextBtn.style.display = i < scene0.text.length - 1 ? "inline-flex" : "none";
 
       if (i === scene0.text.length - 1) {
         showChoices();
       }
+      
+      void textEl.offsetWidth; 
     }
 
     nextBtn.addEventListener("click", () => {
@@ -62,6 +94,7 @@
       scene0.choices.forEach(c => {
         const btn = document.createElement("button");
         btn.textContent = c.text;
+        btn.className = 'button'; 
         btn.onclick = () => goTo(c.nextScene);
         choicesEl.appendChild(btn);
       });
