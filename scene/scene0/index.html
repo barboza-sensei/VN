@@ -1,21 +1,69 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Escena 0 – La calle sin principio</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>La calle sin principio</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <div class="scene-container" style="background-image: url('assets/bg.jpg');">
-    <div class="dialogue-box">
-      <p id="text"></p>
-    </div>
 
-    <div class="options" id="options"></div>
+<body>
+  <div class="scene">
+    <p id="text"></p>
+    <div id="choices"></div>
+    <button id="nextBtn" style="display:none;">Continuar</button>
   </div>
 
-  <audio id="bg-audio" src="assets/ambient.mp3" autoplay loop></audio>
-  <script src="scene.js"></script>
+  <script>
+    const scene0 = {
+      text: [
+        "Despertás de pie.",
+        "No sabés si estabas caminando o si alguien te dejó ahí.",
+        "La calle parece infinita en ambas direcciones.",
+        "Hay faroles, pero ninguno encendido.",
+        "Una brisa te empuja apenas hacia adelante.",
+        "A tu izquierda, una esquina con una vidriera rota.",
+        "A tu derecha, un callejón estrecho que huele a lluvia antigua.",
+        "Una voz que no se oye pero se siente murmura: 'Elegí un camino.'"
+      ],
+      choices: [
+        { text: "Doblar a la izquierda", nextScene: "marquesina.html" },
+        { text: "Doblar a la derecha", nextScene: "pasillo.html" }
+      ]
+    };
+
+    const textEl = document.getElementById("text");
+    const choicesEl = document.getElementById("choices");
+    const nextBtn = document.getElementById("nextBtn");
+    let i = 0;
+
+    function showLine() {
+      textEl.textContent = scene0.text[i];
+      nextBtn.style.display = i < scene0.text.length - 1 ? "block" : "none";
+
+      if (i === scene0.text.length - 1) {
+        showChoices();
+      }
+    }
+
+    nextBtn.addEventListener("click", () => {
+      if (i < scene0.text.length - 1) {
+        i++;
+        showLine();
+      }
+    });
+
+    function showChoices() {
+      choicesEl.innerHTML = "";
+      scene0.choices.forEach(c => {
+        const btn = document.createElement("button");
+        btn.textContent = c.text;
+        btn.onclick = () => window.location.href = c.nextScene;
+        choicesEl.appendChild(btn);
+      });
+    }
+
+    window.onload = showLine;
+  </script>
 </body>
 </html>
