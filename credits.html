@@ -4,25 +4,40 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Créditos - Sueño Algebraico</title>
-  <link rel="stylesheet" href="engine/ui.css">
+  <link rel="stylesheet" href="style.css">
   <style>
+    /* Asegura la carga de la fuente de la VN */
+    @import url('https://fonts.googleapis.com/css2?family=Georgia&display=swap');
+    
     body {
+      /* Fondo radial sutil (mantener) */
       background: radial-gradient(ellipse at center, #0a0a0a 0%, #000000 100%);
       color: #f0f0f0;
-      font-family: 'Courier New', monospace;
+      /* Fuente de código para dar el toque de "terminal" */
+      font-family: 'Courier New', monospace; 
       text-align: center;
       padding: 5vh 10vw;
-      overflow: hidden;
+      /* Permitir scroll si el contenido es demasiado largo en móvil */
+      overflow-y: auto; 
+      overflow-x: hidden;
+      display: flex; /* Añadir flex para centrar el contenido en la columna */
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
     }
 
     h1 {
       font-size: 2.5em;
       text-shadow: 0 0 15px #66ccff;
       margin-bottom: 1em;
+      /* Responsive: asegura que el título encaje */
+      font-size: clamp(1.8em, 6vw, 2.5em); 
     }
 
     .credit-block {
       margin-bottom: 2em;
+      width: 100%;
+      max-width: 450px; /* Limitar el ancho para legibilidad en pantallas grandes */
     }
 
     .credit-block h2 {
@@ -34,29 +49,23 @@
     .credit-block p {
       margin: 0.2em 0;
       opacity: 0.85;
+      font-family: 'Georgia', serif; /* Usar la fuente de la VN para el contenido */
     }
 
+    /* Usamos la clase 'button' para heredar los estilos de ui.css */
     .back-btn {
       margin-top: 3em;
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid #aaa;
-      color: #fff;
-      padding: 0.7em 1.5em;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .back-btn:hover {
-      background: rgba(255, 255, 255, 0.25);
+      /* Estilos eliminados para heredar de ui.css, solo mantenemos el margen */
     }
 
     footer {
-      position: absolute;
-      bottom: 1%;
-      width: 100%;
+      /* Quitar posición absolute para que fluya con el contenido si hay scroll */
+      margin-top: auto; 
+      padding-top: 20px;
       font-size: 0.8em;
       color: rgba(255,255,255,0.6);
+      /* Asegurar que el footer se vea bien en cualquier ancho */
+      width: 100%; 
     }
 
     @keyframes fadeIn {
@@ -66,6 +75,13 @@
 
     body > * {
       animation: fadeIn 1s ease forwards;
+    }
+    
+    /* Media Query para móvil */
+    @media (max-width: 600px) {
+        body {
+            padding: 5vh 5vw;
+        }
     }
   </style>
 </head>
@@ -84,7 +100,7 @@
 
   <div class="credit-block">
     <h2>Programación y Arte</h2>
-    <p>ChatGPT + Pablo Fernández</p>
+    <p>ChatGPT + GEMINI + Pablo Fernández</p>
   </div>
 
   <div class="credit-block">
@@ -92,7 +108,7 @@
     <p>Fuentes libres - Freesound.org</p>
   </div>
 
-  <button class="back-btn" onclick="window.location.href='index.html'">Volver</button>
+  <button class="back-btn button" onclick="window.location.href='index.html'">Volver</button>
 
   <footer>© 2025 Sueño Algebraico — Proyecto educativo libre</footer>
 </body>
