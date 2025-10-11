@@ -8,13 +8,17 @@
   <style>
     /* Estilos locales para la atmósfera de esta escena */
     body {
-        background-image: url('../../assets/bg/calle_oscura_sin_luces.jpg'); 
+        /* RUTA CORREGIDA: Usando assets/bg/ y extensión .png */
+        background-image: url('assets/bg/calle_oscura_sin_luces_inicio.png'); 
         background-color: #0d0d0d;
+        background-size: cover; 
+        background-position: center;
+        /* La transición se mantiene, aunque no haya cambios de fondo por ahora */
+        transition: background-image 1s ease-in-out; 
     }
     
-    /* ******************************************************* */
-    /* ESTILOS DE POSICIONAMIENTO DE LA CAJA */
-    /* ******************************************************* */
+    /* [Resto de estilos de posicionamiento y botones aquí...] */
+
     #main-dialogue-box {
         position: absolute; 
         bottom: 5vh; 
@@ -25,9 +29,6 @@
         padding: 1.5em;
     }
     
-    /* ******************************************************* */
-    /* ESTILOS DE BOTONES DE ELECCIÓN */
-    /* ******************************************************* */
     #choices {
         display: flex;
         flex-direction: column;
@@ -58,17 +59,14 @@
     #choices .choice-btn:last-child {
         border-bottom: none; 
     }
-    /* ******************************************************* */
 
-    /* CORRECCIÓN: ESTILOS PARA OCULTAR FLECHA ::AFTER */
     #nextBtn::after {
-        content: none !important; /* Forzamos la eliminación del contenido ::after */
+        content: none !important; 
         visibility: hidden;
     }
 
-    /* Aseguramos que la flecha del texto se vea */
     #nextBtn {
-        text-indent: 0; /* Aseguramos que el texto sea visible */
+        text-indent: 0; 
         overflow: visible; 
     }
   </style>
@@ -105,12 +103,23 @@
     const nextBtn = document.getElementById("nextBtn");
 
     let i = 0;
+    
+    // Función para cambiar el fondo (desactivada por ahora, solo mantiene el fondo inicial)
+    function changeBackground(imageUrl) {
+        // Mantenemos la imagen inicial hasta que se cargue la Imagen 3
+        // document.body.style.backgroundImage = `url('${imageUrl}')`;
+    }
 
     function showLine() {
       if (i >= scene0.text.length) {
           return;
       }
       
+      // LÓGICA DE CAMBIO DE FONDO (desactivada hasta tener la imagen 3)
+      // if (i === 4) { 
+      //     changeBackground('assets/bg/calle_oscura_sin_luces_cerca_callejon.png');
+      // }
+
       const lineData = scene0.text[i];
       textEl.className = 'fade-text';
 
