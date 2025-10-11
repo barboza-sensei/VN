@@ -66,36 +66,4 @@
     window.onload = showLine;
   </script>
 </body>
-</html>    const nextBtn = document.getElementById("nextBtn");
-    let i = 0;
-
-    function showLine() {
-      textEl.textContent = scene0.text[i];
-      nextBtn.style.display = i < scene0.text.length - 1 ? "block" : "none";
-
-      if (i === scene0.text.length - 1) {
-        showChoices();
-      }
-    }
-
-    nextBtn.addEventListener("click", () => {
-      if (i < scene0.text.length - 1) {
-        i++;
-        showLine();
-      }
-    });
-
-    function showChoices() {
-      choicesEl.innerHTML = "";
-      scene0.choices.forEach(c => {
-        const btn = document.createElement("button");
-        btn.textContent = c.text;
-        btn.onclick = () => window.location.href = c.nextScene;
-        choicesEl.appendChild(btn);
-      });
-    }
-
-    window.onload = showLine;
-  </script>
-</body>
 </html>
