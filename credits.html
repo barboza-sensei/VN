@@ -4,40 +4,35 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Créditos - Sueño Algebraico</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="engine/ui.css">
+  <link href="https://fonts.googleapis.com/css2?family=Georgia&display=swap" rel="stylesheet">
+  
   <style>
-    /* Asegura la carga de la fuente de la VN */
-    @import url('https://fonts.googleapis.com/css2?family=Georgia&display=swap');
-    
     body {
-      /* Fondo radial sutil (mantener) */
       background: radial-gradient(ellipse at center, #0a0a0a 0%, #000000 100%);
       color: #f0f0f0;
-      /* Fuente de código para dar el toque de "terminal" */
-      font-family: 'Courier New', monospace; 
+      font-family: 'Courier New', monospace;
       text-align: center;
-      padding: 5vh 10vw;
-      /* Permitir scroll si el contenido es demasiado largo en móvil */
-      overflow-y: auto; 
-      overflow-x: hidden;
-      display: flex; /* Añadir flex para centrar el contenido en la columna */
+      display: flex;
       flex-direction: column;
       align-items: center;
-      min-height: 100vh;
+      min-height: 100vh; /* CRUCIAL: Ocupa al menos el 100% de la altura */
+      overflow-y: auto; /* Permitir scroll si el contenido es largo */
+      overflow-x: hidden;
+      padding: 5vh 10vw;
     }
 
     h1 {
       font-size: 2.5em;
       text-shadow: 0 0 15px #66ccff;
       margin-bottom: 1em;
-      /* Responsive: asegura que el título encaje */
       font-size: clamp(1.8em, 6vw, 2.5em); 
     }
 
     .credit-block {
       margin-bottom: 2em;
       width: 100%;
-      max-width: 450px; /* Limitar el ancho para legibilidad en pantallas grandes */
+      max-width: 450px; 
     }
 
     .credit-block h2 {
@@ -49,22 +44,20 @@
     .credit-block p {
       margin: 0.2em 0;
       opacity: 0.85;
-      font-family: 'Georgia', serif; /* Usar la fuente de la VN para el contenido */
+      font-family: 'Georgia', serif; 
     }
 
-    /* Usamos la clase 'button' para heredar los estilos de ui.css */
     .back-btn {
-      margin-top: 3em;
-      /* Estilos eliminados para heredar de ui.css, solo mantenemos el margen */
+      /* SOLUCIÓN: Usamos margin-top: auto para empujar al final y heredar estilos de botón global */
+      margin-top: 3em; 
     }
 
     footer {
-      /* Quitar posición absolute para que fluya con el contenido si hay scroll */
-      margin-top: auto; 
+      margin-top: auto; /* Empuja el footer hacia abajo */
       padding-top: 20px;
+      padding-bottom: 10px; /* Padding inferior para no pegarse */
       font-size: 0.8em;
       color: rgba(255,255,255,0.6);
-      /* Asegurar que el footer se vea bien en cualquier ancho */
       width: 100%; 
     }
 
@@ -77,7 +70,6 @@
       animation: fadeIn 1s ease forwards;
     }
     
-    /* Media Query para móvil */
     @media (max-width: 600px) {
         body {
             padding: 5vh 5vw;
@@ -100,7 +92,7 @@
 
   <div class="credit-block">
     <h2>Programación y Arte</h2>
-    <p>ChatGPT + GEMINI + Pablo Fernández</p>
+    <p>ChatGPT + Pablo Fernández</p>
   </div>
 
   <div class="credit-block">
