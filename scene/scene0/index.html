@@ -3,64 +3,78 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>La calle sin principio</title>
-  <link rel="stylesheet" href="../../style.css">
+  <title>Escena 0 — Introducción</title>
+  <link rel="stylesheet" href="../../style.css" />
 </head>
 
 <body>
-  <div class="scene">
-    <p id="text"></p>
-    <div id="choices"></div>
+  <div class="scene intro">
+    <div id="text-box">
+      <p id="text" class="typewriter-text"></p>
+    </div>
     <button id="nextBtn" title="Continuar">➤</button>
   </div>
 
   <script>
+    /* ======================= ESCENA 0 ======================= */
     const scene0 = {
+      id: 0,
+      title: "Introducción",
       text: [
-        "Despertás de pie.",
-        "No sabés si estabas caminando o si alguien te dejó ahí.",
-        "La calle parece infinita en ambas direcciones.",
-        "Hay faroles, pero ninguno encendido.",
-        "Una brisa te empuja apenas hacia adelante.",
-        "A tu izquierda, una esquina con una vidriera rota.",
-        "A tu derecha, un callejón estrecho que huele a lluvia antigua.",
-        "Una voz que no se oye pero se siente murmura: 'Elegí un camino.'"
+        "La ciudad duerme. Pero algo parpadea entre las sombras: un número que no termina de borrarse.",
+        "Caminás sin recordar desde cuándo. El aire es denso, como si el tiempo se hubiera detenido.",
+        "De pronto, una voz metálica te susurra: 'Cada respuesta abrirá una puerta... si sabés cuál.'"
       ],
-      choices: [
-        { text: "Doblar a la izquierda", nextScene: "../scene1/index.html" },
-        { text: "Doblar a la derecha", nextScene: "../scene1/index.html" }
-      ]
+      transition: "A lo lejos, una luz blanca se enciende. Te acercás. Es un cartel que brilla con letras azules.",
+      nextScene: "../scene1/index.html"
     };
 
+    /* ======================= LÓGICA ======================= */
     const textEl = document.getElementById("text");
-    const choicesEl = document.getElementById("choices");
     const nextBtn = document.getElementById("nextBtn");
     let i = 0;
 
-    function showLine() {
-      textEl.textContent = scene0.text[i];
-      nextBtn.style.display = i < scene0.text.length - 1 ? "inline-flex" : "none";
-
-      if (i === scene0.text.length - 1) {
-        showChoices();
+    function typeWriter(text, callback) {
+      textEl.textContent = "";
+      let j = 0;
+      function typing() {
+        if (j < text.length) {
+          textEl.textContent += text.charAt(j);
+          j++;
+          setTimeout(typing, 25);
+        } else if (callback) {
+          callback();
+        }
       }
+      typing();
+    }
+
+    function showLine() {
+      typeWriter(scene0.text[i], () => {
+        nextBtn.style.display = i < scene0.text.length ? "inline-flex" : "none";
+      });
     }
 
     nextBtn.addEventListener("click", () => {
       if (i < scene0.text.length - 1) {
         i++;
         showLine();
+      } else {
+        // Al terminar los textos, muestra la transición y el botón final
+        typeWriter(scene0.transition, () => {
+          const contBtn = document.createElement("button");
+          contBtn.textContent = "Entrar ➤";
+          contBtn.onclick = () => goTo(scene0.nextScene);
+          document.querySelector(".scene").appendChild(contBtn);
+        });
+        nextBtn.style.display = "none";
       }
     });
 
-    function showChoices() {
-      choicesEl.innerHTML = "";
-      scene0.choices.forEach(c => {
-        const btn = document.createElement("button");
-        btn.textContent = c.text;
-        btn.onclick = () => window.location.href = c.nextScene;
-        choicesEl.appendChild(btn);
-      });
+    function goTo(relativePath) {
+      const base = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+      const resolved = new URL(relativePath, base).href;
+      window.location.href = resolved;
     }
 
     window.onload = showLine;
