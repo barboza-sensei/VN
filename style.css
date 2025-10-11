@@ -1,215 +1,131 @@
-/* ==== ESTILO GLOBAL UNIFICADO ==== */
-
-@import url('https://fonts.googleapis.com/css2?family=Georgia&display=swap');
-
-:root {
-  --bg-color: #0b0c10;
-  --text-color: #f8f8f2;
-  --accent-color: #a7c7ff;
-  --box-bg: rgba(20, 20, 30, 0.8);
-}
-
-/* ==== ESTRUCTURA GENERAL ==== */
-
+/* ---------------------- Global ---------------------- */
 body {
-  background: var(--bg-color) url('assets/bg.jpg') center/cover no-repeat;
-  color: var(--text-color);
+  background: #0b0c10 url('assets/bg.jpg') center/cover no-repeat;
+  color: #f8f8f2;
   font-family: 'Georgia', serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
   margin: 0;
-  overflow: hidden;
-  transition: background 1s ease-in-out;
+  padding: 0;
+  overflow-x: hidden;
 }
 
-/* ==== CONTENEDOR PRINCIPAL ==== */
-
-#game-container {
-  background: var(--box-bg);
-  padding: 2rem;
-  border-radius: 12px;
-  max-width: 600px;
-  width: 90%;
-  box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+/* ---------------------- Contenedor del juego ---------------------- */
+#game-container, .scene {
   position: relative;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end; /* Para que el cuadro de texto quede abajo */
+  align-items: center;
+  padding: 1rem;
+  box-sizing: border-box;
 }
 
-/* ==== TEXTO Y NARRATIVA ==== */
-
-#narrative, #question {
-  white-space: pre-line;
-  margin-bottom: 1.5rem;
-  line-height: 1.5;
+/* ---------------------- Cuadro de texto ---------------------- */
+#text-box {
+  width: 95%;
+  background: rgba(30, 30, 30, 0.85); /* gris oscuro traslúcido */
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  box-sizing: border-box;
+  text-align: center;
   font-size: 1.1rem;
+  line-height: 1.5;
+  color: #f8f8f2;
+  margin-bottom: 1rem;
+  min-height: 100px;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
-/* ==== INPUTS ==== */
-
-#answerInput {
-  width: 80%;
-  padding: 0.5rem;
-  border-radius: 6px;
-  border: none;
-  margin-right: 0.5rem;
+/* ---------------------- Efecto máquina de escribir ---------------------- */
+@keyframes typewriter {
+  from { width: 0; }
+  to { width: 100%; }
 }
 
-/* ==== BOTONES ==== */
+.typewriter-text {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 2px solid #f8f8f2;
+  animation: typewriter 1s steps(30, end) 1 forwards;
+}
+
+/* ---------------------- Pregunta y opciones ---------------------- */
+#question {
+  margin: 0.5rem 0;
+  text-align: center;
+  font-weight: bold;
+}
+
+#choices {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
 
 button {
   background-color: #6272a4;
   border: none;
   color: white;
   padding: 0.6rem 1.2rem;
-  margin-top: 0.5rem;
   border-radius: 8px;
   cursor: pointer;
-  transition: background 0.3s, transform 0.2s;
+  font-size: 1rem;
 }
 
 button:hover {
   background-color: #7081c7;
-  transform: scale(1.03);
 }
-
-/* ==== BOTÓN DE CONTINUAR ==== */
 
 #nextBtn {
-  position: absolute;
-  right: 1rem;
-  bottom: 1rem;
-  border: none;
-  background: none;
-  color: var(--text-color);
-  font-size: 1.8rem;
-  opacity: 0.6;
-  cursor: pointer;
-  transition: opacity 0.3s, transform 0.2s;
+  align-self: flex-end;
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+  padding: 0.4rem 0.8rem;
 }
 
-#nextBtn:hover {
-  opacity: 1;
-  transform: scale(1.2);
-}
-
-/* Variante de ícono minimalista (3 puntos o flecha) */
-#nextBtn::after {
-  content: '›';
-  font-weight: bold;
-}
-
-/* ==== ORDENAMIENTO ==== */
-
-.ordering-container {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 1em;
-}
-
-.ordering-step {
-  padding: 10px;
-  border: 1px solid #aaa;
-  border-radius: 8px;
-  background: #1a1a1a;
-  color: #fff;
-  cursor: pointer;
-  transition: background 0.3s, transform 0.2s;
-}
-
-.ordering-step:hover {
-  background: #333;
-  transform: scale(1.02);
-}
-
-.ordering-step.picked {
-  background: #4b5563;
-  opacity: 0.7;
-}
-
-.btn-done {
-  margin-top: 15px;
-  padding: 10px;
-  font-weight: bold;
-  background: #555;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.order-display {
-  margin-top: 10px;
-  font-style: italic;
-  color: #ccc;
-  text-align: center;
-}
-
-/* ==== EFECTOS SUAVES ==== */
-
-.fade-text {
-  animation: fadeText 0.6s ease-in-out;
-}
-
-@keyframes fadeText {
-  from { opacity: 0; transform: translateY(5px); }
-  to { opacity: 1; transform: translateY(0); }
-  }
-button:hover {
-  background-color: #7081c7;
-}
-
+/* ---------------------- Input ---------------------- */
 #answerInput {
-  width: 80%;
+  width: 70%;
   padding: 0.5rem;
   border-radius: 6px;
   border: none;
   margin-right: 0.5rem;
 }
 
-
-.ordering-container {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 1em;
+/* ---------------------- Responsividad ---------------------- */
+@media screen and (max-width: 768px) {
+  #text-box {
+    font-size: 1rem;
+    padding: 0.8rem 1rem;
+    min-height: 80px;
+  }
+  button {
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+  }
+  #answerInput {
+    width: 65%;
+  }
 }
 
-.ordering-step {
-  padding: 10px;
-  border: 1px solid #aaa;
-  border-radius: 8px;
-  background: #1a1a1a;
-  color: #fff;
-  cursor: pointer;
-  transition: background 0.3s, transform 0.2s;
-}
-
-.ordering-step:hover {
-  background: #333;
-  transform: scale(1.02);
-}
-
-.ordering-step.picked {
-  background: #4b5563;
-  opacity: 0.7;
-}
-
-.btn-done {
-  margin-top: 15px;
-  padding: 10px;
-  font-weight: bold;
-  background: #555;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.order-display {
-  margin-top: 10px;
-  font-style: italic;
-  color: #ccc;
-  text-align: center;
-}
+@media screen and (max-width: 480px) {
+  #text-box {
+    font-size: 0.95rem;
+    padding: 0.7rem 0.8rem;
+    min-height: 70px;
+  }
+  button {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.8rem;
+  }
+  #answerInput {
+    width: 60%;
+  }
+      }
