@@ -1,40 +1,105 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Escena 3 — El reloj detenido</title>
-  <link rel="stylesheet" href="../../style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Escena 2 — El reloj detenido</title>
+  <link rel="stylesheet" href="../../style.css" />
 </head>
+
 <body>
-
-<div id="game-container">
-  <div id="narrative"></div>
-
-  <div id="choices" style="display:none;">
-    <button data-correct="false">x = 3</button>
-    <button data-correct="true">x = 5</button>
-    <button data-correct="false">x = 6</button>
+  <div class="scene">
+    <p id="text"></p>
+    <div id="question"></div>
+    <div id="choices"></div>
+    <button id="nextBtn" title="Continuar">➤</button>
   </div>
 
-  <div id="feedback" style="margin-top: 1rem; min-height: 2em;"></div>
+  <script>
+    // Definición de la escena
+    const scene2 = {
+      id: 2,
+      title: "El reloj detenido",
+      text: [
+        "Avanzás siguiendo el eco del tic-tac que escuchaste antes.",
+        "El sonido te guía hasta una torre antigua, donde un reloj inmenso parece suspendido en el tiempo.",
+        "Sus agujas tiemblan, incapaces de avanzar.",
+        "Un eco metálico resuena entre las paredes: 'Solo el número exacto mueve el tiempo.'",
+        "En la base del reloj, alguien grabó una ecuación: 3x - 6 = 9."
+      ],
+      question: "¿Qué valor de x hace verdadera la ecuación 3x - 6 = 9?",
+      choices: [
+        { text: "x = 3", correct: false },
+        { text: "x = 5", correct: true },
+        { text: "x = 6", correct: false }
+      ],
+      transitionSuccess: "El reloj emite un chasquido. Por un instante, sentís que el suelo vibra y la escena cambia de color.",
+      transitionFail: "El reloj retrocede una hora. Te alejás, confundido, sin mirar atrás.",
+      nextScene: "../scene3/index.html"
+    };
 
-  <button id="nextBtn" style="float:right;">⋯</button>
-</div>
+    const textEl = document.getElementById("text");
+    const questionEl = document.getElementById("question");
+    const choicesEl = document.getElementById("choices");
+    const nextBtn = document.getElementById("nextBtn");
 
-<script>
-const narrativeEl = document.getElementById('narrative');
-const choicesDiv = document.getElementById('choices');
-const feedback = document.getElementById('feedback');
-const nextBtn = document.getElementById('nextBtn');
+    let i = 0;
+    let answered = false;
 
-const paragraphs = [
-  "Siguiendo el sonido que te llegó desde la distancia, llegás a una torre con un reloj cuya aguja tiembla.",
-  "El eco metálico repite una frase: 'Solo el número exacto mueve el tiempo.'",
-  "En la base, alguien grabó la ecuación: 3x - 6 = 9."
-];
+    function showLine() {
+      textEl.textContent = scene2.text[i];
+      nextBtn.style.display = i < scene2.text.length - 1 ? "inline-flex" : "none";
 
-let currentPara = 0;
+      if (i === scene2.text.length - 1) {
+        showQuestion();
+      }
+    }
+
+    nextBtn.addEventListener("click", () => {
+      if (i < scene2.text.length - 1) {
+        i++;
+        showLine();
+      }
+    });
+
+    function showQuestion() {
+      questionEl.textContent = scene2.question;
+      choicesEl.innerHTML = "";
+
+      scene2.choices.forEach(c => {
+        const btn = document.createElement("button");
+        btn.textContent = c.text;
+        btn.onclick = () => handleAnswer(c.correct);
+        choicesEl.appendChild(btn);
+      });
+    }
+
+    function handleAnswer(isCorrect) {
+      choicesEl.innerHTML = "";
+      questionEl.textContent = "";
+
+      if (isCorrect) {
+        textEl.textContent = scene2.transitionSuccess;
+      } else {
+        textEl.textContent = scene2.transitionFail;
+      }
+
+      const contBtn = document.createElement("button");
+      contBtn.textContent = "Continuar ➤";
+      contBtn.onclick = () => goTo(scene2.nextScene);
+      choicesEl.appendChild(contBtn);
+    }
+
+    function goTo(relativePath) {
+      const base = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+      const resolved = new URL(relativePath, base).href;
+      window.location.href = resolved;
+    }
+
+    window.onload = showLine;
+  </script>
+</body>
+</html>let currentPara = 0;
 
 function showNextParagraph() {
   if (currentPara < paragraphs.length) {
