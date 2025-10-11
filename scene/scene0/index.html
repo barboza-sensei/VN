@@ -11,6 +11,8 @@
         background-image: url('../../assets/bg/calle_oscura_sin_luces.jpg'); 
         background-color: #0d0d0d;
     }
+
+    /* POSICIONAMIENTO DENTRO DEL CONTENEDOR 'scene' (CORREGIDO) */
     .dialogue-box {
         position: absolute; 
         bottom: 5vh; 
@@ -19,13 +21,49 @@
         width: 90%;
         max-width: 800px;
         padding: 1.5em;
+        /* Estilos de caja de diálogo de ui.css deben aplicarse aquí */
     }
+
+    /* ******************************************************* */
+    /* ESTILOS TEMPORALES DE ELECCIÓN (RECOMENDADO EN style.css) */
+    /* ******************************************************* */
+    #choices {
+        display: flex;
+        flex-direction: column;
+        gap: 0; /* Sin padding entre botones */
+        margin-top: 15px; 
+    }
+
+    .choice-btn {
+        background: rgba(0, 0, 0, 0.4); 
+        border: none;
+        border-radius: 0; 
+        color: #f0f0f0;
+        padding: 12px 15px;
+        font-size: 1.1em;
+        text-align: left; 
+        transition: all 0.2s ease;
+        cursor: pointer;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
+    }
+
+    .choice-btn:hover, .choice-btn:focus {
+        background: rgba(40, 40, 40, 0.6); 
+        box-shadow: 0 0 0 1px #aaffff; 
+        color: #aaffff; 
+        outline: none; 
+    }
+
+    #choices .choice-btn:last-child {
+        border-bottom: none; 
+    }
+    /* ******************************************************* */
   </style>
 </head>
 
 <body>
   <div class="scene">
-    <div class="dialogue-box">
+    <div class="dialogue-box"> 
       <p id="text"></p>
       <div id="choices"></div>
       <button id="nextBtn" title="Continuar">➤</button>
@@ -36,7 +74,6 @@
     const scene0 = {
       id: 0,
       title: "La calle sin principio",
-      // NARRATIVA REVISADA: Suavizando la terminología matemática
       text: [
         { type: 'narrative', content: "Despertás de pie, en el centro exacto de la calle. No hay rastro de si estabas caminando, ni memoria de haber llegado aquí."},
         { type: 'narrative', content: "La calle es una línea perfecta, fríamente recta, que se extiende hasta desvanecerse en la oscuridad."},
@@ -47,8 +84,8 @@
         { type: 'voice', speaker: 'Murmullo', content: "La elección define el primer movimiento en esta realidad."} 
       ],
       choices: [
-        { text: "Doblar a la izquierda (Esquina)", nextScene: "../scene1/index.html" },
-        { text: "Doblar a la derecha (Callejón)", nextScene: "../scene1/index.html" }
+        { text: "Doblar a la izquierda (La Grieta en el Patrón)", nextScene: "../scene1/index.html" },
+        { text: "Doblar a la derecha (El Callejón Orgánico)", nextScene: "../scene1/index.html" }
       ]
     };
 
@@ -94,7 +131,8 @@
       scene0.choices.forEach(c => {
         const btn = document.createElement("button");
         btn.textContent = c.text;
-        btn.className = 'button'; 
+        // APLICAMOS LA NUEVA CLASE PARA EL ESTILO MINIMALISTA
+        btn.className = 'choice-btn'; 
         btn.onclick = () => goTo(c.nextScene);
         choicesEl.appendChild(btn);
       });
