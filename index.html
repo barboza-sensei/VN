@@ -4,7 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sueño Algebraico</title>
-  <link rel="stylesheet" href="engine/ui.css">
+  <link rel="stylesheet" href="style.css">
+  
+  <link href="https://fonts.googleapis.com/css2?family=Georgia&family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet">
+  
   <style>
     body {
       background: url('assets/bg/intro_noche.png') center/cover no-repeat;
@@ -16,6 +19,8 @@
       text-align: center;
       background-color: black;
       overflow: hidden;
+      /* Usa la fuente base de la VN si no se especifica otra */
+      font-family: 'Georgia', serif; 
     }
 
     h1 {
@@ -24,6 +29,8 @@
       font-size: 3em;
       text-shadow: 0 0 10px #66ccff;
       animation: pulse 3s infinite;
+      /* Ajuste responsive para que el título no sea gigantesco en móviles */
+      font-size: clamp(2em, 8vw, 3em); 
     }
 
     @keyframes pulse {
@@ -36,6 +43,9 @@
       flex-direction: column;
       gap: 1em;
       margin-top: 2em;
+      /* Asegura que el menú no sea demasiado ancho, pero es flexible */
+      width: 90%; 
+      max-width: 300px; /* Ancho máximo estético */
     }
 
     .menu-btn {
@@ -47,12 +57,22 @@
       border-radius: 10px;
       cursor: pointer;
       transition: all 0.3s ease;
-      width: 220px;
+      
+      /* MODIFICACIÓN CLAVE: Hacemos el botón 100% adaptable dentro del #menu */
+      width: 100%; 
+      box-sizing: border-box; 
     }
 
     .menu-btn:hover {
       background: rgba(255, 255, 255, 0.25);
       transform: scale(1.05);
+    }
+    
+    /* Media Query para mejorar la estética en pantallas grandes, si es necesario */
+    @media (min-width: 768px) {
+        .menu-btn {
+            font-size: 1.4em;
+        }
     }
 
     footer {
@@ -76,7 +96,8 @@
   <script>
     function startGame() {
       // Aquí comienza la historia
-      window.location.href = 'scene/scene0/index.html';
+      // Asegúrese de que la ruta sea correcta (su carpeta de escenas)
+      window.location.href = 'scene/scene0/index.html'; 
     }
   </script>
 </body>
