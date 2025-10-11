@@ -1,176 +1,156 @@
-/* ---------------------- Global ---------------------- */
-body {
-  background: #0b0c10 url('assets/bg.jpg') center/cover no-repeat;
-  color: #f8f8f2;
-  font-family: 'Georgia', serif;
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
+/* ==== ESTILO GLOBAL UNIFICADO ==== */
+
+@import url('https://fonts.googleapis.com/css2?family=Georgia&display=swap');
+
+:root {
+  --bg-color: #0b0c10;
+  --text-color: #f8f8f2;
+  --accent-color: #a7c7ff; /* Azul/Cian frío */
+  --box-bg: rgba(20, 20, 30, 0.9); /* Aumentado la opacidad para mejor lectura */
+  /* Variables para las voces */
+  --equalis-color: var(--accent-color);
+  --disparia-color: #ff9933; /* Naranja/Ámbar cálido */
+  --button-primary: #6272a4;
+  --button-hover: #7081c7;
 }
 
-/* ---------------------- Contenedor del juego ---------------------- */
-#game-container, .scene {
-  position: relative;
-  width: 100%;
+/* ==== ESTRUCTURA GENERAL ==== */
+
+body {
+  background: var(--bg-color) url('assets/bg.jpg') center/cover no-repeat fixed; /* Añadido 'fixed' para mejor efecto de fondo */
+  color: var(--text-color);
+  font-family: 'Georgia', serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* Usar min-height para manejar mejor el contenido */
+  margin: 0;
+  overflow: hidden;
+  transition: background 1s ease-in-out;
+}
+
+/* ==== CONTENEDOR PRINCIPAL (.scene) ==== */
+
+.scene {
+  background: var(--box-bg);
+  padding: 2rem;
+  border-radius: 12px;
   max-width: 600px;
-  margin: 0 auto;
-  height: 100vh;
+  width: 90%;
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.15); /* Sombra más pronunciada */
+  position: relative;
+  box-sizing: border-box; /* Asegura que padding no afecte el 90% del width */
+}
+
+/* ==== TEXTO Y NARRATIVA ==== */
+
+#text, #question, #narrative {
+  white-space: pre-line;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+  font-size: 1.1rem;
+}
+
+/* ==== VOCES INTERNAS ==== */
+
+.equalis-voice {
+  color: var(--equalis-color); 
+  font-weight: bold;
+  font-style: italic;
+  display: block; 
+  margin-top: 1rem;
+  padding-left: 10px;
+  border-left: 3px solid var(--equalis-color);
+}
+
+.disparia-voice {
+  color: var(--disparia-color); 
+  font-weight: bold;
+  font-style: italic;
+  display: block;
+  margin-top: 1rem;
+  padding-left: 10px;
+  border-left: 3px solid var(--disparia-color);
+}
+
+/* ==== INPUTS Y ÁREA DE DESAFÍO ==== */
+
+#input-area {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: rgba(30, 30, 45, 0.95); /* Ligeramente más opaco que el box-bg */
+  border-radius: 8px;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end; /* Para que el cuadro de texto quede abajo */
-  align-items: center;
-  padding: 1rem;
-  box-sizing: border-box;
+  gap: 10px;
 }
 
-/* ---------------------- Cuadro de texto ---------------------- */
-#text-box {
-  width: 95%;
-  background: rgba(30, 30, 30, 0.85); /* gris oscuro traslúcido */
-  padding: 1rem 1.5rem;
-  border-radius: 12px;
-  box-sizing: border-box;
-  text-align: center;
-  font-size: 1.1rem;
-  line-height: 1.5;
-  color: #f8f8f2;
-  margin-bottom: 1rem;
-  min-height: 100px;
-  overflow-wrap: break-word;
-  word-break: break-word;
-}
-
-/* ---------------------- Efecto máquina de escribir ---------------------- */
-@keyframes typewriter {
-  from { width: 0; }
-  to { width: 100%; }
-}
-
-.typewriter-text {
-  display: inline-block;
-  overflow: hidden;
-  white-space: nowrap;
-  border-right: 2px solid #f8f8f2;
-  animation: typewriter 1s steps(30, end) 1 forwards;
-}
-
-/* ---------------------- Pregunta y opciones ---------------------- */
-#question {
-  margin: 0.5rem 0;
-  text-align: center;
+#input-area label {
+  font-size: 1.2rem;
   font-weight: bold;
+  color: var(--accent-color);
+  margin-bottom: 0.5rem;
 }
 
-#choices {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
+#answerInput {
+  width: 100%;
+  padding: 0.6rem;
+  border-radius: 6px;
+  border: 1px solid #444;
+  background-color: #1a1a1a;
+  color: var(--text-color);
+  font-family: inherit;
+  font-size: 1rem;
+  box-sizing: border-box; /* Asegura que el padding no desborde el 100% de width */
 }
+
+/* ==== BOTONES GENERALES (Incluye choices y checkBtn) ==== */
 
 button {
-  background-color: #6272a4;
+  background-color: var(--button-primary);
   border: none;
   color: white;
   padding: 0.6rem 1.2rem;
+  margin-top: 0.5rem;
   border-radius: 8px;
   cursor: pointer;
-  font-size: 1rem;
+  transition: background 0.3s, transform 0.2s;
+  font-family: inherit;
 }
 
 button:hover {
-  background-color: #7081c7;
+  background-color: var(--button-hover);
+  transform: scale(1.03);
 }
+
+/* ==== OPCIONES (CHOICES) ==== */
+
+#choices {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 1.5rem;
+}
+
+#choices button {
+    width: 100%;
+    text-align: left;
+}
+
+/* ==== BOTÓN DE CONTINUAR (#nextBtn) ==== */
 
 #nextBtn {
-  align-self: flex-end;
-  margin-bottom: 0.5rem;
-  font-size: 1.2rem;
-  padding: 0.4rem 0.8rem;
-}
-
-/* ---------------------- Input ---------------------- */
-#answerInput {
-  width: 70%;
-  padding: 0.5rem;
-  border-radius: 6px;
-  border: none;
-  margin-right: 0.5rem;
-}
-
-/* ---------------------- Responsividad ---------------------- */
-@media screen and (max-width: 768px) {
-  #text-box {
-    font-size: 1rem;
-    padding: 0.8rem 1rem;
-    min-height: 80px;
-  }
-  button {
-    font-size: 0.9rem;
-    padding: 0.5rem 1rem;
-  }
-  #answerInput {
-    width: 65%;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  #text-box {
-    font-size: 0.95rem;
-    padding: 0.7rem 0.8rem;
-    min-height: 70px;
-  }
-  button {
-    font-size: 0.85rem;
-    padding: 0.4rem 0.8rem;
-  }
-  #answerInput {
-    width: 60%;
-  }
-      }
-
-/* --- Cuadro de diálogo estilo visual novel --- */
-.scene {
-  position: relative;
-  width: 100%;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: center;
-  padding: 0;
-  margin: 0;
-  overflow: hidden;
-}
-
-.dialogue-box {
   position: absolute;
-  bottom: 0;
-  width: 100%;
-  background: rgba(20, 20, 30, 0.85);
-  padding: 2rem 1.5rem;
-  color: #f8f8f2;
-  font-family: 'Georgia', serif;
-  font-size: 1.2rem;
-  line-height: 1.6;
-  box-sizing: border-box;
-  text-align: center;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-/* Botón de continuar más vistoso y discreto */
-#nextBtn {
-  position: absolute;
-  bottom: 1.2rem;
-  right: 1.5rem;
+  right: 1rem;
+  bottom: 1rem;
   background: none;
-  color: #f8f8f2;
+  color: var(--text-color);
   font-size: 1.8rem;
-  border: none;
-  cursor: pointer;
   opacity: 0.7;
+  cursor: pointer;
   transition: opacity 0.3s, transform 0.2s;
+  padding: 0.5rem;
+  border: none; /* Asegurar que no tenga borde de botón general */
 }
 
 #nextBtn:hover {
@@ -178,16 +158,102 @@ button:hover {
   transform: scale(1.2);
 }
 
-/* Ajustes para pantallas móviles */
-@media (max-width: 768px) {
-  .dialogue-box {
-    font-size: 1rem;
-    padding: 1.2rem 1rem;
+#nextBtn::after {
+  content: '›';
+  font-weight: bold;
+}
+
+
+/* ==== ORDENAMIENTO (ORDERING) ==== */
+
+.ordering-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 1em;
+}
+
+.ordering-step {
+  padding: 10px;
+  border: 1px solid #4b5563;
+  border-radius: 8px;
+  background: #1a1a1a;
+  color: #fff;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.ordering-step:hover {
+  background: #333;
+  transform: scale(1.01);
+}
+
+.ordering-step.selected {
+  background: #4b5563;
+  opacity: 0.9;
+  font-style: italic;
+}
+
+.btn-done {
+  margin-top: 15px;
+  padding: 10px;
+  font-weight: bold;
+  background: #555;
+  color: #fff;
+}
+
+.order-display {
+  margin-top: 10px;
+  font-style: italic;
+  color: #ccc;
+  text-align: center;
+}
+
+/* ==== MEDIA QUERIES PARA RESPONSIVIDAD (Móviles) ==== */
+
+@media (max-width: 700px) {
+  /* Ajuste del Contenedor Principal */
+  .scene {
+    width: 95%; /* Ocupar más espacio horizontal */
+    padding: 1.2rem; /* Reducir el padding */
+    border-radius: 0; /* Opcional: hacer que ocupe todo el ancho en el borde */
+    max-height: 100vh;
+    overflow-y: auto; /* Permitir scroll si el contenido es demasiado largo */
   }
 
-  #nextBtn {
-    font-size: 1.5rem;
-    bottom: 1rem;
-    right: 1rem;
+  /* Ajuste de Fuente para mejor visualización en móvil */
+  #text, #question, #narrative {
+    font-size: 1rem;
+    line-height: 1.5;
   }
+
+  /* Ajuste de Espaciado para las voces */
+  .equalis-voice, .disparia-voice {
+    margin-top: 0.8rem;
+  }
+  
+  /* Ajuste del Botón de Continuar para facilitar el toque */
+  #nextBtn {
+    font-size: 2.5rem; /* Botón más grande */
+    right: 0.2rem;
+    bottom: 0.2rem;
+    opacity: 1; /* Siempre visible y táctil */
+  }
+  
+  /* Ajuste de Botones de Elección (hacerlos más altos y fáciles de presionar) */
+  button {
+    padding: 0.8rem 1.2rem;
+  }
+}
+
+/* ==== EFECTOS SUAVES ==== */
+
+.fade-text {
+  animation: fadeText 0.6s ease-in-out;
+}
+
+@keyframes fadeText {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
 }
