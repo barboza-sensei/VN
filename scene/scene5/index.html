@@ -6,72 +6,64 @@
   <title>Escena 5 — La Puerta del Teatro</title>
   <link rel="stylesheet" href="../../style.css" />
   <style>
-    /* ------------------------------------------------------------------ */
-    /* ESTILOS DE VOZ Y GENERALES (Completos para asegurar la estética) */
-    /* ------------------------------------------------------------------ */
-    * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-        font-family: 'Consolas', 'Courier New', monospace; 
-    }
+    /* Estilos locales para la atmósfera de esta escena */
     body {
-        color: #f0f0f0; 
-        font-size: 1.1em;
-        line-height: 1.6;
-        background-color: #0c0c1a; 
+        /* IMAGEN INICIAL (Marquesina Antigua) */
+        background-image: url('assets/bg/marquesina_antigua.png'); 
+        background-color: #0c0c1a;
         background-size: cover;
         background-position: center;
         transition: background-image 1s ease-in-out; 
-        background-image: url('assets/bg/marquesina_antigua.png'); 
     }
     
-    /* --- CLASES DE VOZ CORREGIDAS --- */
-    .equalis-voice { color: #aaffff; text-shadow: 0 0 5px rgba(170, 255, 255, 0.4); } 
-    .disparia-voice { color: #ff9999; text-shadow: 0 0 5px rgba(255, 153, 153, 0.4); } 
-    /* ¡NUEVO! Color para el Anciano: Dorado/Amarillo Oscuro */
-    .old-man-voice { color: #ffcc66; text-shadow: 0 0 5px rgba(255, 204, 102, 0.4); } 
-
-    /* --- CAJA DE DIÁLOGO BASE (CUADRO DE TEXTO) --- */
+    .resaltado {
+        font-weight: bold;
+        color: #f0f0f0; 
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.4);
+    }
+    
+    /* ******************************************************* */
+    /* ESTILOS ESTÉTICOS MANTENIDOS (IDÉNTICOS A ESCENA 4) */
+    /* ******************************************************* */
     #main-dialogue-box {
         position: absolute; bottom: 5vh; left: 50%; transform: translateX(-50%);
         width: 90%; max-width: 800px; padding: 1.5em;
         background-color: rgba(15, 15, 15, 0.9); 
         border: 1px solid rgba(255, 255, 255, 0.1); 
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4), 0 0 10px rgba(170, 255, 255, 0.1); 
-        border-radius: 8px; 
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); border-radius: 5px; 
     }
-    
-    /* --- BOTONES Y OPCIONES (ESTILO SLEEK POR DEFECTO) --- */
-    #choices { 
-        display: flex; flex-direction: column; 
-        gap: 0; /* Sin espacio entre botones por defecto */
-        margin-top: 15px; 
-        border-top: 1px solid rgba(255, 255, 255, 0.1); /* Separador superior por defecto */
-    }
+    #choices { display: flex; flex-direction: column; gap: 0; margin-top: 15px; }
     .choice-btn {
-        background: rgba(0, 0, 0, 0.4); border: none; color: #f0f0f0;
+        background: rgba(0, 0, 0, 0.4); border: none; border-radius: 0; color: #f0f0f0;
         padding: 12px 15px; font-size: 1.1em; text-align: left; transition: all 0.2s ease;
-        cursor: pointer; 
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Separador entre botones por defecto */
+        cursor: pointer; border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
     }
     .choice-btn:hover, .choice-btn:focus {
         background: rgba(40, 40, 40, 0.6); box-shadow: 0 0 0 1px #aaffff; color: #aaffff; outline: none; 
     }
     #choices .choice-btn:last-child { border-bottom: none; }
-    
+    #nextBtn::after { content: none !important; visibility: hidden; }
+    #nextBtn { text-indent: 0; overflow: visible; }
+
+    /* COLORES DE VOZ (Incluye el Anciano para consistencia futura) */
+    .equalis-voice { color: #aaffff; } 
+    .disparia-voice { color: #ff9999; } 
+    .old-man-voice { color: #ffcc66; text-shadow: 0 0 5px rgba(255, 204, 102, 0.4); } 
+
     /* ------------------------------------------------------------------ */
-    /* ESTILOS ESPECÍFICOS PARA EL MODO ORDENAMIENTO (SOLO EN EL DESAFÍO) */
+    /* ESTILOS ESPECÍFICOS PARA EL MODO ORDENAMIENTO (DRAG AND DROP) */
     /* ------------------------------------------------------------------ */
+    /* Estos estilos SOLO se aplican cuando #choices tiene la clase .ordering-mode */
     #choices.ordering-mode { 
-        gap: 8px; /* Espacio entre los bloques arrastrables */
-        padding: 10px; border: 1px dashed rgba(255, 255, 255, 0.2); /* Borde punteado para D&D */
-        border-top: none; /* Anular el separador superior en modo desafío */
+        gap: 8px; 
+        padding: 10px; 
+        border: 1px dashed rgba(255, 255, 255, 0.2); 
+        border-top: none; 
     }
     .choice-btn.ordering {
         background: rgba(40, 40, 40, 0.7); 
-        border: 1px solid #aaffff; /* Borde visible para arrastre */
-        border-bottom: 1px solid #aaffff; /* Borde también para el último elemento */
+        border: 1px solid #aaffff; 
+        border-bottom: 1px solid #aaffff;
         cursor: grab;
         position: relative;
     }
@@ -101,7 +93,6 @@
     .final-check-btn:hover {
         background: #00aaaa;
     }
-    /* ... (Otros estilos) ... */
   </style>
 </head>
 
@@ -127,17 +118,15 @@
         document.body.style.backgroundImage = `url('${imageUrl}')`;
     }
 
-    // --- DATA DE LA ESCENA 5 (Desafío de Ordenamiento) ---
     const scene5 = {
       id: 5,
       title: "La Puerta del Teatro",
       text: [
-        // LÍNEA DE CONTINUIDAD
-        { type: 'narrative', content: "El sendero se curva una última vez y te deja frente a una imponente estructura: un viejo teatro abandonado. Su marquesina antigua titila descontroladamente."}, // i=0
-        { type: 'narrative', content: "En el cartel, letras de neón cambian de orden sin parar, creando una sensación de **secuencia rota**."}, // i=1 (IMG_GENERAL)
-        { type: 'voice', speaker: 'Equalis', content: "Cada paso cuenta, pero solo si los das en el **orden** correcto. El proceso es la única llave."}, // i=2
-        { type: 'voice', speaker: 'Disparia', content: "La voz invisible de Disparia te llega como un eco burlón: '¿Por qué seguir el orden cuando la locura es más divertida?'"}, // i=3 -> Corregido tipo a voice
-        { type: 'narrative', content: "En la puerta, una ecuación fragmentada ha sido grabada. Debes resolverla paso a paso para abrirla: (3x − 2)/4 + 5 = 8."}, // i=4 (IMG_DESAFIO)
+        { type: 'narrative', content: "El sendero se curva una última vez y te deja frente a una imponente estructura: un viejo teatro abandonado. Su marquesina antigua titila descontroladamente."},
+        { type: 'narrative', content: "En el cartel, letras de neón cambian de orden sin parar, creando una sensación de **secuencia rota**."},
+        { type: 'voice', speaker: 'Equalis', content: "Cada paso cuenta, pero solo si los das en el **orden** correcto. El proceso es la única llave."},
+        { type: 'voice', speaker: 'Disparia', content: "La voz invisible de Disparia te llega como un eco burlón: '¿Por qué seguir el orden cuando la locura es más divertida?'"},
+        { type: 'narrative', content: "En la puerta, una ecuación fragmentada ha sido grabada. Debes resolverla paso a paso para abrirla: (3x − 2)/4 + 5 = 8."},
         
         { type: 'challenge', 
           question: "Ordená los pasos de forma correcta para despejar 'x' y abrir la puerta. (Recordá invertir el orden de las operaciones: de afuera hacia adentro).", 
@@ -182,16 +171,23 @@
           return; 
       }
       
+      // Asegurarse de quitar las clases de ordenamiento al volver a modo narrativa
+      choicesEl.classList.remove('ordering-mode'); 
+      choicesEl.style.padding = '0'; 
+      choicesEl.style.border = 'none'; 
+      choicesEl.style.borderTop = '1px solid rgba(255, 255, 255, 0.1)'; 
+      choicesEl.style.gap = '0'; 
+
       let content = formatText(lineData.content);
       let speaker = lineData.speaker;
-
+      
       if (speaker) {
           let voiceClass;
           if (speaker.toLowerCase() === 'equalis') {
               voiceClass = 'equalis-voice';
           } else if (speaker.toLowerCase() === 'disparia') {
               voiceClass = 'disparia-voice';
-          } else if (speaker.toLowerCase() === 'anciano') { // Usar esta lógica si el Anciano aparece.
+          } else if (speaker.toLowerCase() === 'anciano') {
               voiceClass = 'old-man-voice';
           } else {
               voiceClass = 'resaltado';
@@ -205,16 +201,13 @@
       void textEl.offsetWidth; 
     }
 
-    // --- FUNCIÓN ESPECÍFICA PARA EL DESAFÍO DE ORDENAMIENTO ---
     function renderOrderingChallenge(data) {
-        // ACTIVA el modo desafío para aplicar el estilo visual de D&D a #choices
         choicesEl.classList.add('ordering-mode'); 
         
         textEl.innerHTML = `<p class="challenge-question fade-text">${formatText(data.question)}</p>`;
         choicesEl.innerHTML = ""; 
         
         let stepsToRender = [...data.steps];
-        // Método simple de Fisher-Yates (Shuffle)
         for (let i = stepsToRender.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [stepsToRender[i], stepsToRender[j]] = [stepsToRender[j], stepsToRender[i]];
@@ -229,7 +222,6 @@
             choicesEl.appendChild(btn);
         });
 
-        // 2. Implementar Drag and Drop (simplificado)
         let dragSrcEl = null;
 
         function handleDragStart(e) {
@@ -240,29 +232,20 @@
         }
 
         function handleDragOver(e) {
-            if (e.preventDefault) {
-                e.preventDefault(); 
-            }
+            if (e.preventDefault) { e.preventDefault(); }
             e.dataTransfer.dropEffect = 'move';
             return false;
         }
 
-        function handleDragEnter(e) {
-            this.classList.add('over');
-        }
-
-        function handleDragLeave(e) {
-            this.classList.remove('over'); 
-        }
+        function handleDragEnter(e) { this.classList.add('over'); }
+        function handleDragLeave(e) { this.classList.remove('over'); }
 
         function handleDrop(e) {
             e.stopPropagation(); 
-            
             if (dragSrcEl !== this) {
                 const targetParent = this.parentNode;
                 const sourceElement = dragSrcEl;
                 const targetElement = this;
-
                 const tempNode = document.createElement('div');
                 targetParent.insertBefore(tempNode, targetElement);
                 targetParent.insertBefore(targetElement, sourceElement);
@@ -278,7 +261,7 @@
         }
 
         Array.from(choicesEl.children).forEach(item => {
-            if (item.classList.contains('ordering')) {
+            if (item.classList.contains('ordering')) { 
                 item.addEventListener('dragstart', handleDragStart, false);
                 item.addEventListener('dragenter', handleDragEnter, false);
                 item.addEventListener('dragover', handleDragOver, false);
@@ -288,7 +271,6 @@
             }
         });
         
-        // 3. Botón de Verificación
         const checkBtn = document.createElement("button");
         checkBtn.textContent = "VERIFICAR ORDEN";
         checkBtn.className = 'final-check-btn';
@@ -297,7 +279,6 @@
     }
     
     function checkOrdering(data) {
-        // DESACTIVA el modo desafío para limpiar la estética
         choicesEl.classList.remove('ordering-mode'); 
         
         const currentOrder = Array.from(choicesEl.children)
