@@ -23,14 +23,15 @@
     }
     
     /* ******************************************************* */
-    /* ESTILOS ESTÉTICOS MANTENIDOS */
+    /* ESTILOS ESTÉTICOS CORREGIDOS */
     /* ******************************************************* */
     #main-dialogue-box {
         position: absolute; bottom: 5vh; left: 50%; transform: translateX(-50%);
         width: 90%; max-width: 800px; padding: 1.5em;
-        background-color: rgba(15, 15, 15, 0.3); 
+        background-color: rgba(15, 15, 15, 0.9); 
         border: 1px solid rgba(255, 255, 255, 0.1); 
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); border-radius: 5px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4), 0 0 10px rgba(170, 255, 255, 0.1); /* Agrego el neón sutil */
+        border-radius: 8px; /* Redondeo de borde para consistencia */
     }
     #choices { display: flex; flex-direction: column; gap: 0; margin-top: 15px; }
     .choice-btn {
@@ -44,9 +45,12 @@
     #choices .choice-btn:last-child { border-bottom: none; }
     #nextBtn::after { content: none !important; visibility: hidden; }
     #nextBtn { text-indent: 0; overflow: visible; }
-
+    
+    /* COLORES DE VOZ */
     .equalis-voice { color: #aaffff; } 
     .disparia-voice { color: #ff9999; } 
+    /* NUEVO COLOR PARA EL ANCIANO */
+    .old-man-voice { color: #ffcc66; text-shadow: 0 0 5px rgba(255, 204, 102, 0.4); } 
   </style>
 </head>
 
@@ -127,11 +131,21 @@
       }
       
       let content = formatText(lineData.content);
-
-      if (lineData.speaker) {
-          // Asumimos que la voz del anciano es neutral, pero usamos la voz de Equalis para su contenido lógico.
-          const voiceClass = lineData.speaker.toLowerCase() === 'equalis' || lineData.speaker.toLowerCase() === 'anciano' ? 'equalis-voice' : 'disparia-voice';
-          textEl.innerHTML = `<span class="${voiceClass}">${lineData.speaker}: ${content}</span>`;
+      let speaker = lineData.speaker;
+      
+      if (speaker) {
+          let voiceClass;
+          if (speaker.toLowerCase() === 'equalis') {
+              voiceClass = 'equalis-voice';
+          } else if (speaker.toLowerCase() === 'disparia') {
+              voiceClass = 'disparia-voice';
+          } else if (speaker.toLowerCase() === 'anciano') {
+              // Asigna la nueva clase de voz
+              voiceClass = 'old-man-voice'; 
+          } else {
+              voiceClass = 'resaltado';
+          }
+          textEl.innerHTML = `<span class="${voiceClass}">${speaker}: ${content}</span>`;
       } else {
           textEl.innerHTML = content;
       }
@@ -149,10 +163,8 @@
             const btn = document.createElement("button");
             btn.textContent = choice.text;
             btn.className = 'choice-btn'; 
-            btn.onclick = () => checkAnswer(data, choice.value);
-            // Aseguramos que el valor de la respuesta sea un número si el 'answer' de data lo es
-            const valueToPass = typeof data.answer === 'number' ? choice.value : choice.value; 
-            btn.onclick = () => checkAnswer(data, valueToPass);
+            // Pasa solo el valor, simplificando el valor para el checkAnswer
+            btn.onclick = () => checkAnswer(data, choice.value); 
             choicesEl.appendChild(btn);
         });
     }
@@ -163,8 +175,12 @@
         let resultText;
         let transitionData;
         
-        // Convertir la respuesta del usuario a número para la comparación, ya que 'answer' es 5 (número)
-        const isCorrect = (typeof data.answer === 'number') ? (parseInt(userAnswer.split('=')[1] || userAnswer) === data.answer) : (userAnswer === data.answer);
+        // --- INICIO DE LA CORRECCIÓN DEL BUG ---
+        // Simplicamos la lógica: el userAnswer ahora es solo el número 1, 5, o 0.
+        // Convertimos el userAnswer a número si data.answer lo es, para comparación estricta.
+        const userValue = (typeof data.answer === 'number') ? parseInt(userAnswer) : userAnswer;
+        const isCorrect = userValue === data.answer;
+        // --- FIN DE LA CORRECCIÓN DEL BUG ---
         
         if (isCorrect) {
             score += 1; 
