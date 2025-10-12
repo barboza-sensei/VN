@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="../../style.css" />
   <style>
     /* ------------------------------------------------------------------ */
-    /* ESTILOS GLOBALES (Replicados para asegurar la estética del cuadro) */
+    /* ESTILOS DE VOZ Y GENERALES (Completos para asegurar la estética) */
     /* ------------------------------------------------------------------ */
     * {
         box-sizing: border-box;
@@ -23,43 +23,37 @@
         background-size: cover;
         background-position: center;
         transition: background-image 1s ease-in-out; 
-        /* IMAGEN INICIAL (Marquesina Antigua) */
         background-image: url('assets/bg/marquesina_antigua.png'); 
     }
+    
+    /* --- CLASES DE VOZ CORREGIDAS --- */
     .equalis-voice { color: #aaffff; text-shadow: 0 0 5px rgba(170, 255, 255, 0.4); } 
     .disparia-voice { color: #ff9999; text-shadow: 0 0 5px rgba(255, 153, 153, 0.4); } 
+    /* ¡NUEVO! Color para el Anciano: Dorado/Amarillo Oscuro */
+    .old-man-voice { color: #ffcc66; text-shadow: 0 0 5px rgba(255, 204, 102, 0.4); } 
 
     /* --- CAJA DE DIÁLOGO BASE (CUADRO DE TEXTO) --- */
     #main-dialogue-box {
         position: absolute; bottom: 5vh; left: 50%; transform: translateX(-50%);
         width: 90%; max-width: 800px; padding: 1.5em;
-        background-color: rgba(15, 15, 15, 0.3); /* Fondo oscuro semitransparente */
+        background-color: rgba(15, 15, 15, 0.9); 
         border: 1px solid rgba(255, 255, 255, 0.1); 
-        /* Sombra sutil que da el toque estético de neón */
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4), 0 0 10px rgba(170, 255, 255, 0.1); 
-        border-radius: 8px; /* Bordes ligeramente redondeados */
+        border-radius: 8px; 
     }
     
-    /* --- BOTÓN DE CONTINUAR --- */
-    #nextBtn {
-        background: none; border: none; color: #aaffff; font-size: 1.5em;
-        position: absolute; bottom: 10px; right: 15px; cursor: pointer;
-        transition: color 0.2s ease;
-    }
-    #nextBtn:hover {
-        color: #ffffff;
-        text-shadow: 0 0 5px #aaffff;
-    }
-
-    /* --- ESTILOS DE OPCIONES GENERALES --- */
+    /* --- BOTONES Y OPCIONES (ESTILO SLEEK POR DEFECTO) --- */
     #choices { 
-        display: flex; flex-direction: column; gap: 0; margin-top: 15px; 
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex; flex-direction: column; 
+        gap: 0; /* Sin espacio entre botones por defecto */
+        margin-top: 15px; 
+        border-top: 1px solid rgba(255, 255, 255, 0.1); /* Separador superior por defecto */
     }
     .choice-btn {
         background: rgba(0, 0, 0, 0.4); border: none; color: #f0f0f0;
         padding: 12px 15px; font-size: 1.1em; text-align: left; transition: all 0.2s ease;
-        cursor: pointer; border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
+        cursor: pointer; 
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Separador entre botones por defecto */
     }
     .choice-btn:hover, .choice-btn:focus {
         background: rgba(40, 40, 40, 0.6); box-shadow: 0 0 0 1px #aaffff; color: #aaffff; outline: none; 
@@ -67,15 +61,17 @@
     #choices .choice-btn:last-child { border-bottom: none; }
     
     /* ------------------------------------------------------------------ */
-    /* ESTILOS ESPECÍFICOS PARA ORDENAMIENTO (DRAG AND DROP VISUAL) */
+    /* ESTILOS ESPECÍFICOS PARA EL MODO ORDENAMIENTO (SOLO EN EL DESAFÍO) */
     /* ------------------------------------------------------------------ */
-    #choices { 
-        gap: 8px; margin-top: 15px; 
-        padding: 10px; border: 1px dashed rgba(255, 255, 255, 0.2);
+    #choices.ordering-mode { 
+        gap: 8px; /* Espacio entre los bloques arrastrables */
+        padding: 10px; border: 1px dashed rgba(255, 255, 255, 0.2); /* Borde punteado para D&D */
+        border-top: none; /* Anular el separador superior en modo desafío */
     }
     .choice-btn.ordering {
         background: rgba(40, 40, 40, 0.7); 
-        border: 1px solid #aaffff; 
+        border: 1px solid #aaffff; /* Borde visible para arrastre */
+        border-bottom: 1px solid #aaffff; /* Borde también para el último elemento */
         cursor: grab;
         position: relative;
     }
@@ -105,14 +101,7 @@
     .final-check-btn:hover {
         background: #00aaaa;
     }
-    
-    /* ------------------------------------------------------------------ */
-    /* Estilos para el texto resaltado */
-    .resaltado {
-        font-weight: bold;
-        color: #f0f0f0; 
-        text-shadow: 0 0 5px rgba(255, 255, 255, 0.4);
-    }
+    /* ... (Otros estilos) ... */
   </style>
 </head>
 
@@ -147,7 +136,7 @@
         { type: 'narrative', content: "El sendero se curva una última vez y te deja frente a una imponente estructura: un viejo teatro abandonado. Su marquesina antigua titila descontroladamente."}, // i=0
         { type: 'narrative', content: "En el cartel, letras de neón cambian de orden sin parar, creando una sensación de **secuencia rota**."}, // i=1 (IMG_GENERAL)
         { type: 'voice', speaker: 'Equalis', content: "Cada paso cuenta, pero solo si los das en el **orden** correcto. El proceso es la única llave."}, // i=2
-        { type: 'narrative', content: "La voz invisible de Disparia te llega como un eco burlón: '¿Por qué seguir el orden cuando la locura es más divertida?'"}, // i=3
+        { type: 'voice', speaker: 'Disparia', content: "La voz invisible de Disparia te llega como un eco burlón: '¿Por qué seguir el orden cuando la locura es más divertida?'"}, // i=3 -> Corregido tipo a voice
         { type: 'narrative', content: "En la puerta, una ecuación fragmentada ha sido grabada. Debes resolverla paso a paso para abrirla: (3x − 2)/4 + 5 = 8."}, // i=4 (IMG_DESAFIO)
         
         { type: 'challenge', 
@@ -194,10 +183,20 @@
       }
       
       let content = formatText(lineData.content);
+      let speaker = lineData.speaker;
 
-      if (lineData.speaker) {
-          const voiceClass = lineData.speaker.toLowerCase() === 'equalis' ? 'equalis-voice' : 'disparia-voice';
-          textEl.innerHTML = `<span class="${voiceClass}">${lineData.speaker}: ${content}</span>`;
+      if (speaker) {
+          let voiceClass;
+          if (speaker.toLowerCase() === 'equalis') {
+              voiceClass = 'equalis-voice';
+          } else if (speaker.toLowerCase() === 'disparia') {
+              voiceClass = 'disparia-voice';
+          } else if (speaker.toLowerCase() === 'anciano') { // Usar esta lógica si el Anciano aparece.
+              voiceClass = 'old-man-voice';
+          } else {
+              voiceClass = 'resaltado';
+          }
+          textEl.innerHTML = `<span class="${voiceClass}">${speaker}: ${content}</span>`;
       } else {
           textEl.innerHTML = content;
       }
@@ -208,11 +207,12 @@
 
     // --- FUNCIÓN ESPECÍFICA PARA EL DESAFÍO DE ORDENAMIENTO ---
     function renderOrderingChallenge(data) {
-        textEl.innerHTML = `<p class="challenge-question fade-text">${formatText(data.question)}</p>`;
+        // ACTIVA el modo desafío para aplicar el estilo visual de D&D a #choices
+        choicesEl.classList.add('ordering-mode'); 
         
+        textEl.innerHTML = `<p class="challenge-question fade-text">${formatText(data.question)}</p>`;
         choicesEl.innerHTML = ""; 
         
-        // 1. Clonar y mezclar los pasos para que el jugador tenga que ordenarlos.
         let stepsToRender = [...data.steps];
         // Método simple de Fisher-Yates (Shuffle)
         for (let i = stepsToRender.length - 1; i > 0; i--) {
@@ -297,6 +297,9 @@
     }
     
     function checkOrdering(data) {
+        // DESACTIVA el modo desafío para limpiar la estética
+        choicesEl.classList.remove('ordering-mode'); 
+        
         const currentOrder = Array.from(choicesEl.children)
             .filter(btn => btn.hasAttribute('data-index'))
             .map(btn => parseInt(btn.getAttribute('data-index')));
@@ -313,11 +316,11 @@
         
         if (isCorrect) {
             score += 1; 
-            resultText = `<span class="equalis-voice fade-text">${data.success}</span>`;
+            resultText = `<span class="equalis-voice fade-text">${formatText(data.success)}</span>`;
             transitionData = data.transitionSuccess;
         } else {
             score -= 1; 
-            resultText = `<span class="disparia-voice fade-text">${data.failure}</span>`;
+            resultText = `<span class="disparia-voice fade-text">${formatText(data.failure)}</span>`;
             transitionData = data.transitionFail;
         }
 
@@ -334,7 +337,7 @@
         };
     }
 
-    function checkAnswer() { /* Función de chequeo general mantenida por consistencia */ }
+    function checkAnswer() { /* No usada en esta escena */ }
 
     function goTo(relativePath) {
         const base = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
@@ -350,5 +353,5 @@
     window.onload = showLine;
   </script>
 </body>
-</html>
-
+  </html>
+  
