@@ -6,7 +6,49 @@
   <title>Escena 7 — El Libro Rasgado</title>
   <link rel="stylesheet" href="../../style.css" />
   <style>
-    /* Estilos omitidos por brevedad, asumiendo que están correctos */
+    /* Estilos para la atmósfera de esta escena */
+    body {
+        /* IMAGEN INICIAL (Banca Oscura) */
+        background-image: url('assets/bg/banca_oscura.png'); 
+        background-color: #0c0c1a;
+        background-size: cover;
+        background-position: center;
+        transition: background-image 1s ease-in-out; 
+    }
+    
+    .resaltado {
+        font-weight: bold;
+        color: #f0f0f0; 
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.4);
+    }
+    
+    /* ******************************************************* */
+    /* ESTILOS ESTÉTICOS GLOBALES (COHERENCIA) */
+    /* ******************************************************* */
+    #main-dialogue-box {
+        position: absolute; bottom: 5vh; left: 50%; transform: translateX(-50%);
+        width: 90%; max-width: 800px; padding: 1.5em;
+        background-color: rgba(15, 15, 15, 0.3); 
+        border: 1px solid rgba(255, 255, 255, 0.1); 
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); border-radius: 5px;
+    }
+    #choices { display: flex; flex-direction: column; gap: 0; margin-top: 15px; }
+    .choice-btn {
+        background: rgba(0, 0, 0, 0.4); border: none; border-radius: 0; color: #f0f0f0;
+        padding: 12px 15px; font-size: 1.1em; text-align: left; transition: all 0.2s ease;
+        cursor: pointer; border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
+    }
+    .choice-btn:hover, .choice-btn:focus {
+        background: rgba(40, 40, 40, 0.6); box-shadow: 0 0 0 1px #aaffff; color: #aaffff; outline: none; 
+    }
+    #choices .choice-btn:last-child { border-bottom: none; }
+    #nextBtn::after { content: none !important; visibility: hidden; }
+    #nextBtn { text-indent: 0; overflow: visible; }
+
+    /* COLORES DE VOZ */
+    .equalis-voice { color: #aaffff; text-shadow: 0 0 5px rgba(170, 255, 255, 0.4); } 
+    .disparia-voice { color: #ff9999; text-shadow: 0 0 5px rgba(255, 153, 153, 0.4); } 
+    .old-man-voice { color: #ffcc66; text-shadow: 0 0 5px rgba(255, 204, 102, 0.4); } 
   </style>
 </head>
 
@@ -68,10 +110,11 @@
     function showLine() {
       if (currentLine >= sceneData.length) return;
 
-      if (currentLine === 1) { 
-        changeBackground(IMG_GENERAL);
-      } else if (currentLine === 3) { 
+      // El fondo se inicializa en el CSS, solo cambia cuando se encuentra el cuaderno (índice 3)
+      if (currentLine === 3) { 
         changeBackground(IMG_DESAFIO);
+      } else if (currentLine === 0) {
+        changeBackground(IMG_GENERAL); // Asegura que el fondo general se cargue al inicio
       }
       
       const lineData = sceneData[currentLine];
@@ -146,16 +189,14 @@
         textEl.innerHTML = resultText;
         choicesEl.innerHTML = ''; 
         
-        // --- CORRECCIÓN CLAVE AQUÍ ---
         nextBtn.style.display = 'inline-flex';
         nextBtn.onclick = () => {
-            textEl.textContent = transitionData.text; // Mostrar el texto de transición
-            nextBtn.onclick = () => { // Reasignar la acción para ir a la siguiente escena
+            textEl.textContent = transitionData.text; 
+            nextBtn.onclick = () => { 
                 localStorage.setItem('score', score); 
                 goTo(transitionData.nextScene);
             }
         };
-        // -----------------------------
     }
 
     function goTo(relativePath) {
@@ -165,7 +206,7 @@
     }
     
     nextBtn.addEventListener("click", () => {
-      // Solo avanzar si no estamos en un desafío resuelto
+      // Solo avanzar si NO estamos en un desafío y el onclick no ha sido reasignado para goTo
       if (choicesEl.children.length === 0 && nextBtn.onclick.toString().indexOf('goTo') === -1) {
           currentLine++;
           showLine();
