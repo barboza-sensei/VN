@@ -29,7 +29,7 @@
     #main-dialogue-box {
         position: absolute; bottom: 5vh; left: 50%; transform: translateX(-50%);
         width: 90%; max-width: 800px; padding: 1.5em;
-        background-color: rgba(15, 15, 15, 0.9); 
+        background-color: rgba(15, 15, 15, 0.3); 
         border: 1px solid rgba(255, 255, 255, 0.1); 
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); border-radius: 5px;
     }
@@ -75,26 +75,28 @@
         document.body.style.backgroundImage = `url('${imageUrl}')`;
     }
 
-    // --- DATA DE LA ESCENA 8 (Desafío de Concepto: Inecuación) ---
+    // --- DATA DE LA ESCENA 8 (Diálogos y Metáforas Puras) ---
     const scene8 = {
       id: 8,
       title: "El eco del túnel",
       text: [
-        { type: 'narrative', content: "Entrás a un pasaje de ladrillo. Tu voz rebota con retardo. Cada palabra que decís vuelve convertida en número."}, // i=0 (IMG_GENERAL)
-        { type: 'voice', speaker: 'Disparia', content: "¿Es igual el camino para todos los números? ¿O algunos tienen que invertir su dirección para seguir?"}, // i=1
-        { type: 'voice', speaker: 'Equalis', content: "La única regla es la coherencia. Observa con atención la inecuación y dime: **¿cuál es la ley que la diferencia de su hermana, la ecuación?**"}, // i=2 (IMG_DESAFIO)
+        { type: 'narrative', content: "Entras a un pasaje de ladrillo. El ambiente gélido y húmedo absorbe el sonido, pero tu presencia rompe la calma."}, 
+        { type: 'voice', speaker: 'Equalis', content: "El eco de este lugar distorsiona el **equilibrio** en una **desigualdad**."}, 
+        { type: 'voice', speaker: 'Disparia', content: "¡Interesante! ¿Por qué complicarse? La dirección del camino es clara. **Solo tienes que invertir su polaridad (dejarlo positivo) y mantener el rumbo**."}, // ERROR SUGERIDO POR DISPARIA (Cambiar el signo de x, mantener la desigualdad)
+        { type: 'narrative', content: "La humedad del túnel se condensa sobre el ladrillo, formando un **goteo negro y aceitoso que revela una incisión en la pared**: el estado crítico. **-3x < 6**"}, 
+        { type: 'voice', speaker: 'Equalis', content: "Esa **oscura atadura** que sujeta la incógnita tiene **polaridad negativa**. ¿Cuál es la ley que rige la dirección de la desigualdad al liberarla?"}, 
         { type: 'challenge', 
-          // NOTA: Reemplazo de KaTeX por texto simple/Unicode
-          question: "El eco muestra la resolución de una inecuación. ¿Qué regla **procedimental** fundamental debe aplicarse en el paso de división que la diferencia de una ecuación?\n\n-2x + 1 > 5\n-2x > 4\n\n(-2x) / -2  >  4 / -2  →  ¿Qué pasa con el signo de desigualdad (>)?",
-          answer: "La regla es que el signo de la desigualdad debe invertirse (cambiar de > a <) cuando se divide o multiplica por un número negativo.",
-          success: "Equalis: La ley de la desigualdad ha sido honrada. El camino se abre para un conjunto infinito de soluciones. (+1 Lógica).", 
-          failure: "Disparia: ¡Un suspiro! Esos pequeños errores son los que hacen la vida interesante. (-1 Lógica).",
+          question: "La **atadura** es $\\mathbf{-3}$. Al forzar su liberación, ¿qué efecto tiene su **polaridad** sobre la dirección del camino desigual?", 
+          answer: "La regla es que el signo de la desigualdad debe invertirse (cambiar de < a >) cuando se divide o multiplica por un número negativo.",
+          success: "Equalis: La ley de la desigualdad ha sido honrada. La dirección se invierte ante la polaridad opuesta. (+1 Lógica).", 
+          failure: "Disparia: ¡Un suspiro! Esos pequeños errores son los que hacen la vida interesante. El Caos agradece la confusión. (-1 Lógica).",
           transitionSuccess: { text: "El eco se apaga. Una puerta familiar aparece adelante, brillante y sólida.", nextScene: "../scene9/index.html" },
           transitionFail: { text: "El eco te responde con tu propio nombre, repetido mil veces, y el túnel se alarga.", nextScene: "../scene9/index.html" },
           choices: [
-              { text: "La variable x debe pasar a ser positiva, por lo que -2x se convierte en 2x y la desigualdad se mantiene.", isCorrect: false },
-              { text: "La regla es que el signo de la desigualdad debe invertirse (cambiar de > a <) cuando se divide o multiplica por un número negativo.", isCorrect: true },
-              { text: "Al dividir ambos lados, la desigualdad se convierte en una igualdad (=) en el paso final.", isCorrect: false }
+              // La opción incorrecta que refleja la sugerencia de Disparia
+              { text: "La polaridad negativa del elemento no afecta la dirección, solo el valor de la incógnita.", isCorrect: false }, 
+              { text: "La dirección del camino desigual debe invertirse (cambiar de < a >) cuando se aplica la operación de un elemento de polaridad negativa.", isCorrect: true }, 
+              { text: "La atadura negativa convierte la desigualdad estricta (<) en una no estricta (≤).", isCorrect: false }
           ]
         }
       ]
@@ -112,7 +114,7 @@
 
       if (currentLine === 0) { 
         changeBackground(IMG_GENERAL);
-      } else if (currentLine === 2) { 
+      } else if (currentLine === 3) { 
         changeBackground(IMG_DESAFIO);
       }
       
@@ -205,7 +207,6 @@
     }
     
     nextBtn.addEventListener("click", () => {
-      // Solo avanzar si no estamos en un desafío resuelto, o si ya tiene asignada la función de goTo
       if (choicesEl.children.length === 0) {
           currentLine++;
           showLine();
