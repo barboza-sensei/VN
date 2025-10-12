@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Escena 6 — El Tren Fantasma</title>
+  <link rel="stylesheet" href="../../style.css" />
+  <style>
+    /* Estilos locales para la atmósfera de esta escena */
+    body {
+        /* IMAGEN INICIAL (Vías Oxidadas) */
+        background-image: url('assets/bg/vias_oxidadas.png'); 
+        background-color: #0c0c1a;
+        background-size: cover;
+        background-position: center;
+        transition: background-image 1s ease-in-out; 
+    }
+    
+    .resaltado {
+        font-weight: bold;
+        color: #f0f0f0; 
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.4);
+    }
+    
+    /* ******************************************************* */
+    /* ESTILOS ESTÉTICOS MANTENIDOS (COHERENCIA CON ESCENA 4/5) */
+    /* ******************************************************* */
+    #main-dialogue-box {
+        position: absolute; bottom: 5vh; left: 50%; transform: translateX(-50%);
+        width: 90%; max-width: 800px; padding: 1.5em;
+        background-color: rgba(15, 15, 15, 0.3); 
+        border: 1px solid rgba(255, 255, 255, 0.1); 
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); border-radius: 5px;
+    }
+    #choices { display: flex; flex-direction: column; gap: 0; margin-top: 15px; }
+    .choice-btn {
+        background: rgba(0, 0, 0, 0.4); border: none; border-radius: 0; color: #f0f0f0;
+        padding: 12px 15px; font-size: 1.1em; text-align: left; transition: all 0.2s ease;
+        cursor: pointer; border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
+    }
+    .choice-btn:hover, .choice-btn:focus {
+        background: rgba(40, 40, 40, 0.6); box-shadow: 0 0 0 1px #aaffff; color: #aaffff; outline: none; 
+    }
+    #choices .choice-btn:last-child { border-bottom: none; }
+    #nextBtn::after { content: none !important; visibility: hidden; }
+    #nextBtn { text-indent: 0; overflow: visible; }
+
+    /* COLORES DE VOZ */
+    .equalis-voice { color: #aaffff; text-shadow: 0 0 5px rgba(170, 255, 255, 0.4); } 
+    .disparia-voice { color: #ff9999; text-shadow: 0 0 5px rgba(255, 153, 153, 0.4); } 
+    .old-man-voice { color: #ffcc66; text-shadow: 0 0 5px rgba(255, 204, 102, 0.4); } 
+  </style>
+</head>
+
+<body>
+  <div class="dialogue-box" id="main-dialogue-box">
+    <p id="text"></p>
+    
+    <div id="choices"></div>
+    <button id="nextBtn" title="Continuar">➤</button> 
+  </div>
+
+  <script>
+    let score = parseInt(localStorage.getItem('score') || 0);
+
+    const IMG_GENERAL = 'assets/bg/vias_oxidadas.png';
+    const IMG_DESAFIO = 'assets/bg/vagon_inecuacion.png';
+
+    function formatText(content) {
+        return content.replace(/\*\*(.*?)\*\*/g, '<span class="resaltado">$1</span>');
+    }
+    
+    function changeBackground(imageUrl) {
+        document.body.style.backgroundImage = `url('${imageUrl}')`;
+    }
+
+    // --- DATA DE LA ESCENA 6 (Desafío de Inecuación) ---
+    const scene6 = {
+      id: 6,
+      title: "El Tren Fantasma",
+      text: [
+        { type: 'narrative', content: "El camino te ha llevado a unas vías oxidadas que se pierden en la niebla. El aire huele a metal y ozono."}, 
+        { type: 'narrative', content: "Un vagón sin conductor se detiene frente a vos con un chirrido espeluznante. En el costado, se ve una inscripción: **'x ≤ 4'**."}, // i=1 (IMG_GENERAL)
+        { type: 'voice', speaker: 'Disparia', content: "El límite es una ilusión. ¿Por qué poner fronteras a la ambición? ¡Salta la barrera!"}, // i=2
+        { type: 'voice', speaker: 'Equalis', content: "El conocimiento del límite es la única forma de moverte con seguridad. No cruces la línea."}, // i=3 (IMG_DESAFIO)
+        { type: 'narrative', content: "En el costado del vagón, cuatro luces están encendidas y la quinta está apagada. Es una **barrera invisible**."}, // i=4
+        
+        { type: 'challenge', 
+          question: "¿Qué significa el signo '≤' en esta inecuación?", 
+          answer: "Incluye el 4 y todos los menores", 
+          success: "Equalis: La frontera ha sido honrada. El camino se abre para los que respetan el límite. (+1 Lógica).", 
+          failure: "Disparia: Un falso paso y el tren se detiene. ¡El progreso se detiene por la falta de comprensión! (-1 Lógica).", 
+          transitionSuccess: { text: "Subís al vagón y este se mueve suavemente hacia el túnel, ofreciendo un breve respiro.", nextScene: "../scene7/index.html" },
+          transitionFail: { text: "El tren se detiene antes del túnel. Tenés que caminar el resto del camino en silencio, mientras el tren se desvanece.", nextScene: "../scene7/index.html" }, 
+          choices: [
+              { text: "Incluye el 4 y todos los menores", isCorrect: true },
+              { text: "Incluye solo números menores a 4", isCorrect: false },
+              { text: "Incluye solo el número 4", isCorrect: false }
+          ]
+        }
+      ]
+    };
+
+    const textEl = document.getElementById("text");
+    const choicesEl = document.getElementById("choices");
+    const nextBtn = document.getElementById("nextBtn");
+    
+    let currentLine = 0; 
+    const sceneData = scene6.text; 
+
+    function showLine() {
+      if (currentLine >= sceneData.length) return;
+
+      if (currentLine === 1) { 
+        changeBackground(IMG_GENERAL);
+      } else if (currentLine === 3) { 
+        changeBackground(IMG_DESAFIO);
+      }
+      
+      const lineData = sceneData[currentLine];
+      textEl.className = 'fade-text'; 
+
+      if (lineData.type === 'challenge') {
+          renderChallenge(lineData);
+          nextBtn.style.display = 'none'; 
+          return; 
+      }
+      
+      let content = formatText(lineData.content);
+      let speaker = lineData.speaker;
+      
+      if (speaker) {
+          let voiceClass;
+          if (speaker.toLowerCase() === 'equalis') {
+              voiceClass = 'equalis-voice';
+          } else if (speaker.toLowerCase() === 'disparia') {
+              voiceClass = 'disparia-voice';
+          } else if (speaker.toLowerCase() === 'anciano') {
+              voiceClass = 'old-man-voice';
+          } else {
+              voiceClass = 'resaltado';
+          }
+          textEl.innerHTML = `<span class="${voiceClass}">${speaker}: ${content}</span>`;
+      } else {
+          textEl.innerHTML = content;
+      }
+      
+      nextBtn.style.display = 'inline-flex';
+      void textEl.offsetWidth; 
+    }
+
+    function renderChallenge(data) {
+        textEl.innerHTML = `<p class="challenge-question fade-text">${formatText(data.question)}</p>`;
+        
+        choicesEl.innerHTML = ""; 
+        
+        data.choices.forEach(choice => {
+            const btn = document.createElement("button");
+            btn.textContent = choice.text;
+            btn.className = 'choice-btn'; 
+            // Pasamos el texto como respuesta, ya que es la única forma de verificar la opción elegida
+            btn.onclick = () => checkAnswer(data, choice.text); 
+            choicesEl.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(data, userAnswerText) {
+        // Deshabilitar los botones para evitar doble clic
+        Array.from(choicesEl.children).forEach(btn => btn.disabled = true);
+        
+        let resultText;
+        let transitionData;
+        
+        // La respuesta es correcta si el texto de la opción elegida coincide con la respuesta correcta del data
+        const isCorrect = userAnswerText === data.answer;
+        
+        if (isCorrect) {
+            score += 1; 
+            resultText = `<span class="equalis-voice fade-text">${formatText(data.success)}</span>`;
+            transitionData = data.transitionSuccess;
+        } else {
+            score -= 1; 
+            resultText = `<span class="disparia-voice fade-text">${formatText(data.failure)}</span>`;
+            transitionData = data.transitionFail;
+        }
+
+        textEl.innerHTML = resultText;
+        choicesEl.innerHTML = ''; 
+        
+        nextBtn.style.display = 'inline-flex';
+        nextBtn.onclick = () => {
+            textEl.textContent = transitionData.text; 
+            nextBtn.onclick = () => {
+                localStorage.setItem('score', score); 
+                goTo(transitionData.nextScene);
+            }
+        };
+    }
+
+    function goTo(relativePath) {
+        const base = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+        const resolved = new URL(relativePath, base).href;
+        window.location.href = resolved;
+    }
+    
+    nextBtn.addEventListener("click", () => {
+      currentLine++;
+      showLine();
+    });
+    
+    window.onload = showLine;
+  </script>
+</body>
+  </html>
+  
