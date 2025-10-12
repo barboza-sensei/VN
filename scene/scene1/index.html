@@ -6,34 +6,30 @@
   <title>Escena 1 — El Cartel Luminoso</title>
   <link rel="stylesheet" href="../../style.css" />
   
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" integrity="sha384-GvrS4c5R6G3zK+g0nFwP2t0nJ4R4G9b+85gOQ2P1M5g==" crossorigin="anonymous">
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js" integrity="sha384-iYh2jP4+zJ95Zf3iK4M1c6IeE4zJ5I1BfC5kH7a8r5iA5j4B7+n4R6I5kR4w5jM9" crossorigin="anonymous"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" integrity="sha384-uO834yH9+oT0QjHn4r3h3y4z3G3w5g5/t8E4yW4t9e6N4Ff7n7J5g4R4y4G9+85g" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
-
   <style>
     /* Estilos locales para la atmósfera de esta escena */
     body {
-        /* Usamos la Imagen 1 de la Escena 0 como fondo de laberinto urbano, por ahora */
-        background-image: url('../scene0/assets/bg/calle_oscura_sin_luces_inicio.png'); 
+        /* IMAGEN INICIAL (Laberinto Urbano) */
+        background-image: url('assets/bg/laberinto_urbano.png'); 
         background-color: #0c0c1a;
         background-size: cover;
         background-position: center;
+        transition: background-image 1s ease-in-out; /* Mantenemos la transición */
     }
     
-    /* 2. ESTILO PARA RESALTADO (simula **negrita**) */
     .resaltado {
         font-weight: bold;
-        color: #f0f0f0; /* Color blanco brillante */
+        color: #f0f0f0; 
         text-shadow: 0 0 5px rgba(255, 255, 255, 0.4);
     }
     
     /* ******************************************************* */
-    /* ESTILOS ESTÉTICOS MANTENIDOS (Caja de Diálogo y Botones) */
+    /* ESTILOS ESTÉTICOS MANTENIDOS */
     /* ******************************************************* */
     #main-dialogue-box {
         position: absolute; bottom: 5vh; left: 50%; transform: translateX(-50%);
         width: 90%; max-width: 800px; padding: 1.5em;
-        background-color: rgba(15, 15, 15, 0.9); 
+        background-color: rgba(15, 15, 15, 0.3); 
         border: 1px solid rgba(255, 255, 255, 0.1); 
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); border-radius: 5px;
     }
@@ -51,7 +47,7 @@
     #nextBtn { text-indent: 0; overflow: visible; }
 
     .equalis-voice { color: #aaffff; } 
-    .disparia-voice { color: #ff9999; } /* Usado para "Murmullo Averso" */
+    .disparia-voice { color: #ff9999; } 
   </style>
 </head>
 
@@ -64,12 +60,17 @@
   </div>
 
   <script>
-    // Recuperar o inicializar la puntuación (Lógica vs. Caos)
     let score = parseInt(localStorage.getItem('score') || 0);
 
-    // Función para reemplazar el estilo ** ** por <span>
+    const IMG_GENERAL = 'assets/bg/laberinto_urbano.png';
+    const IMG_DESAFIO = 'assets/bg/cartel_luminoso_desafio.png';
+
     function formatText(content) {
         return content.replace(/\*\*(.*?)\*\*/g, '<span class="resaltado">$1</span>');
+    }
+    
+    function changeBackground(imageUrl) {
+        document.body.style.backgroundImage = `url('${imageUrl}')`;
     }
 
     // --- DATA DE LA ESCENA 1 ---
@@ -77,14 +78,15 @@
       id: 1,
       title: "El Cartel Luminoso",
       text: [
-        { type: 'narrative', content: "El giro no trae alivio. La esquina se alarga o el callejón se abre en otra avenida idéntica. Estás atrapado en un laberinto hecho de la misma calle repetida."},
-        { type: 'narrative', content: "El aire es frío, y la luz es artificial y muerta. Buscás desesperadamente una salida, un punto de referencia que no sea una repetición vacía."},
-        { type: 'narrative', content: "Una luz roja y pálida parpadea con insistencia en un cartel sobre una pared. No es un anuncio, es una **instrucción**."},
-        { type: 'narrative', content: "Hay charcos en el suelo. El reflejo del cartel en el agua parece más nítido que el cartel mismo; son las letras reflejadas las que parecen encenderse solas."},
-        { type: 'voice', speaker: 'Equalis', content: "El camino solo se revela ante la **Verdad**. Resuelve esta inconsistencia. Solo la **Lógica** te devolverá la realidad."},
-        { type: 'narrative', content: "El Murmullo Averso está cerca, esperando que falles. Hay un número escondido entre los destellos. Si lo hallás, el cartel se abrirá como una puerta."},
+        { type: 'narrative', content: "El giro no trae alivio. La esquina se alarga o el callejón se abre en otra avenida idéntica. Estás atrapado en un laberinto hecho de la misma calle repetida."}, // i=0
+        { type: 'narrative', content: "El aire es frío, y la luz es artificial y muerta. Buscás desesperadamente una salida, un punto de referencia que no sea una repetición vacía."}, // i=1
+        { type: 'narrative', content: "Una luz roja y pálida parpadea con insistencia en un cartel sobre una pared. No es un anuncio, es una **instrucción**."}, // i=2 (CAMBIO DE FONDO AQUÍ)
+        { type: 'narrative', content: "Hay charcos en el suelo. El reflejo del cartel en el agua parece más nítido que el cartel mismo; son las letras reflejadas las que parecen encenderse solas."}, // i=3
+        { type: 'voice', speaker: 'Equalis', content: "El camino solo se revela ante la **Verdad**. Resuelve esta inconsistencia. Solo la **Lógica** te devolverá la realidad."}, // i=4
+        { type: 'narrative', content: "El Murmullo Averso está cerca, esperando que falles. Hay un número escondido entre los destellos. Si lo hallás, el cartel se abrirá como una puerta."}, // i=5
         { type: 'challenge', 
-          question: "El enigma del cartel es: $$2x + 3 = 7$$ ¿Qué valor de 'x' revela el camino?", 
+          // DESAFÍO: ECUACIÓN SIMPLIFICADA
+          question: "El enigma del cartel es: 2x + 3 = 7 ¿Qué valor de 'x' revela el camino?", 
           answer: 2, 
           success: "Equalis: Un paso más cerca. (+1 Lógica).", 
           failure: "Murmullo Averso: Un círculo vicioso... (-1 Lógica).", 
@@ -99,7 +101,6 @@
       ]
     };
 
-    // Referencias a elementos del DOM
     const textEl = document.getElementById("text");
     const choicesEl = document.getElementById("choices");
     const nextBtn = document.getElementById("nextBtn");
@@ -107,11 +108,14 @@
     let currentLine = 0; 
     const sceneData = scene1.text; 
 
-    // --- FUNCIONES PRINCIPALES ---
-
     function showLine() {
       if (currentLine >= sceneData.length) return;
 
+      if (currentLine === 2) { 
+        // CAMBIO DE FONDO: Al mencionar el cartel por primera vez
+        changeBackground(IMG_DESAFIO);
+      }
+      
       const lineData = sceneData[currentLine];
       textEl.className = 'fade-text'; 
 
@@ -132,8 +136,6 @@
       
       nextBtn.style.display = 'inline-flex';
       void textEl.offsetWidth; 
-      
-      // Renderizar el KaTeX después de insertar el texto (si está en el body, lo hará automáticamente por el onload)
     }
 
     function renderChallenge(data) {
@@ -148,11 +150,6 @@
             btn.onclick = () => checkAnswer(data, choice.value);
             choicesEl.appendChild(btn);
         });
-        
-        // Función específica de KaTeX para re-renderizar solo el área de texto si es necesario
-        if (typeof renderMathInElement !== 'undefined') {
-            renderMathInElement(textEl);
-        }
     }
 
     function checkAnswer(data, userAnswer) {
@@ -163,12 +160,10 @@
         
         if (userAnswer === data.answer) {
             score += 1; 
-            // 3. CORRECCIÓN DEL MENSAJE DE CALIFICACIÓN (SOLO USAMOS EL TEXTO LIMPIO)
             resultText = `<span class="equalis-voice fade-text">${data.success}</span>`;
             transitionData = data.transitionSuccess;
         } else {
             score -= 1; 
-            // 3. CORRECCIÓN DEL MENSAJE DE CALIFICACIÓN (SOLO USAMOS EL TEXTO LIMPIO)
             resultText = `<span class="disparia-voice fade-text">${data.failure}</span>`;
             transitionData = data.transitionFail;
         }
@@ -191,8 +186,6 @@
         const resolved = new URL(relativePath, base).href;
         window.location.href = resolved;
     }
-
-    // --- EVENT LISTENERS E INICIALIZACIÓN ---
     
     nextBtn.addEventListener("click", () => {
       currentLine++;
