@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Escena 4 — El Anciano del Banco</title>
+  <link rel="stylesheet" href="../../style.css" />
+  <style>
+    /* Estilos locales para la atmósfera de esta escena */
+    body {
+        /* IMAGEN INICIAL (Plaza sin hojas) */
+        background-image: url('assets/bg/plaza_sin_hojas.png'); 
+        background-color: #0c0c1a;
+        background-size: cover;
+        background-position: center;
+        transition: background-image 1s ease-in-out; 
+    }
+    
+    .resaltado {
+        font-weight: bold;
+        color: #f0f0f0; 
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.4);
+    }
+    
+    /* ******************************************************* */
+    /* ESTILOS ESTÉTICOS MANTENIDOS */
+    /* ******************************************************* */
+    #main-dialogue-box {
+        position: absolute; bottom: 5vh; left: 50%; transform: translateX(-50%);
+        width: 90%; max-width: 800px; padding: 1.5em;
+        background-color: rgba(15, 15, 15, 0.3); 
+        border: 1px solid rgba(255, 255, 255, 0.1); 
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); border-radius: 5px;
+    }
+    #choices { display: flex; flex-direction: column; gap: 0; margin-top: 15px; }
+    .choice-btn {
+        background: rgba(0, 0, 0, 0.4); border: none; border-radius: 0; color: #f0f0f0;
+        padding: 12px 15px; font-size: 1.1em; text-align: left; transition: all 0.2s ease;
+        cursor: pointer; border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
+    }
+    .choice-btn:hover, .choice-btn:focus {
+        background: rgba(40, 40, 40, 0.6); box-shadow: 0 0 0 1px #aaffff; color: #aaffff; outline: none; 
+    }
+    #choices .choice-btn:last-child { border-bottom: none; }
+    #nextBtn::after { content: none !important; visibility: hidden; }
+    #nextBtn { text-indent: 0; overflow: visible; }
+
+    .equalis-voice { color: #aaffff; } 
+    .disparia-voice { color: #ff9999; } 
+  </style>
+</head>
+
+<body>
+  <div class="dialogue-box" id="main-dialogue-box">
+    <p id="text"></p>
+    
+    <div id="choices"></div>
+    <button id="nextBtn" title="Continuar">➤</button> 
+  </div>
+
+  <script>
+    let score = parseInt(localStorage.getItem('score') || 0);
+
+    const IMG_GENERAL = 'assets/bg/plaza_sin_hojas.png';
+    const IMG_DESAFIO = 'assets/bg/anciano_escribiendo.png';
+
+    function formatText(content) {
+        return content.replace(/\*\*(.*?)\*\*/g, '<span class="resaltado">$1</span>');
+    }
+    
+    function changeBackground(imageUrl) {
+        document.body.style.backgroundImage = `url('${imageUrl}')`;
+    }
+
+    // --- DATA DE LA ESCENA 4 (Ecuación final) ---
+    const scene4 = {
+      id: 4,
+      title: "El Anciano del Banco",
+      text: [
+        // LÍNEA DE CONTINUIDAD
+        { type: 'narrative', content: "El sendero marcado por el polvo luminoso te lleva a una gran plaza vacía. Es una plaza de invierno, **sin hojas** y con una quietud total."}, // i=0
+        { type: 'narrative', content: "Un anciano de rostro serio y tranquilo te mira fijamente desde un banco de hierro. Es la primera figura humana que ves claramente."}, // i=1 (IMG_GENERAL)
+        { type: 'voice', speaker: 'Anciano', content: "—Todo número tiene su **equilibrio**, dice, con una voz que suena a papel seco. La igualdad es la única paz que existe."}, // i=2
+        { type: 'voice', speaker: 'Equalis', content: "La estabilidad final solo se logra donde los pesos son idénticos. Resuelve esta balanza, o el Caos la romperá."}, // i=3
+        { type: 'narrative', content: "El anciano extiende un dedo y escribe la fórmula en el aire con una luz tenue: 'x + 2 = 2x − 3'."}, // i=4 (IMG_DESAFIO)
+        { type: 'voice', speaker: 'Anciano', content: "¿Quién está del otro lado de la balanza?"}, // i=5
+        
+        { type: 'challenge', 
+          question: "¿Qué valor de 'x' devuelve el equilibrio a la balanza: x + 2 = 2x − 3?", 
+          answer: 5, 
+          success: "Equalis: El orden prevalece. La paz de la igualdad ha sido establecida. (+1 Lógica).", 
+          failure: "Disparia: A veces la balanza se inclina por costumbre... y por el desorden. (-1 Lógica).", 
+          transitionSuccess: { text: "El anciano asiente lentamente, sonriendo. Desaparece del banco como si nunca hubiera estado. Un nuevo camino se abre.", nextScene: "../scene5/index.html" },
+          transitionFail: { text: "El anciano ríe suavemente. El banco se tambalea violentamente. Te alejás sintiendo que el equilibrio es una mentira.", nextScene: "../scene5/index.html" }, 
+          choices: [
+              { text: "x = 1", isCorrect: false, value: 1 },
+              { text: "x = 5", isCorrect: true, value: 5 }, 
+              { text: "x = 0", isCorrect: false, value: 0 }
+          ]
+        }
+      ]
+    };
+
+    const textEl = document.getElementById("text");
+    const choicesEl = document.getElementById("choices");
+    const nextBtn = document.getElementById("nextBtn");
+    
+    let currentLine = 0; 
+    const sceneData = scene4.text; 
+
+    function showLine() {
+      if (currentLine >= sceneData.length) return;
+
+      if (currentLine === 1) { 
+        changeBackground(IMG_GENERAL);
+      } else if (currentLine === 4) { 
+        changeBackground(IMG_DESAFIO);
+      }
+      
+      const lineData = sceneData[currentLine];
+      textEl.className = 'fade-text'; 
+
+      if (lineData.type === 'challenge') {
+          renderChallenge(lineData);
+          nextBtn.style.display = 'none'; 
+          return; 
+      }
+      
+      let content = formatText(lineData.content);
+
+      if (lineData.speaker) {
+          // Asumimos que la voz del anciano es neutral, pero usamos la voz de Equalis para su contenido lógico.
+          const voiceClass = lineData.speaker.toLowerCase() === 'equalis' || lineData.speaker.toLowerCase() === 'anciano' ? 'equalis-voice' : 'disparia-voice';
+          textEl.innerHTML = `<span class="${voiceClass}">${lineData.speaker}: ${content}</span>`;
+      } else {
+          textEl.innerHTML = content;
+      }
+      
+      nextBtn.style.display = 'inline-flex';
+      void textEl.offsetWidth; 
+    }
+
+    function renderChallenge(data) {
+        textEl.innerHTML = `<p class="challenge-question fade-text">${formatText(data.question)}</p>`;
+        
+        choicesEl.innerHTML = ""; 
+        
+        data.choices.forEach(choice => {
+            const btn = document.createElement("button");
+            btn.textContent = choice.text;
+            btn.className = 'choice-btn'; 
+            btn.onclick = () => checkAnswer(data, choice.value);
+            // Aseguramos que el valor de la respuesta sea un número si el 'answer' de data lo es
+            const valueToPass = typeof data.answer === 'number' ? choice.value : choice.value; 
+            btn.onclick = () => checkAnswer(data, valueToPass);
+            choicesEl.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(data, userAnswer) {
+        Array.from(choicesEl.children).forEach(btn => btn.disabled = true);
+        
+        let resultText;
+        let transitionData;
+        
+        // Convertir la respuesta del usuario a número para la comparación, ya que 'answer' es 5 (número)
+        const isCorrect = (typeof data.answer === 'number') ? (parseInt(userAnswer.split('=')[1] || userAnswer) === data.answer) : (userAnswer === data.answer);
+        
+        if (isCorrect) {
+            score += 1; 
+            resultText = `<span class="equalis-voice fade-text">${data.success}</span>`;
+            transitionData = data.transitionSuccess;
+        } else {
+            score -= 1; 
+            resultText = `<span class="disparia-voice fade-text">${data.failure}</span>`;
+            transitionData = data.transitionFail;
+        }
+
+        textEl.innerHTML = resultText;
+        choicesEl.innerHTML = ''; 
+        
+        nextBtn.style.display = 'inline-flex';
+        nextBtn.onclick = () => {
+            textEl.textContent = transitionData.text; 
+            nextBtn.onclick = () => {
+                localStorage.setItem('score', score); 
+                goTo(transitionData.nextScene);
+            }
+        };
+    }
+
+    function goTo(relativePath) {
+        const base = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+        const resolved = new URL(relativePath, base).href;
+        window.location.href = resolved;
+    }
+    
+    nextBtn.addEventListener("click", () => {
+      currentLine++;
+      showLine();
+    });
+    
+    window.onload = showLine;
+  </script>
+</body>
+</html>
