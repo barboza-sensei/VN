@@ -8,6 +8,8 @@
   
   <link href="https://fonts.googleapis.com/css2?family=Georgia&family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet">
   
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
   <style>
     body {
       background: url('assets/bg/intro_noche.png') center/cover no-repeat;
@@ -15,13 +17,15 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 100vh; /* Usamos min-height para permitir el scroll */
+      min-height: 100vh;
       text-align: center;
       background-color: black;
       overflow-x: hidden;
-      overflow-y: auto; /* Permitir scroll vertical si el contenido es largo */
+      overflow-y: auto;
       font-family: 'Georgia', serif; 
-      padding: 1em 0; /* Pequeño padding para que el contenido no se pegue al borde */
+      padding: 1em 0;
+      /* Necesario para posicionar el botón de silencio */
+      position: relative;
     }
 
     h1 {
@@ -31,7 +35,7 @@
       text-shadow: 0 0 10px #66ccff;
       animation: pulse 3s infinite;
       font-size: clamp(2em, 8vw, 3em); 
-      margin-top: 1em; /* Margen superior para centrar mejor en pantallas pequeñas */
+      margin-top: 1em;
     }
 
     @keyframes pulse {
@@ -73,8 +77,6 @@
     }
 
     footer {
-      /* SOLUCIÓN: Quitamos 'position: absolute' para que el footer fluya con el contenido */
-      /* Usamos margin-top: auto para empujarlo al final si hay espacio */
       margin-top: auto; 
       padding-top: 3em; 
       padding-bottom: 1em;
@@ -83,9 +85,48 @@
       width: 100%; 
       text-align: center;
     }
+
+    /* ------------------------------------------------------------------ */
+    /* ESTILOS DEL BOTÓN DE SILENCIO */
+    /* ------------------------------------------------------------------ */
+    #muteButton {
+        position: fixed; /* Fijo en la pantalla */
+        bottom: 20px;
+        right: 20px;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2em;
+        z-index: 100; /* Asegura que esté por encima de otros elementos */
+        
+        /* Estado por defecto (No silenciado - Azul Grisáceo) */
+        background-color: rgba(68, 85, 102, 0.8); /* Azul grisáceo oscuro */
+        color: #f0f0f0;
+        box-shadow: 0 0 10px rgba(68, 85, 102, 0.5);
+    }
+
+    #muteButton.muted {
+        /* Estado Silenciado (Rojo Grisáceo) */
+        background-color: rgba(102, 68, 68, 0.8); /* Rojo grisáceo oscuro */
+        color: #ff9999;
+        box-shadow: 0 0 10px rgba(102, 68, 68, 0.5);
+    }
+
+    #muteButton:hover {
+        opacity: 0.9;
+    }
   </style>
 </head>
 <body>
+  
+  <audio id="backgroundMusic" src="assets/sfx/ambient-loop.wav" autoplay loop></audio>
+
   <h1>Sueño Algebraico</h1>
 
   <div id="menu">
@@ -94,8 +135,41 @@
   </div>
 
   <footer>Un proyecto didáctico gamificado</footer>
+  
+  <button id="muteButton" title="Silenciar/Activar Música">
+      <i class="fas fa-volume-up"></i>
+  </button>
+
 
   <script>
+    const music = document.getElementById('backgroundMusic');
+    const muteButton = document.getElementById('muteButton');
+
+    // Nota: Los navegadores modernos a menudo requieren interacción del usuario (un clic) 
+    // para que el 'autoplay' funcione. Si la música no arranca, es por esa restricción.
+    // El botón de silencio manejará la primera interacción si es necesaria.
+
+    function toggleMute() {
+        if (music.muted) {
+            // Activar (Unmute)
+            music.muted = false;
+            muteButton.classList.remove('muted');
+            muteButton.innerHTML = '<i class="fas fa-volume-up"></i>';
+            // Intentar reproducir si fue bloqueado inicialmente por el navegador
+            music.play().catch(e => {
+                console.log("El navegador bloqueó la reproducción automática. Clic para activar.");
+            });
+        } else {
+            // Silenciar (Mute)
+            music.muted = true;
+            muteButton.classList.add('muted');
+            muteButton.innerHTML = '<i class="fas fa-volume-mute"></i>';
+        }
+    }
+
+    // 3. LÓGICA DE CONTROL DEL SONIDO
+    muteButton.addEventListener('click', toggleMute);
+
     function startGame() {
       // Aquí comienza la historia
       window.location.href = 'scene/scene0/index.html';
