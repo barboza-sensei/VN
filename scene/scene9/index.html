@@ -124,7 +124,8 @@
         ]},
         // Después de Fase 2 (Amplitud) -> Diálogo de la Voz Dual para la Elección Final
         { state: 2, content: [
-            { type: 'voice', speaker: 'Equalis/Disparia', content: "La voz dual resuena: Has comprendido la verdad de ambas cerraduras. La Puerta Flotante está lista para abrirse. **Tu elección definirá el final.**"}
+            // El mensaje de la voz dual ahora es puramente confirmatorio
+            { type: 'voice', speaker: 'Equalis/Disparia', content: "La voz dual resuena: Has comprendido la verdad de ambas cerraduras. La Puerta Flotante está lista para abrirse. **Tu elección definirá tu Destino.**"}
         ]}
     ];
 
@@ -136,7 +137,6 @@
     const sceneData = scene9.text; 
 
     function formatText(content) {
-        // Esta función convierte **texto** en HTML <span class="resaltado">texto</span>
         return content.replace(/\*\*(.*?)\*\*/g, '<span class="resaltado">$1</span>');
     }
     
@@ -164,9 +164,12 @@
             else if (speaker.toLowerCase() === 'disparia') { voiceClass = 'disparia-voice'; } 
             else if (speaker.toLowerCase() === 'equalis/disparia') { voiceClass = 'dual-voice'; } 
             else { voiceClass = 'resaltado'; }
-            textEl.innerHTML = `<span class="${voiceClass}">${speaker}: ${content}</span>`;
+            
+            // La clase de voz es necesaria para que el CSS aplique el estilo de barra vertical
+            textEl.innerHTML = `<p class="voice-line ${voiceClass}"><span class="speaker-name">${speaker}:</span> ${content}</p>`;
+            
         } else {
-            textEl.innerHTML = content;
+            textEl.innerHTML = `<p>${content}</p>`;
         }
         
         nextBtn.style.display = 'inline-flex';
@@ -198,7 +201,7 @@
         
         choices.forEach(choice => {
             const btn = document.createElement("button");
-            // Aplicar formatText al texto de la opción aquí:
+            // Aplicar formatText al texto de la opción para el resaltado
             btn.innerHTML = formatText(choice.text); 
             btn.className = 'choice-btn'; 
             const answerText = (phase === 1) ? challengeData.phase1.answer : challengeData.phase2.answer;
@@ -212,20 +215,23 @@
         
         const isCorrect = userAnswerText === correctAnswer;
         let resultText;
+        let speaker;
+        let voiceClass;
         
         if (isCorrect) {
             score += 1;
-            resultText = (phase === 1) 
-                ? `<span class="equalis-voice">${formatText(challengeData.phase1.success)}</span>`
-                : `<span class="disparia-voice">${formatText(challengeData.phase2.success)}</span>`;
+            speaker = (phase === 1) ? 'Equalis' : 'Disparia';
+            resultText = (phase === 1) ? challengeData.phase1.success : challengeData.phase2.success;
         } else {
             score -= 1;
-            resultText = (phase === 1) 
-                ? `<span class="equalis-voice">${formatText(challengeData.phase1.failure)}</span>`
-                : `<span class="disparia-voice">${formatText(challengeData.phase2.failure)}</span>`;
+            speaker = (phase === 1) ? 'Equalis' : 'Disparia';
+            resultText = (phase === 1) ? challengeData.phase1.failure : challengeData.phase2.failure;
         }
-
-        textEl.innerHTML = resultText;
+        
+        voiceClass = (speaker.toLowerCase() === 'equalis') ? 'equalis-voice' : 'disparia-voice';
+        
+        // Aplicar la estructura de voz estándar
+        textEl.innerHTML = `<p class="voice-line ${voiceClass}"><span class="speaker-name">${speaker}:</span> ${formatText(resultText)}</p>`;
         choicesEl.innerHTML = ''; 
         
         nextBtn.style.display = 'inline-flex';
@@ -241,16 +247,14 @@
             let content = formatText(lineData.content);
             let speaker = lineData.speaker;
             
-            if (speaker) {
-                let voiceClass;
-                if (speaker.toLowerCase() === 'equalis') { voiceClass = 'equalis-voice'; } 
-                else if (speaker.toLowerCase() === 'disparia') { voiceClass = 'disparia-voice'; } 
-                else if (speaker.toLowerCase() === 'equalis/disparia') { voiceClass = 'dual-voice'; }
-                else { voiceClass = 'resaltado'; }
-                textEl.innerHTML = `<span class="${voiceClass}">${speaker}: ${content}</span>`;
-            } else {
-                textEl.innerHTML = content;
-            }
+            let voiceClass;
+            if (speaker.toLowerCase() === 'equalis') { voiceClass = 'equalis-voice'; } 
+            else if (speaker.toLowerCase() === 'disparia') { voiceClass = 'disparia-voice'; } 
+            else if (speaker.toLowerCase() === 'equalis/disparia') { voiceClass = 'dual-voice'; }
+            else { voiceClass = 'resaltado'; }
+
+            // Aplicar la estructura de voz estándar a las transiciones
+            textEl.innerHTML = `<p class="voice-line ${voiceClass}"><span class="speaker-name">${speaker}:</span> ${content}</p>`;
             
             transitionLineIndex++;
             nextBtn.style.display = 'inline-flex';
@@ -264,16 +268,13 @@
         textEl.innerHTML = `<p class="challenge-question fade-text">${formatText(question)}</p>`;
         choicesEl.innerHTML = "";
         
-        // Guía final de la voz dual con las metáforas ajustadas
-        const scoreNarrative = score >= 0 
-            ? `<p><span class="dual-voice">Equalis/Disparia: Tu Lógica te llama. Elige el **Destino Singular**.</span></p>`
-            : `<p><span class="dual-voice">Equalis/Disparia: Tu Caos te invita. Elige el **Camino Infinito**.</span></p>`;
+        // Mensaje de voz dual neutro (sin sugerencias de puntaje)
+        const neutralMessage = "Equalis/Disparia: Es hora de elegir la verdad que te define.";
         
-        textEl.innerHTML += scoreNarrative;
+        textEl.innerHTML += `<p class="voice-line dual-voice"><span class="speaker-name">Equalis/Disparia:</span> ${formatText(neutralMessage)}</p>`;
         
         choices.forEach(choice => {
             const btn = document.createElement("button");
-            // Aplicar formatText al texto de la opción aquí:
             btn.innerHTML = formatText(choice.text); 
             btn.className = 'choice-btn'; 
             btn.onclick = () => handleFinalChoice(choice); 
