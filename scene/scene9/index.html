@@ -70,8 +70,8 @@
         phase1: {
             question: "Al referirse a la **Cerradura de Precisión (Igualdad)**, ¿cuál es la naturaleza de su conjunto solución en la recta real?",
             answer: "Es un conjunto de soluciones finito y discreto, compuesto por elementos puntuales.",
-            success: "Equalis: ¡Precisión! La verdad es un punto. (+1 Lógica).",
-            failure: "Disparia: Un error puntual. El Caos te da una segunda oportunidad. (-1 Lógica).",
+            success: "Equalis: **La Lógica es firme.** Has definido el **Punto** único. La Precisión está satisfecha. (+1 Lógica).",
+            failure: "Equalis: La verdad se te ha escurrido. El **Punto** exige una definición discreta. (-1 Lógica).",
             choices: [
                 { text: "Es un conjunto infinito y continuo, representado por un intervalo cerrado.", isCorrect: false },
                 { text: "Es un conjunto de soluciones finito y discreto, compuesto por elementos puntuales.", isCorrect: true },
@@ -82,8 +82,8 @@
         phase2: {
             question: "Al referirse a la **Cerradura de Amplitud (Desigualdad)**, ¿cuál es la naturaleza de su conjunto solución en la recta real?",
             answer: "Es un conjunto de soluciones infinito y continuo, representado por un intervalo o rayo.",
-            success: "Disparia: ¡Excelente! Entendiste la naturaleza del Camino Infinito. (+1 Lógica).",
-            failure: "Equalis: Fallaste la prueba de la Amplitud. El desorden del Caos te confunde. (-1 Lógica).",
+            success: "Disparia: **El Caos te sonríe.** Has abrazado la naturaleza del **Rango** infinito. (+1 Lógica).",
+            failure: "Disparia: ¡Qué aburrido! Confundiste el **Rango** con un simple punto. El desorden es continuo. (-1 Lógica).",
             choices: [
                 { text: "Es un conjunto de soluciones finito y discreto, compuesto por un solo elemento puntual.", isCorrect: false },
                 { text: "Es un conjunto infinito, pero solo incluye los números enteros dentro de un rango dado.", isCorrect: false },
@@ -110,15 +110,21 @@
             { type: 'narrative', content: "Salís del túnel y te encontrás en medio de una calle desierta que termina abruptamente en una **Puerta Flotante**, sostenida por ninguna estructura visible."},
             { type: 'narrative', content: "La puerta exhibe dos cerraduras: la **Cerradura de Precisión**, con un orificio exacto, y la **Cerradura de Amplitud**, con una ranura ancha. Ambas te exigen comprensión."},
             { type: 'voice', speaker: 'Equalis', content: "La **Cerradura de Precisión** exige el **Punto**. Es la **Igualdad**. Define la naturaleza de su solución."},
-            { type: 'voice', speaker: 'Disparia', content: "La **Cerradura de Amplitud** exige el **Rango**. Es la **Desigualdad**. Define la naturaleza de su solución."},
-            { type: 'internal', content: 'Preparando desafío 1' }
+            // El desafío de Precisión (Fase 1) se lanza aquí. El diálogo de Disparia (Fase 2) se mueve a la transición narrativa.
+            { type: 'internal', content: 'Preparando desafío 1' } 
         ]
     };
     
-    // Transiciones narrativas entre fases
+    // Transiciones narrativas entre fases (AJUSTADAS)
     const narrativeTransition = [
-        { state: 1, text: "La Cerradura de Precisión destella. Entendiste su naturaleza fija. Tu atención se desplaza a la Cerradura de Amplitud." },
-        { state: 2, text: "Has comprendido la verdad de ambas cerraduras. La Puerta Flotante está lista para abrirse. Una voz dual resuena por última vez." }
+        // Después de Fase 1 (Precisión) -> Lanzamos el diálogo de Disparia y luego el Desafío 2
+        { state: 1, content: [
+            { type: 'voice', speaker: 'Disparia', content: "¡Ahora mira aquí! La **Cerradura de Amplitud** exige el **Rango**. Es la **Desigualdad**. Define la naturaleza de su solución."}
+        ]},
+        // Después de Fase 2 (Amplitud) -> Lanzamos el texto de la Elección Final
+        { state: 2, content: [
+            { type: 'narrative', content: "Has comprendido la verdad de ambas cerraduras. La Puerta Flotante está lista para abrirse. Una voz dual resuena por última vez." }
+        ]}
     ];
 
     const textEl = document.getElementById("text");
@@ -143,6 +149,7 @@
         textEl.className = 'fade-text'; 
 
         if (lineData.type === 'internal') {
+            // El marcador 'internal' indica que se debe iniciar el primer desafío
             startChallenge();
             return;
         }
@@ -164,9 +171,13 @@
         void textEl.offsetWidth; 
     }
 
+    // Índice para recorrer los diálogos de transición
+    let transitionLineIndex = 0;
+
     function startChallenge() {
         challengeState++;
         nextBtn.style.display = 'none';
+        transitionLineIndex = 0; // Resetear índice de transición al iniciar fase
 
         if (challengeState === 1) {
             // Fase 1: Precisión
@@ -188,7 +199,6 @@
             const btn = document.createElement("button");
             btn.textContent = choice.text;
             btn.className = 'choice-btn'; 
-            // La respuesta correcta está directamente en el objeto de datos de la fase
             const answerText = (phase === 1) ? challengeData.phase1.answer : challengeData.phase2.answer;
             btn.onclick = () => checkAnswer(choice.text, phase, answerText); 
             choicesEl.appendChild(btn);
@@ -203,35 +213,64 @@
         
         if (isCorrect) {
             score += 1;
-            resultText = (phase === 1) ? challengeData.phase1.success : challengeData.phase2.success;
+            // Usar clase de voz para la retroalimentación
+            resultText = (phase === 1) 
+                ? `<span class="equalis-voice">${formatText(challengeData.phase1.success)}</span>`
+                : `<span class="disparia-voice">${formatText(challengeData.phase2.success)}</span>`;
         } else {
             score -= 1;
-            resultText = (phase === 1) ? challengeData.phase1.failure : challengeData.phase2.failure;
+            resultText = (phase === 1) 
+                ? `<span class="equalis-voice">${formatText(challengeData.phase1.failure)}</span>`
+                : `<span class="disparia-voice">${formatText(challengeData.phase2.failure)}</span>`;
         }
 
-        textEl.innerHTML = formatText(resultText);
+        textEl.innerHTML = resultText;
         choicesEl.innerHTML = ''; 
         
-        // Configurar nextBtn para avanzar a la siguiente fase o a la elección final
+        // Configurar nextBtn para avanzar a la transición
         nextBtn.style.display = 'inline-flex';
-        nextBtn.onclick = () => {
-            const transition = narrativeTransition.find(t => t.state === phase);
-            
-            textEl.textContent = transition.text; 
-            nextBtn.onclick = startChallenge; // Llama a startChallenge para la siguiente fase
-        };
+        nextBtn.onclick = handleTransition;
     }
+
+    function handleTransition() {
+        const transition = narrativeTransition.find(t => t.state === challengeState);
+        
+        if (transition && transitionLineIndex < transition.content.length) {
+            // Mostrar la siguiente línea de transición
+            const lineData = transition.content[transitionLineIndex];
+            
+            let content = formatText(lineData.content);
+            let speaker = lineData.speaker;
+            
+            if (speaker) {
+                let voiceClass;
+                if (speaker.toLowerCase() === 'equalis') { voiceClass = 'equalis-voice'; } 
+                else if (speaker.toLowerCase() === 'disparia') { voiceClass = 'disparia-voice'; } 
+                else { voiceClass = 'resaltado'; }
+                textEl.innerHTML = `<span class="${voiceClass}">${speaker}: ${content}</span>`;
+            } else {
+                textEl.innerHTML = content;
+            }
+            
+            transitionLineIndex++;
+            nextBtn.style.display = 'inline-flex';
+        } else {
+            // No hay más líneas de transición, iniciar la siguiente fase del desafío
+            startChallenge();
+        }
+    }
+
 
     function renderFinalChoice(question, choices) {
         textEl.innerHTML = `<p class="challenge-question fade-text">${formatText(question)}</p>`;
         choicesEl.innerHTML = "";
         
-        // Diálogo de Equalis/Disparia adaptado a la puntuación del jugador (opcional, pero útil)
+        // Diálogo de Equalis/Disparia adaptado a la puntuación del jugador (guía final)
         const scoreNarrative = score >= 0 
-            ? `<span class="equalis-voice">Equalis: Has honrado la Lógica. Elige la Precisión, el Punto.</span>`
-            : `<span class="disparia-voice">Disparia: Has coqueteado con el Caos. Elige la Amplitud, el Rango.</span>`;
+            ? `<p><span class="equalis-voice">Equalis: Has honrado la Lógica. Elige la Precisión, el Punto.</span></p>`
+            : `<p><span class="disparia-voice">Disparia: Has coqueteado con el Caos. Elige la Amplitud, el Rango.</span></p>`;
         
-        textEl.innerHTML += `<p style="margin-top: 15px;">${scoreNarrative}</p>`;
+        textEl.innerHTML += scoreNarrative;
         
         choices.forEach(choice => {
             const btn = document.createElement("button");
@@ -263,7 +302,6 @@
     }
 
     function goTo(relativePath) {
-        // Lógica para navegar a la siguiente escena
         const base = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
         const resolved = new URL(relativePath, base).href;
         window.location.href = resolved;
@@ -280,5 +318,4 @@
     window.onload = showLine;
   </script>
 </body>
-  </html>
-  
+</html>
