@@ -61,6 +61,7 @@
   </div>
 
   <script>
+    // Recupera el puntaje acumulado de las escenas anteriores.
     let score = parseInt(localStorage.getItem('score') || 0);
 
     const IMG_GENERAL = 'assets/bg/banca_oscura.png';
@@ -110,11 +111,11 @@
     function showLine() {
       if (currentLine >= sceneData.length) return;
 
-      // El fondo se inicializa en el CSS, solo cambia cuando se encuentra el cuaderno (índice 3)
+      // Cambio de fondo al encontrar el cuaderno
       if (currentLine === 3) { 
         changeBackground(IMG_DESAFIO);
       } else if (currentLine === 0) {
-        changeBackground(IMG_GENERAL); // Asegura que el fondo general se cargue al inicio
+        changeBackground(IMG_GENERAL); // Carga el fondo inicial
       }
       
       const lineData = sceneData[currentLine];
@@ -122,7 +123,7 @@
 
       if (lineData.type === 'challenge') {
           renderChallenge(lineData);
-          nextBtn.style.display = 'none'; 
+          nextBtn.style.display = 'none'; // Oculta el botón genérico durante el desafío
           return; 
       }
       
@@ -146,13 +147,13 @@
       }
       
       nextBtn.style.display = 'inline-flex';
-      void textEl.offsetWidth; 
+      void textEl.offsetWidth; // Trigger reflow for fade effect
     }
     
     function renderChallenge(data) {
         let questionContent = formatText(data.question);
         
-        // Reemplaza las líneas de la ecuación con <br>
+        // Reemplaza los saltos de línea con <br> para formatear la ecuación
         questionContent = questionContent.replace(/\n/g, '<br>');
 
         textEl.innerHTML = `<p class="challenge-question fade-text">${questionContent}</p>`;
@@ -168,7 +169,15 @@
         });
     }
 
+    function goTo(relativePath) {
+        // Lógica para una navegación más segura
+        const base = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+        const resolved = new URL(relativePath, base).href;
+        window.location.href = resolved;
+    }
+
     function checkAnswer(data, userAnswerText) {
+        // Deshabilita todos los botones de elección
         Array.from(choicesEl.children).forEach(btn => btn.disabled = true);
         
         let resultText;
@@ -176,6 +185,7 @@
         
         const isCorrect = userAnswerText === data.answer;
         
+        // Aplica el puntaje
         if (isCorrect) {
             score += 1; 
             resultText = `<span class="equalis-voice fade-text">${formatText(data.success)}</span>`;
@@ -186,33 +196,38 @@
             transitionData = data.transitionFail;
         }
 
+        // Muestra el resultado
         textEl.innerHTML = resultText;
         choicesEl.innerHTML = ''; 
         
+        // Prepara el botón para la transición narrativa
         nextBtn.style.display = 'inline-flex';
         nextBtn.onclick = () => {
             textEl.textContent = transitionData.text; 
+            
+            // Prepara el botón para el salto final a la Escena 8
             nextBtn.onclick = () => { 
-                localStorage.setItem('score', score); 
+                localStorage.setItem('score', score); // GUARDA EL PUNTAJE FINAL
                 goTo(transitionData.nextScene);
             }
         };
     }
 
-    function goTo(relativePath) {
-        const base = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
-        const resolved = new URL(relativePath, base).href;
-        window.location.href = resolved;
+    // --- LÓGICA DE AVANCE DE DIÁLOGO ---
+    function advanceDialogue() {
+      // Solo avanza si no hay opciones visibles (Challenge)
+      if (choicesEl.children.length > 0) {
+        return; 
+      }
+      
+      currentLine++;
+      showLine();
     }
     
-    nextBtn.addEventListener("click", () => {
-      // Solo avanzar si NO estamos en un desafío y el onclick no ha sido reasignado para goTo
-      if (choicesEl.children.length === 0 && nextBtn.onclick.toString().indexOf('goTo') === -1) {
-          currentLine++;
-          showLine();
-      }
-    });
+    // Asigna la función de avance al clic del botón por defecto
+    nextBtn.onclick = advanceDialogue;
     
+    // Inicia la escena al cargar la página
     window.onload = showLine;
   </script>
 </body>
