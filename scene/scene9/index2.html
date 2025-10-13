@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Escena 9 — La Puerta Flotante</title>
+  <link rel="stylesheet" href="../../style.css" />
+  <style>
+    /* Estilos base y de caja (Mantenidos) */
+    body {
+        background-image: url('assets/bg/puerta_flotante.png'); 
+        background-color: #0c0c1a;
+        background-size: cover;
+        background-position: center;
+        transition: background-image 1s ease-in-out; 
+    }
+    
+    .resaltado {
+        font-weight: bold;
+        color: #f0f0f0; 
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.4);
+    }
+    
+    #main-dialogue-box {
+        position: absolute; bottom: 5vh; left: 50%; transform: translateX(-50%);
+        width: 90%; max-width: 800px; padding: 1.5em;
+        background-color: rgba(15, 15, 15, 0.9); 
+        border: 1px solid rgba(255, 255, 255, 0.1); 
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); border-radius: 5px;
+    }
+    #choices { display: flex; flex-direction: column; gap: 0; margin-top: 15px; }
+    .choice-btn {
+        background: rgba(0, 0, 0, 0.4); border: none; border-radius: 0; color: #f0f0f0;
+        padding: 12px 15px; font-size: 1.1em; text-align: left; transition: all 0.2s ease;
+        cursor: pointer; border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
+    }
+    #nextBtn { text-indent: 0; overflow: visible; }
+
+    /* ESTILOS DE VOZ Y BARRA LATERAL (Añadido: Lógica para la barra lateral y Voz Dual) */
+    
+    .voice-line { 
+        padding-left: 10px; 
+        border-left-width: 3px;
+        border-left-style: solid;
+        display: block; /* Asegura que la barra ocupe su propio espacio */
+        margin: 0.5em 0;
+    }
+
+    /* COLORES DE VOZ */
+    .equalis-voice { color: #aaffff; text-shadow: 0 0 5px rgba(170, 255, 255, 0.4); border-left-color: #aaffff; } 
+    .disparia-voice { color: #ff9999; text-shadow: 0 0 5px rgba(255, 153, 153, 0.4); border-left-color: #ff9999; } 
+    .old-man-voice { color: #ffcc66; text-shadow: 0 0 5px rgba(255, 204, 102, 0.4); } 
+    
+    /* NUEVO: Voz Dual - Asigna el color y el estilo cursiva */
+    .dual-voice { 
+        color: #E0BBE4; 
+        text-shadow: 0 0 8px rgba(224, 187, 228, 0.7); 
+        font-style: italic; 
+        border-left-color: #E0BBE4; 
+    }
+  </style>
+</head>
+
+<body>
+  <div class="dialogue-box" id="main-dialogue-box">
+    <div id="text"></div> 
+    
+    <div id="choices"></div>
+    <button id="nextBtn" title="Continuar">➤</button> 
+  </div>
+
+  <script>
+    let score = parseInt(localStorage.getItem('score') || 0);
+
+    let challengeState = 0; 
+    let currentLine = 0; 
+    let transitionLineIndex = 0;
+
+    // --- DATA DEL DESAFÍO EN FASES (Mantenida) ---
+    const challengeData = {
+        // ... (Datos omitidos por brevedad, son idénticos a la versión anterior)
+        phase1: {
+            question: "Al referirse a la **Cerradura de Precisión (Igualdad)**, ¿cuál es la naturaleza de su conjunto solución en la recta real?",
+            answer: "Es un conjunto de soluciones finito y discreto, compuesto por elementos puntuales.",
+            success: "La Lógica es firme. Has definido el **Punto** único. La Precisión está satisfecha. (+1 Lógica).",
+            failure: "La verdad se te ha escurrido. El **Punto** exige una definición discreta. (-1 Lógica).",
+            choices: [
+                { text: "Es un conjunto infinito y continuo, representado por un intervalo cerrado.", isCorrect: false },
+                { text: "Es un conjunto de soluciones finito y discreto, compuesto por elementos puntuales.", isCorrect: true },
+                { text: "Es un conjunto que solo contiene soluciones enteras.", isCorrect: false }
+            ]
+        },
+        phase2: {
+            question: "Al referirse a la **Cerradura de Amplitud (Desigualdad)**, ¿cuál es la naturaleza de su conjunto solución en la recta real?",
+            answer: "Es un conjunto de soluciones infinito y continuo, representado por un intervalo o rayo.",
+            success: "El Caos te sonríe. Has abrazado la naturaleza del **Rango** infinito. (+1 Lógica).",
+            failure: "¡Qué aburrido! Confundiste el **Rango** con un simple punto. El desorden es continuo. (-1 Lógica).",
+            choices: [
+                { text: "Es un conjunto de soluciones finito y discreto, compuesto por un solo elemento puntual.", isCorrect: false },
+                { text: "Es un conjunto infinito, pero solo incluye los números enteros dentro de un rango dado.", isCorrect: false },
+                { text: "Es un conjunto de soluciones infinito y continuo, representado por un intervalo o rayo.", isCorrect: true }
+            ]
+        },
+        finalChoice: {
+            question: "Tu destino final pende de esta elección: ¿Qué principio regirá tu salida?",
+            transitionA: { text: "Aceptas el Destino Singular. La Cerradura de Precisión se ilumina.", nextScene: "../scene_final/ending_equalis.html" },
+            transitionB: { text: "Aceptas el Camino Infinito. La Cerradura de Amplitud se enciende.", nextScene: "../scene_final/ending_disparia.html" },
+            choices: [
+                { text: "Elijo la **Precisión** de la Igualdad (El Punto / Destino Singular).", isChoiceA: true },
+                { text: "Elijo la **Amplitud** de la Desigualdad (El Rango / Camino Infinito).", isChoiceB: true }
+            ]
+        }
+    };
+
+    // --- DATA DE LA ESCENA 9 (Diálogos) ---
+    const scene9 = {
+        id: 9,
+        title: "La Puerta Flotante",
+        text: [
+            { type: 'narrative', content: "Salís del túnel y te encontrás en medio de una calle desierta que termina abruptamente en una **Puerta Flotante**, sostenida por ninguna estructura visible."},
+            { type: 'narrative', content: "La puerta exhibe dos cerraduras: la **Cerradura de Precisión**, con un orificio exacto, y la **Cerradura de Amplitud**, con una ranura ancha. Ambas te exigen comprensión."},
+            { type: 'voice', speaker: 'Equalis', content: "La **Cerradura de Precisión** exige el **Punto**. Es la **Igualdad**. Define la naturaleza de su solución."},
+            { type: 'internal', content: 'Preparando desafío 1' } 
+        ]
+    };
+    
+    // Transiciones narrativas entre fases (Mantenida la estructura para el flujo correcto)
+    const narrativeTransition = [
+        { state: 1, content: [
+            { type: 'voice', speaker: 'Disparia', content: "¡Ahora mira aquí! La **Cerradura de Amplitud** exige el **Rango**. Es la **Desigualdad**. Define la naturaleza de su solución."}
+        ]},
+        { state: 2, content: [
+            { type: 'narrative', content: "Una voz dual resuena."}, 
+            { type: 'voice', speaker: 'Equalis/Disparia', content: "Has comprendido la verdad de ambas cerraduras. La Puerta Flotante está lista para abrirse."}, 
+            { type: 'narrative', content: "Tu elección definirá tu Destino."}
+        ]}
+    ];
+
+    const textEl = document.getElementById("text");
+    const choicesEl = document.getElementById("choices");
+    const nextBtn = document.getElementById("nextBtn");
+    
+    const sceneData = scene9.text; 
+
+    function formatText(content) {
+        return content.replace(/\*\*(.*?)\*\*/g, '<span class="resaltado">$1</span>');
+    }
+    
+    // Función de renderizado corregida para usar la estructura de barra lateral
+    function renderTextLine(lineData) {
+        const speaker = lineData.speaker;
+        const content = formatText(lineData.content);
+        textEl.className = 'fade-text';
+
+        if (speaker) {
+            let voiceClass;
+            if (speaker.toLowerCase() === 'equalis') { voiceClass = 'equalis-voice'; } 
+            else if (speaker.toLowerCase() === 'disparia') { voiceClass = 'disparia-voice'; } 
+            // NUEVO: Reconoce y asigna la clase dual-voice
+            else if (speaker.toLowerCase() === 'equalis/disparia') { voiceClass = 'dual-voice'; } 
+            else { voiceClass = ''; }
+            
+            // Renderiza la línea de voz con la clase .voice-line para la barra lateral
+            textEl.innerHTML = `<p class="voice-line ${voiceClass}"><span class="speaker-name">${speaker}:</span> ${content}</p>`;
+            
+        } else {
+            // Renderiza la línea narrativa sin la clase .voice-line
+            textEl.innerHTML = `<p>${content}</p>`;
+        }
+        void textEl.offsetWidth; 
+    }
+
+
+    function showLine() {
+        if (currentLine >= sceneData.length) return;
+        
+        const lineData = sceneData[currentLine];
+
+        if (lineData.type === 'internal') {
+            startChallenge();
+            return;
+        }
+        
+        renderTextLine(lineData);
+        
+        nextBtn.style.display = 'inline-flex';
+    }
+
+    // --- FUNCIONES DE FLUJO (Mantenidas de la versión que funcionaba) ---
+
+    function startChallenge() {
+        challengeState++;
+        nextBtn.style.display = 'none';
+        transitionLineIndex = 0; 
+
+        if (challengeState === 1) {
+            renderChallengePhase(challengeData.phase1.question, challengeData.phase1.choices, 1);
+        } else if (challengeState === 2) {
+            renderChallengePhase(challengeData.phase2.question, challengeData.phase2.choices, 2);
+        } else if (challengeState === 3) {
+            renderFinalChoice(challengeData.finalChoice.question, challengeData.finalChoice.choices);
+        }
+    }
+
+    function renderChallengePhase(question, choices, phase) {
+        textEl.innerHTML = `<p class="challenge-question fade-text">${formatText(question)}</p>`;
+        choicesEl.innerHTML = "";
+        
+        choices.forEach(choice => {
+            const btn = document.createElement("button");
+            btn.textContent = choice.text;
+            btn.className = 'choice-btn'; 
+            const answerText = (phase === 1) ? challengeData.phase1.answer : challengeData.phase2.answer;
+            btn.onclick = () => checkAnswer(choice.text, phase, answerText); 
+            choicesEl.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(userAnswerText, phase, correctAnswer) {
+        Array.from(choicesEl.children).forEach(btn => btn.disabled = true);
+        
+        const isCorrect = userAnswerText === correctAnswer;
+        let speaker = (phase === 1) ? 'Equalis' : 'Disparia';
+        let resultContent = isCorrect 
+            ? challengeData[`phase${phase}`].success 
+            : challengeData[`phase${phase}`].failure;
+        
+        const feedbackLine = { type: 'voice', speaker: speaker, content: resultContent };
+        renderTextLine(feedbackLine);
+        choicesEl.innerHTML = ''; 
+        
+        nextBtn.style.display = 'inline-flex';
+        nextBtn.onclick = handleTransition;
+    }
+
+    function handleTransition() {
+        const transition = narrativeTransition.find(t => t.state === challengeState);
+        
+        if (transition && transitionLineIndex < transition.content.length) {
+            const lineData = transition.content[transitionLineIndex];
+            
+            renderTextLine(lineData);
+            
+            transitionLineIndex++;
+            nextBtn.style.display = 'inline-flex';
+        } else {
+            startChallenge();
+        }
+    }
+
+    // FUNCIÓN CLAVE CORREGIDA: Aplica voz dual a la pregunta y elimina la recomendación.
+    function renderFinalChoice(question, choices) {
+        
+        // 1. Aplica la voz dual a la pregunta.
+        const finalQuestionLine = { 
+            type: 'voice', 
+            speaker: 'Equalis/Disparia', // Fuerza el uso de la voz dual
+            content: question // Usa el contenido de la pregunta
+        };
+
+        renderTextLine(finalQuestionLine); // Esto renderiza la pregunta con voz dual y barra lateral.
+        
+        // 2. ELIMINAR la línea de recomendación (HECHO AL NO INCLUIRLA)
+        
+        choicesEl.innerHTML = "";
+        choices.forEach(choice => {
+            const btn = document.createElement("button");
+            btn.textContent = choice.text;
+            btn.className = 'choice-btn'; 
+            btn.onclick = () => handleFinalChoice(choice); 
+            choicesEl.appendChild(btn);
+        });
+    }
+
+    function handleFinalChoice(choice) {
+        Array.from(choicesEl.children).forEach(btn => btn.disabled = true);
+        
+        let transitionData;
+        if (choice.isChoiceA) {
+            transitionData = challengeData.finalChoice.transitionA;
+        } else {
+            transitionData = challengeData.finalChoice.transitionB;
+        }
+
+        textEl.innerHTML = transitionData.text; 
+        choicesEl.innerHTML = ''; 
+        
+        nextBtn.style.display = 'inline-flex';
+        nextBtn.onclick = () => {
+            localStorage.setItem('score', score); 
+            goTo(transitionData.nextScene);
+        };
+    }
+
+    function goTo(relativePath) {
+        const base = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+        const resolved = new URL(relativePath, base).href;
+        window.location.href = resolved;
+    }
+    
+    nextBtn.addEventListener("click", () => {
+      if (challengeState === 0) {
+          currentLine++;
+          showLine();
+      }
+    });
+    
+    window.onload = showLine;
+  </script>
+</body>
+  </html>
+  
