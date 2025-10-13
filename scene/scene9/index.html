@@ -112,7 +112,6 @@
             { type: 'narrative', content: "Salís del túnel y te encontrás en medio de una calle desierta que termina abruptamente en una **Puerta Flotante**, sostenida por ninguna estructura visible."},
             { type: 'narrative', content: "La puerta exhibe dos cerraduras: la **Cerradura de Precisión**, con un orificio exacto, y la **Cerradura de Amplitud**, con una ranura ancha. Ambas te exigen comprensión."},
             { type: 'voice', speaker: 'Equalis', content: "La **Cerradura de Precisión** exige el **Punto**. Es la **Igualdad**. Define la naturaleza de su solución."},
-            // El desafío de Precisión (Fase 1) se lanza aquí. El diálogo de Disparia (Fase 2) se mueve a la transición narrativa.
             { type: 'internal', content: 'Preparando desafío 1' } 
         ]
     };
@@ -137,6 +136,7 @@
     const sceneData = scene9.text; 
 
     function formatText(content) {
+        // Esta función convierte **texto** en HTML <span class="resaltado">texto</span>
         return content.replace(/\*\*(.*?)\*\*/g, '<span class="resaltado">$1</span>');
     }
     
@@ -151,7 +151,6 @@
         textEl.className = 'fade-text'; 
 
         if (lineData.type === 'internal') {
-            // El marcador 'internal' indica que se debe iniciar el primer desafío
             startChallenge();
             return;
         }
@@ -179,7 +178,7 @@
     function startChallenge() {
         challengeState++;
         nextBtn.style.display = 'none';
-        transitionLineIndex = 0; // Resetear índice de transición al iniciar fase
+        transitionLineIndex = 0; 
 
         if (challengeState === 1) {
             // Fase 1: Precisión
@@ -199,7 +198,8 @@
         
         choices.forEach(choice => {
             const btn = document.createElement("button");
-            btn.textContent = choice.text;
+            // Aplicar formatText al texto de la opción aquí:
+            btn.innerHTML = formatText(choice.text); 
             btn.className = 'choice-btn'; 
             const answerText = (phase === 1) ? challengeData.phase1.answer : challengeData.phase2.answer;
             btn.onclick = () => checkAnswer(choice.text, phase, answerText); 
@@ -215,7 +215,6 @@
         
         if (isCorrect) {
             score += 1;
-            // Usar clase de voz para la retroalimentación
             resultText = (phase === 1) 
                 ? `<span class="equalis-voice">${formatText(challengeData.phase1.success)}</span>`
                 : `<span class="disparia-voice">${formatText(challengeData.phase2.success)}</span>`;
@@ -229,7 +228,6 @@
         textEl.innerHTML = resultText;
         choicesEl.innerHTML = ''; 
         
-        // Configurar nextBtn para avanzar a la transición
         nextBtn.style.display = 'inline-flex';
         nextBtn.onclick = handleTransition;
     }
@@ -238,7 +236,6 @@
         const transition = narrativeTransition.find(t => t.state === challengeState);
         
         if (transition && transitionLineIndex < transition.content.length) {
-            // Mostrar la siguiente línea de transición (ej. diálogo de Disparia después de Fase 1)
             const lineData = transition.content[transitionLineIndex];
             
             let content = formatText(lineData.content);
@@ -258,7 +255,6 @@
             transitionLineIndex++;
             nextBtn.style.display = 'inline-flex';
         } else {
-            // No hay más líneas de transición, iniciar la siguiente fase del desafío
             startChallenge();
         }
     }
@@ -268,16 +264,17 @@
         textEl.innerHTML = `<p class="challenge-question fade-text">${formatText(question)}</p>`;
         choicesEl.innerHTML = "";
         
-        // Guía final de la voz dual adaptada a la puntuación del jugador
+        // Guía final de la voz dual con las metáforas ajustadas
         const scoreNarrative = score >= 0 
-            ? `<p><span class="dual-voice">La voz dual te susurra: Tu camino ha sido regido por la Lógica. Elige la Precisión, el Punto.</span></p>`
-            : `<p><span class="dual-voice">La voz dual te susurra: Tu camino ha abrazado el Caos. Elige la Amplitud, el Rango.</span></p>`;
+            ? `<p><span class="dual-voice">Equalis/Disparia: Tu Lógica te llama. Elige el **Destino Singular**.</span></p>`
+            : `<p><span class="dual-voice">Equalis/Disparia: Tu Caos te invita. Elige el **Camino Infinito**.</span></p>`;
         
         textEl.innerHTML += scoreNarrative;
         
         choices.forEach(choice => {
             const btn = document.createElement("button");
-            btn.textContent = choice.text;
+            // Aplicar formatText al texto de la opción aquí:
+            btn.innerHTML = formatText(choice.text); 
             btn.className = 'choice-btn'; 
             btn.onclick = () => handleFinalChoice(choice); 
             choicesEl.appendChild(btn);
@@ -311,7 +308,6 @@
     }
     
     nextBtn.addEventListener("click", () => {
-      // Avanzar líneas narrativas si estamos en la fase 0
       if (challengeState === 0) {
           currentLine++;
           showLine();
@@ -321,5 +317,4 @@
     window.onload = showLine;
   </script>
 </body>
-  </html>
-  
+</html>
