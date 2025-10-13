@@ -6,7 +6,7 @@
   <title>Escena 9 — La Puerta Flotante</title>
   <link rel="stylesheet" href="../../style.css" />
   <style>
-    /* Estilos base */
+    /* Estilos base y de caja (Mantenidos) */
     body {
         background-image: url('assets/bg/puerta_flotante.png'); 
         background-color: #0c0c1a;
@@ -21,7 +21,6 @@
         text-shadow: 0 0 5px rgba(255, 255, 255, 0.4);
     }
     
-    /* Estilos de la caja de diálogo (Mantenidos) */
     #main-dialogue-box {
         position: absolute; bottom: 5vh; left: 50%; transform: translateX(-50%);
         width: 90%; max-width: 800px; padding: 1.5em;
@@ -35,32 +34,36 @@
         padding: 12px 15px; font-size: 1.1em; text-align: left; transition: all 0.2s ease;
         cursor: pointer; border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
     }
-    .choice-btn:hover, .choice-btn:focus {
-        background: rgba(40, 40, 40, 0.6); box-shadow: 0 0 0 1px #aaffff; color: #aaffff; outline: none; 
-    }
-    #choices .choice-btn:last-child { border-bottom: none; }
-    #nextBtn::after { content: none !important; visibility: hidden; }
     #nextBtn { text-indent: 0; overflow: visible; }
 
-    /* ESTILOS DE VOZ Y BARRA LATERAL (Tomados del Bloque 2 para garantizar el estilo) */
+    /* ESTILOS DE VOZ Y BARRA LATERAL (CORREGIDO: Aplica barra solo a las líneas de voz) */
     
-    /* Clase base para el contenedor de voz */
+    .voice-line {
+        /* Contenedor que solo establece el margen y el color de texto/sombra */
+        padding: 0; 
+        margin: 0.5em 0; 
+    }
+
     .voice-line p {
+        /* Estilo para el párrafo interno que ahora maneja la barra */
         padding-left: 10px;
-        margin-left: 0;
         border-left-width: 3px;
         border-left-style: solid;
-        margin-top: 0;
-        margin-bottom: 0;
+        margin: 0; /* Asegura que no haya margin duplicado */
     }
-    
-    /* Clases de voz específicas */
-    .equalis-voice p { color: #aaffff; text-shadow: 0 0 5px rgba(170, 255, 255, 0.4); border-left-color: #aaffff; } 
-    .disparia-voice p { color: #ff9999; text-shadow: 0 0 5px rgba(255, 153, 153, 0.4); border-left-color: #ff9999; } 
-    /* Voz Dual (Asegura barra y color) */
-    .dual-voice p { color: #E0BBE4; text-shadow: 0 0 8px rgba(224, 187, 228, 0.7); font-style: italic; border-left-color: #E0BBE4; }
 
-    /* Ajuste para que el contenedor general de texto no tenga padding/margin no deseado */
+    /* Clases de voz específicas que establecen el color del texto y la barra */
+    .equalis-voice { color: #aaffff; text-shadow: 0 0 5px rgba(170, 255, 255, 0.4); } 
+    .equalis-voice p { border-left-color: #aaffff; }
+
+    .disparia-voice { color: #ff9999; text-shadow: 0 0 5px rgba(255, 153, 153, 0.4); } 
+    .disparia-voice p { border-left-color: #ff9999; }
+
+    /* Voz Dual (Corregida) */
+    .dual-voice { color: #E0BBE4; text-shadow: 0 0 8px rgba(224, 187, 228, 0.7); font-style: italic; } 
+    .dual-voice p { border-left-color: #E0BBE4; }
+
+    /* Ajuste para narrativa */
     #text p {
         margin: 0.5em 0;
     }
@@ -79,6 +82,8 @@
     let score = parseInt(localStorage.getItem('score') || 0);
 
     let challengeState = 0; 
+    let currentLine = 0; // Para el diálogo inicial (challengeState 0)
+    let transitionLineIndex = 0; // Para los diálogos de transición (challengeState 1 y 2)
     
     // --- DATA DEL DESAFÍO EN FASES (Mantenida) ---
     const challengeData = {
@@ -129,11 +134,11 @@
     
     // Transiciones narrativas entre fases (Flujo de 3 pasos para el final confirmado)
     const narrativeTransition = [
-        // state: 1 (Después de Fase 1) -> Diálogo de Disparia
+        // state: 1 (Después de Fase 1) -> Diálogo de Disparia (¡LÍNEA DE DISPARIA GARANTIZADA!)
         { state: 1, content: [
             { type: 'voice', speaker: 'Disparia', content: "¡Ahora mira aquí! La **Cerradura de Amplitud** exige el **Rango**. Es la **Desigualdad**. Define la naturaleza de su solución."}
         ]},
-        // state: 2 (Después de Fase 2) -> Diálogo de la Voz Dual (en tres líneas)
+        // state: 2 (Después de Fase 2) -> Diálogo de la Voz Dual (en tres líneas - ¡FLUJO GARANTIZADO!)
         { state: 2, content: [
             // 1. Narrativa introductoria
             { type: 'narrative', content: "Una voz dual resuena."},
@@ -148,13 +153,13 @@
     const choicesEl = document.getElementById("choices");
     const nextBtn = document.getElementById("nextBtn");
     
-    let currentLine = 0; 
     const sceneData = scene9.text; 
 
     function formatText(content) {
         return content.replace(/\*\*(.*?)\*\*/g, '<span class="resaltado">$1</span>');
     }
     
+    // Función de renderizado corregida para la barra única
     function renderTextLine(lineData) {
         const speaker = lineData.speaker;
         const content = formatText(lineData.content);
@@ -166,8 +171,8 @@
             else if (speaker.toLowerCase() === 'equalis/disparia') { voiceClass = 'dual-voice'; } 
             else { voiceClass = 'resaltado'; }
             
-            // USANDO LA ESTRUCTURA DE RENDERIZACIÓN DE VOZ GARANTIZADA DEL BLOQUE 2
-            textEl.innerHTML = `<div class="voice-line ${voiceClass}"><p><span class="speaker-name">${speaker}:</span> ${content}</p></div>`;
+            // Estructura simplificada que solo aplica el border-left al elemento P
+            textEl.innerHTML = `<div class="${voiceClass} voice-line"><p><span class="speaker-name">${speaker}:</span> ${content}</p></div>`;
             
         } else {
             // Estructura narrativa simple
@@ -175,6 +180,8 @@
         }
         textEl.className = 'fade-text';
     }
+
+    // --- FUNCIONES DE FLUJO (Tomadas de la versión que funcionaba correctamente) ---
 
     function showLine() {
         if (currentLine >= sceneData.length) return;
@@ -192,8 +199,6 @@
         void textEl.offsetWidth; 
     }
 
-    let transitionLineIndex = 0;
-
     function startChallenge() {
         challengeState++;
         nextBtn.style.display = 'none';
@@ -204,7 +209,6 @@
         } else if (challengeState === 2) {
             renderChallengePhase(challengeData.phase2.question, challengeData.phase2.choices, 2);
         } else if (challengeState === 3) {
-            // Ya se han mostrado las 3 líneas de transición (state: 2)
             renderFinalChoice(challengeData.finalChoice.question, challengeData.finalChoice.choices);
         }
     }
@@ -241,11 +245,10 @@
         }
         
         const feedbackLine = { type: 'voice', speaker: speaker, content: resultContent };
-        renderTextLine(feedbackLine); // Muestra la retroalimentación (con barra)
+        renderTextLine(feedbackLine);
         choicesEl.innerHTML = ''; 
         
         nextBtn.style.display = 'inline-flex';
-        // Esto enlaza el botón "Siguiente" a la función de transición para la próxima línea (Disparia o la secuencia dual)
         nextBtn.onclick = handleTransition;
     }
 
@@ -255,12 +258,12 @@
         if (transition && transitionLineIndex < transition.content.length) {
             const lineData = transition.content[transitionLineIndex];
             
-            renderTextLine(lineData); // Muestra la línea (que puede ser Disparia, o narrativa/dual)
+            renderTextLine(lineData);
             
             transitionLineIndex++;
             nextBtn.style.display = 'inline-flex';
         } else {
-            // Si la transición de ese estado se ha agotado, pasa a la siguiente fase (siguiente desafío o elección final)
+            // Flujo corregido: Si se agotan las líneas, se avanza la fase (startChallenge)
             startChallenge();
         }
     }
@@ -268,7 +271,6 @@
 
     function renderFinalChoice(question, choices) {
         // En esta versión, las 3 líneas de diálogo (narrativa-dual-narrativa) YA SE MOSTRARON en handleTransition (state: 2).
-        // Solo necesitamos mostrar los botones de elección.
         textEl.innerHTML = `<p class="challenge-question fade-text">${formatText(question)}</p>`;
         choicesEl.innerHTML = "";
         
@@ -313,6 +315,8 @@
           currentLine++;
           showLine();
       } else {
+          // Después de las respuestas, handleTransition se asigna como onclick.
+          // Si estamos aquí, es para avanzar una línea de transición.
           handleTransition(); 
       }
     });
@@ -320,5 +324,4 @@
     window.onload = showLine;
   </script>
 </body>
-  </html>
-  
+</html>
