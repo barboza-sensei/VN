@@ -3,11 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <title>Despertar Lógico</title>
-    <link rel="stylesheet" href="../../style.css">
+    <link rel="stylesheet" href="../../style.css"> 
     <style>
-        /* CSS específico si este final tiene una imagen de fondo única */
+        /* -------------------------------------------------------------------- */
+        /* 1. ESTILOS DEL CUERPO (ATMOESFERA DE ORDEN) */
+        /* -------------------------------------------------------------------- */
         body {
-            background-image: url('assets/bg/final_orden.png'); /* Fondo de orden/paz */
+            /* Fondo de orden/paz */
+            background-image: url('assets/bg/final_orden.png'); 
+            background-size: cover;
+            background-position: center;
+            background-color: #050a10; /* Color base muy oscuro, casi negro-azul */
+            background-attachment: fixed;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Capa de tinte azul/cian sutil sobre el fondo */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 10, 30, 0.5); /* Tinte azul oscuro */
+            z-index: -1; 
+        }
+
+        /* -------------------------------------------------------------------- */
+        /* 2. CAJA DE DIÁLOGO (SOLUCIÓN/PUNTO FIJO) */
+        /* -------------------------------------------------------------------- */
+        .final-box {
+            /* Estilo de la caja central */
+            background-color: rgba(5, 15, 25, 0.98); /* Fondo casi negro, con tinte azul */
+            padding: 40px;
+            border-radius: 10px;
+            max-width: 650px;
+            width: 90%;
+            box-shadow: 0 0 30px rgba(170, 255, 255, 0.6), 0 0 10px rgba(170, 255, 255, 0.8); /* Doble sombra cian */
+            border: 2px solid #aaffff; /* Borde de Equalis */
+            animation: fadeInBox 2s ease-out forwards;
+            color: #f0f0f0;
+            text-align: center;
+        }
+
+        @keyframes fadeInBox {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* -------------------------------------------------------------------- */
+        /* 3. TIPOGRAFÍA Y ESTILOS ESPECÍFICOS */
+        /* -------------------------------------------------------------------- */
+        h1 {
+            color: #aaffff; /* Cian de Equalis */
+            font-size: clamp(2em, 6vw, 3em);
+            text-shadow: 0 0 15px #66ccff;
+            margin-bottom: 30px;
+        }
+
+        p {
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin: 15px 0;
+        }
+
+        .voice-line {
+            margin-top: 25px;
+            font-style: italic;
+            font-weight: bold;
+        }
+
+        /* Aseguramos que la voz de Equalis resalte */
+        .equalis-voice { 
+            color: #aaffff; 
+            text-shadow: 0 0 8px rgba(170, 255, 255, 0.8);
+            display: block; /* Para que ocupe su propia línea con el margen de arriba */
+            padding: 10px;
+        }
+
+        /* Estilo para el botón de volver (asumiendo que hereda .button del style.css) */
+        button {
+            margin-top: 30px;
+            padding: 12px 25px;
+            font-size: 1.1em;
+            background-color: #0088aa; /* Color sólido de Equalis */
+            border: 2px solid #aaffff;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        button:hover {
+            background-color: #00bbaa;
+            transform: scale(1.02);
+            box-shadow: 0 0 10px #aaffff;
         }
     </style>
 </head>
@@ -16,8 +111,10 @@
         <h1>Despertar Lógico</h1>
         <p>Aceptaste la **Precisión** con maestría. La Puerta Flotante se vuelve una luz cálida y familiar.</p>
         <p>Despiertas. Estás en tu propia cama. Afuera, la calle es tranquila, los pájaros cantan con ritmos perfectamente medidos. En la mesa de noche, una taza de café humea. Todo está en un orden sereno y absoluto, tal como lo definiste.</p>
-        <p class="voice-line equalis-voice">Equalis sonríe, su voz ahora tu pensamiento: «El sueño ha terminado. Tu realidad es la ecuación resuelta, el **Punto Fijo** que buscabas. No hay variables. Hay paz».</p>
+        <p>Equalis sonríe, su voz ahora tu pensamiento</p>
+        <p class="voice-line equalis-voice">El sueño ha terminado. Tu realidad es la ecuación resuelta, el **Punto Fijo** que buscabas. No hay variables. Hay paz.</p>
         <button onclick="window.location.href='../../index.html'">Volver a Empezar</button>
     </div>
 </body>
-</html>
+    </html>
+    
