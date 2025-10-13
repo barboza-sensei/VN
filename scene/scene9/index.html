@@ -6,9 +6,8 @@
   <title>Escena 9 — La Puerta Flotante</title>
   <link rel="stylesheet" href="../../style.css" />
   <style>
-    /* Estilos globales y de voz, asumiendo su existencia en style.css, se mantienen solo los específicos */
+    /* Estilos base (Mantenidos) */
     body {
-        /* IMAGEN INICIAL (Puerta flotante) */
         background-image: url('assets/bg/puerta_flotante.png'); 
         background-color: #0c0c1a;
         background-size: cover;
@@ -22,7 +21,7 @@
         text-shadow: 0 0 5px rgba(255, 255, 255, 0.4);
     }
     
-    /* Estilos estéticos de la caja de diálogo y botones para coherencia */
+    /* Estilos de la caja de diálogo */
     #main-dialogue-box {
         position: absolute; bottom: 5vh; left: 50%; transform: translateX(-50%);
         width: 90%; max-width: 800px; padding: 1.5em;
@@ -43,16 +42,21 @@
     #nextBtn::after { content: none !important; visibility: hidden; }
     #nextBtn { text-indent: 0; overflow: visible; }
 
-    /* COLORES DE VOZ */
-    .equalis-voice { color: #aaffff; text-shadow: 0 0 5px rgba(170, 255, 255, 0.4); } 
-    .disparia-voice { color: #ff9999; text-shadow: 0 0 5px rgba(255, 153, 153, 0.4); } 
-    .old-man-voice { color: #ffcc66; text-shadow: 0 0 5px rgba(255, 204, 102, 0.4); } 
-    /* NUEVO: Color para la voz de Equalis/Disparia fusionada */
-    .dual-voice { color: #E0BBE4; text-shadow: 0 0 8px rgba(224, 187, 228, 0.7); font-style: italic; }
+    /* DEFINICIÓN DE COLORES Y BARRA LATERAL (Fuerzo el estilo de barra aquí para garantizar la visualización) */
     
-    /* ASUMO QUE ESTAS CLASES ESTÁN EN style.css, NECESARIAS PARA LA BARRA LATERAL */
-    .voice-line { /* Estilo base para el contenedor de voz (asume barra lateral aquí) */ }
-    .speaker-name { /* Estilo para el nombre del orador */ }
+    /* Variables de Color (para la barra y el texto) */
+    .equalis-voice { --voice-color: #aaffff; color: var(--voice-color); text-shadow: 0 0 5px rgba(170, 255, 255, 0.4); } 
+    .disparia-voice { --voice-color: #ff9999; color: var(--voice-color); text-shadow: 0 0 5px rgba(255, 153, 153, 0.4); } 
+    .old-man-voice { --voice-color: #ffcc66; color: var(--voice-color); text-shadow: 0 0 5px rgba(255, 204, 102, 0.4); } 
+    /* Voz Dual: Fusión de colores (Magenta/Púrpura) */
+    .dual-voice { --voice-color: #E0BBE4; color: var(--voice-color); text-shadow: 0 0 8px rgba(224, 187, 228, 0.7); font-style: italic; }
+    
+    /* APLICACIÓN DE LA BARRA LATERAL AL CONTENEDOR DE VOZ */
+    .voice-line { 
+        border-left: 3px solid var(--voice-color); /* Usa el color específico de la voz */
+        padding-left: 10px;
+        margin-left: 0; /* Asegura que la barra esté bien pegada */
+    }
   </style>
 </head>
 
@@ -67,36 +71,32 @@
   <script>
     let score = parseInt(localStorage.getItem('score') || 0);
 
-    // Variable de estado para manejar las fases del desafío
-    let challengeState = 0; // 0: Líneas narrativas, 1: Desafío de Precisión, 2: Desafío de Amplitud, 3: Elección Final
+    let challengeState = 0; 
     
-    // --- DATA DEL DESAFÍO EN FASES (Precisión Matemática Requerida) ---
+    // --- DATA DEL DESAFÍO EN FASES ---
     const challengeData = {
-        // Fase 1: Cerradura de Precisión (Igualdad / Finito y Discreto)
         phase1: {
             question: "Al referirse a la **Cerradura de Precisión (Igualdad)**, ¿cuál es la naturaleza de su conjunto solución en la recta real?",
             answer: "Es un conjunto de soluciones finito y discreto, compuesto por elementos puntuales.",
-            success: "Equalis: **La Lógica es firme.** Has definido el **Punto** único. La Precisión está satisfecha. (+1 Lógica).",
-            failure: "Equalis: La verdad se te ha escurrido. El **Punto** exige una definición discreta. (-1 Lógica).",
+            success: "La Lógica es firme. Has definido el **Punto** único. La Precisión está satisfecha. (+1 Lógica).",
+            failure: "La verdad se te ha escurrido. El **Punto** exige una definición discreta. (-1 Lógica).",
             choices: [
                 { text: "Es un conjunto infinito y continuo, representado por un intervalo cerrado.", isCorrect: false },
                 { text: "Es un conjunto de soluciones finito y discreto, compuesto por elementos puntuales.", isCorrect: true },
                 { text: "Es un conjunto que solo contiene soluciones enteras.", isCorrect: false }
             ]
         },
-        // Fase 2: Cerradura de Amplitud (Desigualdad / Infinito y Continuo)
         phase2: {
             question: "Al referirse a la **Cerradura de Amplitud (Desigualdad)**, ¿cuál es la naturaleza de su conjunto solución en la recta real?",
             answer: "Es un conjunto de soluciones infinito y continuo, representado por un intervalo o rayo.",
-            success: "Disparia: **El Caos te sonríe.** Has abrazado la naturaleza del **Rango** infinito. (+1 Lógica).",
-            failure: "Disparia: ¡Qué aburrido! Confundiste el **Rango** con un simple punto. El desorden es continuo. (-1 Lógica).",
+            success: "El Caos te sonríe. Has abrazado la naturaleza del **Rango** infinito. (+1 Lógica).",
+            failure: "¡Qué aburrido! Confundiste el **Rango** con un simple punto. El desorden es continuo. (-1 Lógica).",
             choices: [
                 { text: "Es un conjunto de soluciones finito y discreto, compuesto por un solo elemento puntual.", isCorrect: false },
                 { text: "Es un conjunto infinito, pero solo incluye los números enteros dentro de un rango dado.", isCorrect: false },
                 { text: "Es un conjunto de soluciones infinito y continuo, representado por un intervalo o rayo.", isCorrect: true }
             ]
         },
-        // Fase 3: Elección Final (Bifurcación Narrativa)
         finalChoice: {
             question: "Tu destino final pende de esta elección: ¿Qué principio regirá tu salida?",
             transitionA: { text: "Aceptas el Destino Singular. La Cerradura de Precisión se ilumina.", nextScene: "../scene_final/ending_equalis.html" },
@@ -120,13 +120,14 @@
         ]
     };
     
-    // Transiciones narrativas entre fases (AJUSTADO AL PATRÓN SOLICITADO)
+    // Transiciones narrativas entre fases (CORREGIDO: Disparia restaurada, Voz Dual separada)
     const narrativeTransition = [
-        // Después de Fase 1 (Precisión) -> Diálogo de Disparia para presentar el segundo desafío
+        // state: 1 (Después de Fase 1) -> Diálogo de Disparia para presentar el segundo desafío
         { state: 1, content: [
+            // ESTA FUE LA LÍNEA QUE SE HABÍA PERDIDO
             { type: 'voice', speaker: 'Disparia', content: "¡Ahora mira aquí! La **Cerradura de Amplitud** exige el **Rango**. Es la **Desigualdad**. Define la naturaleza de su solución."}
         ]},
-        // Después de Fase 2 (Amplitud) -> Diálogo de la Voz Dual (en tres líneas)
+        // state: 2 (Después de Fase 2) -> Diálogo de la Voz Dual (en tres líneas)
         { state: 2, content: [
             // 1. Narrativa introductoria (sin barra)
             { type: 'narrative', content: "Una voz dual resuena."},
@@ -152,19 +153,9 @@
         document.body.style.backgroundImage = `url('${imageUrl}')`;
     }
 
-    function showLine() {
-        if (currentLine >= sceneData.length) return;
-        
-        const lineData = sceneData[currentLine];
-        textEl.className = 'fade-text'; 
-
-        if (lineData.type === 'internal') {
-            startChallenge();
-            return;
-        }
-        
-        let content = formatText(lineData.content);
-        let speaker = lineData.speaker;
+    function renderTextLine(lineData) {
+        const speaker = lineData.speaker;
+        const content = formatText(lineData.content);
         
         if (speaker) {
             let voiceClass;
@@ -173,13 +164,27 @@
             else if (speaker.toLowerCase() === 'equalis/disparia') { voiceClass = 'dual-voice'; } 
             else { voiceClass = 'resaltado'; }
             
-            // Estructura de voz con barra lateral (asumiendo estilos en CSS)
+            // Estructura de voz con barra lateral y color dinámico
             textEl.innerHTML = `<p class="voice-line ${voiceClass}"><span class="speaker-name">${speaker}:</span> ${content}</p>`;
             
         } else {
             // Estructura narrativa simple (sin barra lateral)
             textEl.innerHTML = `<p>${content}</p>`;
         }
+        textEl.className = 'fade-text';
+    }
+
+    function showLine() {
+        if (currentLine >= sceneData.length) return;
+        
+        const lineData = sceneData[currentLine];
+
+        if (lineData.type === 'internal') {
+            startChallenge();
+            return;
+        }
+        
+        renderTextLine(lineData);
         
         nextBtn.style.display = 'inline-flex';
         void textEl.offsetWidth; 
@@ -197,7 +202,6 @@
         } else if (challengeState === 2) {
             renderChallengePhase(challengeData.phase2.question, challengeData.phase2.choices, 2);
         } else if (challengeState === 3) {
-            // El estado 3 (Elección Final) se lanza después de que handleTransition complete todas las líneas de state: 2
             renderFinalChoice(challengeData.finalChoice.question, challengeData.finalChoice.choices);
         }
     }
@@ -220,24 +224,22 @@
         Array.from(choicesEl.children).forEach(btn => btn.disabled = true);
         
         const isCorrect = userAnswerText === correctAnswer;
-        let resultText;
+        let resultContent;
         let speaker;
-        let voiceClass;
         
         if (isCorrect) {
             score += 1;
             speaker = (phase === 1) ? 'Equalis' : 'Disparia';
-            resultText = (phase === 1) ? challengeData.phase1.success : challengeData.phase2.success;
+            resultContent = (phase === 1) ? challengeData.phase1.success : challengeData.phase2.success;
         } else {
             score -= 1;
             speaker = (phase === 1) ? 'Equalis' : 'Disparia';
-            resultText = (phase === 1) ? challengeData.phase1.failure : challengeData.phase2.failure;
+            resultContent = (phase === 1) ? challengeData.phase1.failure : challengeData.phase2.failure;
         }
         
-        voiceClass = (speaker.toLowerCase() === 'equalis') ? 'equalis-voice' : 'disparia-voice';
-        
-        // Estructura de voz para la retroalimentación
-        textEl.innerHTML = `<p class="voice-line ${voiceClass}"><span class="speaker-name">${speaker}:</span> ${formatText(resultText)}</p>`;
+        // Generar el objeto de la línea de retroalimentación
+        const feedbackLine = { type: 'voice', speaker: speaker, content: resultContent };
+        renderTextLine(feedbackLine); // Usar la función renderTextLine para aplicar el estilo de voz
         choicesEl.innerHTML = ''; 
         
         nextBtn.style.display = 'inline-flex';
@@ -250,28 +252,11 @@
         if (transition && transitionLineIndex < transition.content.length) {
             const lineData = transition.content[transitionLineIndex];
             
-            let content = formatText(lineData.content);
-            let speaker = lineData.speaker;
-            
-            // Determinar si es narrativa o voz para la estructura HTML correcta
-            if (lineData.type === 'voice') {
-                let voiceClass;
-                if (speaker.toLowerCase() === 'equalis') { voiceClass = 'equalis-voice'; } 
-                else if (speaker.toLowerCase() === 'disparia') { voiceClass = 'disparia-voice'; } 
-                else if (speaker.toLowerCase() === 'equalis/disparia') { voiceClass = 'dual-voice'; }
-                else { voiceClass = 'resaltado'; }
-
-                // Estructura de voz (con barra lateral)
-                textEl.innerHTML = `<p class="voice-line ${voiceClass}"><span class="speaker-name">${speaker}:</span> ${content}</p>`;
-            } else {
-                 // Estructura narrativa (sin barra lateral)
-                textEl.innerHTML = `<p>${content}</p>`;
-            }
+            renderTextLine(lineData); // Usar la función unificada para renderizar
             
             transitionLineIndex++;
             nextBtn.style.display = 'inline-flex';
         } else {
-            // Si ya no hay más transiciones, pasar a la siguiente fase (Elección Final)
             startChallenge();
         }
     }
@@ -281,8 +266,7 @@
         textEl.innerHTML = `<p class="challenge-question fade-text">${formatText(question)}</p>`;
         choicesEl.innerHTML = "";
         
-        // Mensaje de voz dual neutro (sin sugerencias de puntaje, solo la pregunta de nuevo)
-        // Eliminado el diálogo redundante para mantener la estructura simple para el final
+        // El mensaje de voz dual neutro (ya cubierto por la transición state: 2, por lo que este campo se deja limpio)
         
         choices.forEach(choice => {
             const btn = document.createElement("button");
@@ -324,6 +308,7 @@
           currentLine++;
           showLine();
       } else {
+          // Esto maneja la progresión de los diálogos de transición (state 1 y 2)
           handleTransition(); 
       }
     });
