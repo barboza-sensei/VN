@@ -49,6 +49,10 @@
     .old-man-voice { color: #ffcc66; text-shadow: 0 0 5px rgba(255, 204, 102, 0.4); } 
     /* NUEVO: Color para la voz de Equalis/Disparia fusionada */
     .dual-voice { color: #E0BBE4; text-shadow: 0 0 8px rgba(224, 187, 228, 0.7); font-style: italic; }
+    
+    /* ASUMO QUE ESTAS CLASES ESTÁN EN style.css, NECESARIAS PARA LA BARRA LATERAL */
+    .voice-line { /* Estilo base para el contenedor de voz (asume barra lateral aquí) */ }
+    .speaker-name { /* Estilo para el nombre del orador */ }
   </style>
 </head>
 
@@ -116,16 +120,20 @@
         ]
     };
     
-    // Transiciones narrativas entre fases (AJUSTADAS)
+    // Transiciones narrativas entre fases (AJUSTADO AL PATRÓN SOLICITADO)
     const narrativeTransition = [
         // Después de Fase 1 (Precisión) -> Diálogo de Disparia para presentar el segundo desafío
         { state: 1, content: [
             { type: 'voice', speaker: 'Disparia', content: "¡Ahora mira aquí! La **Cerradura de Amplitud** exige el **Rango**. Es la **Desigualdad**. Define la naturaleza de su solución."}
         ]},
-        // Después de Fase 2 (Amplitud) -> Diálogo de la Voz Dual para la Elección Final
+        // Después de Fase 2 (Amplitud) -> Diálogo de la Voz Dual (en tres líneas)
         { state: 2, content: [
-            // El mensaje de la voz dual ahora es puramente confirmatorio
-            { type: 'voice', speaker: 'Equalis/Disparia', content: "La voz dual resuena: Has comprendido la verdad de ambas cerraduras. La Puerta Flotante está lista para abrirse. **Tu elección definirá tu Destino.**"}
+            // 1. Narrativa introductoria (sin barra)
+            { type: 'narrative', content: "Una voz dual resuena."},
+            // 2. Voz Dual (con barra y color dual)
+            { type: 'voice', speaker: 'Equalis/Disparia', content: "Has comprendido la verdad de ambas cerraduras. La Puerta Flotante está lista para abrirse."},
+            // 3. Narrativa de cierre (sin barra)
+            { type: 'narrative', content: "Tu elección definirá tu Destino."}
         ]}
     ];
 
@@ -165,10 +173,11 @@
             else if (speaker.toLowerCase() === 'equalis/disparia') { voiceClass = 'dual-voice'; } 
             else { voiceClass = 'resaltado'; }
             
-            // La clase de voz es necesaria para que el CSS aplique el estilo de barra vertical
+            // Estructura de voz con barra lateral (asumiendo estilos en CSS)
             textEl.innerHTML = `<p class="voice-line ${voiceClass}"><span class="speaker-name">${speaker}:</span> ${content}</p>`;
             
         } else {
+            // Estructura narrativa simple (sin barra lateral)
             textEl.innerHTML = `<p>${content}</p>`;
         }
         
@@ -184,13 +193,11 @@
         transitionLineIndex = 0; 
 
         if (challengeState === 1) {
-            // Fase 1: Precisión
             renderChallengePhase(challengeData.phase1.question, challengeData.phase1.choices, 1);
         } else if (challengeState === 2) {
-            // Fase 2: Amplitud
             renderChallengePhase(challengeData.phase2.question, challengeData.phase2.choices, 2);
         } else if (challengeState === 3) {
-            // Fase 3: Elección Final
+            // El estado 3 (Elección Final) se lanza después de que handleTransition complete todas las líneas de state: 2
             renderFinalChoice(challengeData.finalChoice.question, challengeData.finalChoice.choices);
         }
     }
@@ -201,7 +208,6 @@
         
         choices.forEach(choice => {
             const btn = document.createElement("button");
-            // Aplicar formatText al texto de la opción para el resaltado
             btn.innerHTML = formatText(choice.text); 
             btn.className = 'choice-btn'; 
             const answerText = (phase === 1) ? challengeData.phase1.answer : challengeData.phase2.answer;
@@ -230,7 +236,7 @@
         
         voiceClass = (speaker.toLowerCase() === 'equalis') ? 'equalis-voice' : 'disparia-voice';
         
-        // Aplicar la estructura de voz estándar
+        // Estructura de voz para la retroalimentación
         textEl.innerHTML = `<p class="voice-line ${voiceClass}"><span class="speaker-name">${speaker}:</span> ${formatText(resultText)}</p>`;
         choicesEl.innerHTML = ''; 
         
@@ -247,18 +253,25 @@
             let content = formatText(lineData.content);
             let speaker = lineData.speaker;
             
-            let voiceClass;
-            if (speaker.toLowerCase() === 'equalis') { voiceClass = 'equalis-voice'; } 
-            else if (speaker.toLowerCase() === 'disparia') { voiceClass = 'disparia-voice'; } 
-            else if (speaker.toLowerCase() === 'equalis/disparia') { voiceClass = 'dual-voice'; }
-            else { voiceClass = 'resaltado'; }
+            // Determinar si es narrativa o voz para la estructura HTML correcta
+            if (lineData.type === 'voice') {
+                let voiceClass;
+                if (speaker.toLowerCase() === 'equalis') { voiceClass = 'equalis-voice'; } 
+                else if (speaker.toLowerCase() === 'disparia') { voiceClass = 'disparia-voice'; } 
+                else if (speaker.toLowerCase() === 'equalis/disparia') { voiceClass = 'dual-voice'; }
+                else { voiceClass = 'resaltado'; }
 
-            // Aplicar la estructura de voz estándar a las transiciones
-            textEl.innerHTML = `<p class="voice-line ${voiceClass}"><span class="speaker-name">${speaker}:</span> ${content}</p>`;
+                // Estructura de voz (con barra lateral)
+                textEl.innerHTML = `<p class="voice-line ${voiceClass}"><span class="speaker-name">${speaker}:</span> ${content}</p>`;
+            } else {
+                 // Estructura narrativa (sin barra lateral)
+                textEl.innerHTML = `<p>${content}</p>`;
+            }
             
             transitionLineIndex++;
             nextBtn.style.display = 'inline-flex';
         } else {
+            // Si ya no hay más transiciones, pasar a la siguiente fase (Elección Final)
             startChallenge();
         }
     }
@@ -268,10 +281,8 @@
         textEl.innerHTML = `<p class="challenge-question fade-text">${formatText(question)}</p>`;
         choicesEl.innerHTML = "";
         
-        // Mensaje de voz dual neutro (sin sugerencias de puntaje)
-        const neutralMessage = "Equalis/Disparia: Es hora de elegir la verdad que te define.";
-        
-        textEl.innerHTML += `<p class="voice-line dual-voice"><span class="speaker-name">Equalis/Disparia:</span> ${formatText(neutralMessage)}</p>`;
+        // Mensaje de voz dual neutro (sin sugerencias de puntaje, solo la pregunta de nuevo)
+        // Eliminado el diálogo redundante para mantener la estructura simple para el final
         
         choices.forEach(choice => {
             const btn = document.createElement("button");
@@ -312,6 +323,8 @@
       if (challengeState === 0) {
           currentLine++;
           showLine();
+      } else {
+          handleTransition(); 
       }
     });
     
