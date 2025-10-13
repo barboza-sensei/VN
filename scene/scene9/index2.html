@@ -35,14 +35,21 @@
         cursor: pointer; border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
     }
     #nextBtn { text-indent: 0; overflow: visible; }
-
-    /* ESTILOS DE VOZ Y BARRA LATERAL (Añadido: Lógica para la barra lateral y Voz Dual) */
     
+    /* CORRECCIÓN FINAL: Eliminar la flecha generada por el ::after, si existe. */
+    #nextBtn::after { 
+        content: none !important; 
+        visibility: hidden; 
+        display: none !important; 
+    }
+    /* Estilos de nextBtn (Mantenidos, debe mostrar solo el glifo '➤') */
+    
+    /* ESTILOS DE VOZ Y BARRA LATERAL */
     .voice-line { 
         padding-left: 10px; 
         border-left-width: 3px;
         border-left-style: solid;
-        display: block; /* Asegura que la barra ocupe su propio espacio */
+        display: block;
         margin: 0.5em 0;
     }
 
@@ -51,7 +58,7 @@
     .disparia-voice { color: #ff9999; text-shadow: 0 0 5px rgba(255, 153, 153, 0.4); border-left-color: #ff9999; } 
     .old-man-voice { color: #ffcc66; text-shadow: 0 0 5px rgba(255, 204, 102, 0.4); } 
     
-    /* NUEVO: Voz Dual - Asigna el color y el estilo cursiva */
+    /* Voz Dual */
     .dual-voice { 
         color: #E0BBE4; 
         text-shadow: 0 0 8px rgba(224, 187, 228, 0.7); 
@@ -78,7 +85,6 @@
 
     // --- DATA DEL DESAFÍO EN FASES (Mantenida) ---
     const challengeData = {
-        // ... (Datos omitidos por brevedad, son idénticos a la versión anterior)
         phase1: {
             question: "Al referirse a la **Cerradura de Precisión (Igualdad)**, ¿cuál es la naturaleza de su conjunto solución en la recta real?",
             answer: "Es un conjunto de soluciones finito y discreto, compuesto por elementos puntuales.",
@@ -124,7 +130,7 @@
         ]
     };
     
-    // Transiciones narrativas entre fases (Mantenida la estructura para el flujo correcto)
+    // Transiciones narrativas entre fases 
     const narrativeTransition = [
         { state: 1, content: [
             { type: 'voice', speaker: 'Disparia', content: "¡Ahora mira aquí! La **Cerradura de Amplitud** exige el **Rango**. Es la **Desigualdad**. Define la naturaleza de su solución."}
@@ -146,7 +152,7 @@
         return content.replace(/\*\*(.*?)\*\*/g, '<span class="resaltado">$1</span>');
     }
     
-    // Función de renderizado corregida para usar la estructura de barra lateral
+    // Función de renderizado para todas las líneas (incluyendo la lógica de la barra)
     function renderTextLine(lineData) {
         const speaker = lineData.speaker;
         const content = formatText(lineData.content);
@@ -156,15 +162,12 @@
             let voiceClass;
             if (speaker.toLowerCase() === 'equalis') { voiceClass = 'equalis-voice'; } 
             else if (speaker.toLowerCase() === 'disparia') { voiceClass = 'disparia-voice'; } 
-            // NUEVO: Reconoce y asigna la clase dual-voice
             else if (speaker.toLowerCase() === 'equalis/disparia') { voiceClass = 'dual-voice'; } 
             else { voiceClass = ''; }
             
-            // Renderiza la línea de voz con la clase .voice-line para la barra lateral
             textEl.innerHTML = `<p class="voice-line ${voiceClass}"><span class="speaker-name">${speaker}:</span> ${content}</p>`;
             
         } else {
-            // Renderiza la línea narrativa sin la clase .voice-line
             textEl.innerHTML = `<p>${content}</p>`;
         }
         void textEl.offsetWidth; 
@@ -248,19 +251,17 @@
         }
     }
 
-    // FUNCIÓN CLAVE CORREGIDA: Aplica voz dual a la pregunta y elimina la recomendación.
+    // FUNCIÓN FINAL CORREGIDA
     function renderFinalChoice(question, choices) {
         
-        // 1. Aplica la voz dual a la pregunta.
         const finalQuestionLine = { 
             type: 'voice', 
-            speaker: 'Equalis/Disparia', // Fuerza el uso de la voz dual
-            content: question // Usa el contenido de la pregunta
+            speaker: 'Equalis/Disparia', 
+            content: question 
         };
 
-        renderTextLine(finalQuestionLine); // Esto renderiza la pregunta con voz dual y barra lateral.
-        
-        // 2. ELIMINAR la línea de recomendación (HECHO AL NO INCLUIRLA)
+        // Renderiza la pregunta con voz dual y barra lateral.
+        renderTextLine(finalQuestionLine); 
         
         choicesEl.innerHTML = "";
         choices.forEach(choice => {
@@ -308,5 +309,4 @@
     window.onload = showLine;
   </script>
 </body>
-  </html>
-  
+</html>
