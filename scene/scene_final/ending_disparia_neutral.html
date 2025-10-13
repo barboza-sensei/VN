@@ -1,1 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>El Eco del Caos</title>
+    <link rel="stylesheet" href="../../style.css"> 
+    <style>
+        /* -------------------------------------------------------------------- */
+        /* 1. ESTILOS DEL CUERPO (ATMOESFERA DE NEUTRALIDAD/INCONSISTENCIA) */
+        /* -------------------------------------------------------------------- */
+        body {
+            /* IMAGEN DE FONDO: Incertidumbre */
+            background-image: url('assets/bg/final_incertidumbre.png'); 
+            background-size: cover;
+            background-position: center;
+            /* Color base gris oscuro */
+            background-color: #151515; 
+            background-attachment: fixed;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            font-family: Georgia, serif; 
+        }
 
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* Tinte gris/sepia para neutralidad */
+            background: rgba(10, 10, 10, 0.6); 
+            z-index: -1; 
+        }
+
+        /* -------------------------------------------------------------------- */
+        /* 2. CAJA DE DIÁLOGO (INCONSISTENCIA) */
+        /* -------------------------------------------------------------------- */
+        .final-box {
+            /* Fondo gris oscuro neutro */
+            background-color: rgba(25, 25, 25, 0.98); 
+            padding: 40px;
+            border-radius: 10px;
+            max-width: 650px;
+            width: 90%;
+            /* Sombra y borde cambiados a ÁMBAR (Neutral) */
+            box-shadow: 0 0 30px rgba(255, 204, 102, 0.4), 0 0 10px rgba(255, 204, 102, 0.6); 
+            border: 2px solid #ffcc66; 
+            animation: fadeInBox 2s ease-out forwards;
+            color: #f0f0f0;
+            text-align: left; 
+        }
+
+        @keyframes fadeInBox {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* -------------------------------------------------------------------- */
+        /* 3. TIPOGRAFÍA Y ESTILOS ESPECÍFICOS */
+        /* -------------------------------------------------------------------- */
+        h1 {
+            /* Color ÁMBAR (Neutral) */
+            color: #ffcc66; 
+            font-size: clamp(2em, 6vw, 3em);
+            text-shadow: 0 0 15px #ffb74d;
+            margin-bottom: 5px; 
+            text-align: center; 
+        }
+        
+        /* ESTILO DEL SUBTÍTULO (Neutral) */
+        h2 {
+            /* Color ÁMBAR */
+            color: #ffcc66; 
+            font-size: clamp(0.9em, 2.5vw, 1.2em); 
+            font-weight: 500;
+            margin-top: 0; 
+            margin-bottom: 25px; 
+            text-align: center;
+            opacity: 0.95;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* Resaltados (strong) cambiados a ÁMBAR */
+        strong, .resaltado {
+            color: #ffcc66;
+            font-weight: bold;
+            text-shadow: 0 0 5px rgba(255, 204, 102, 0.5);
+        }
+
+        p {
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin: 15px 0;
+            text-align: justify;
+        }
+        
+        .voice-line {
+            margin-top: 25px;
+            font-style: italic;
+            font-weight: bold;
+        }
+
+        /* Voz de Disparia (mantenida en #ff9999) pero el tono de la escena es Neutral */
+        .disparia-voice { 
+            color: #ff9999; 
+            text-shadow: 0 0 8px rgba(255, 153, 153, 0.8);
+            display: block;
+            padding: 10px;
+        }
+
+        /* Botón cambiado a un tono neutro/ámbar */
+        button {
+            margin-top: 30px;
+            padding: 12px 25px;
+            font-size: 1.1em;
+            background-color: #8a6c3f; /* Marrón-dorado oscuro */
+            border: 2px solid #ffcc66;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s, transform 0.2s;
+            display: block; 
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        button:hover {
+            background-color: #a88d5e;
+            transform: scale(1.02);
+            box-shadow: 0 0 10px #ffcc66;
+        }
+    </style>
+</head>
+<body>
+    <div class="dialogue-box final-box">
+        <h1>El Eco del Caos</h1>
+        <h2>Disparia — Neutral Ending</h2>
+        
+        <p>Elegiste la <strong>Amplitud</strong>, pero tu lógica fue inconsistente. El vórtice de la puerta te expulsa con violencia.</p>
+        <p>Despiertas. Estás en tu propia cama, el corazón latiéndote. Todo parece normal, pero al caminar, las cosas no están donde deberían. Un libro se mueve levemente al borde de la mesa, la llave de la puerta no aparece, hay un desorden sutil pero constante. El <strong>Caos</strong> te ha seguido.</p>
+        <p>La voz de Disparia te sigue con burla.</p>
+        <p class="voice-line disparia-voice">Saliste del sueño, pero el <strong>Rango</strong> te marcó. Ahora cada día es una nueva variable. Disfruta de la incertidumbre.</p>
+        
+        <button onclick="window.location.href='../../index.html'">Volver a Empezar</button>
+    </div>
+</body>
+  </html>
+      
