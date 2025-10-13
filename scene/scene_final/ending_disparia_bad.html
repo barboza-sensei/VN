@@ -1,1 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>El Vacío de la Amplitud</title>
+    <link rel="stylesheet" href="../../style.css"> 
+    <style>
+        /* -------------------------------------------------------------------- */
+        /* 1. ESTILOS DEL CUERPO (ATMOESFERA DE FALLA/VACÍO) */
+        /* -------------------------------------------------------------------- */
+        body {
+            /* IMAGEN DE FONDO: Vacío/Glitch/Dispersión */
+            background-image: url('assets/bg/final_vacio.png'); 
+            background-size: cover;
+            background-position: center;
+            /* Color base casi negro */
+            background-color: #0d0d0d; 
+            background-attachment: fixed;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            font-family: Georgia, serif; 
+        }
 
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* Tinte rojo/negro para sensación de alarma y estancamiento */
+            background: rgba(40, 0, 0, 0.6); 
+            z-index: -1; 
+        }
+
+        /* -------------------------------------------------------------------- */
+        /* 2. CAJA DE DIÁLOGO (FALLA FATAL) */
+        /* -------------------------------------------------------------------- */
+        .final-box {
+            /* Fondo muy oscuro, casi negro total */
+            background-color: rgba(10, 10, 10, 0.98); 
+            padding: 40px;
+            border-radius: 10px;
+            max-width: 650px;
+            width: 90%;
+            /* Sombra y borde de ALARMA/ERROR (Rojo oscuro) */
+            box-shadow: 0 0 30px rgba(204, 0, 0, 0.4), 0 0 10px rgba(102, 0, 0, 0.8); 
+            border: 2px solid #cc0000; 
+            animation: fadeInBox 2s ease-out forwards;
+            color: #f0f0f0;
+            text-align: left; 
+        }
+
+        @keyframes fadeInBox {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* -------------------------------------------------------------------- */
+        /* 3. TIPOGRAFÍA Y ESTILOS ESPECÍFICOS */
+        /* -------------------------------------------------------------------- */
+        h1 {
+            /* Color de ALARMA (Rojo oscuro) */
+            color: #cc0000; 
+            font-size: clamp(2em, 6vw, 3em);
+            text-shadow: 0 0 15px #ff3333;
+            margin-bottom: 5px; 
+            text-align: center; 
+        }
+        
+        /* ESTILO DEL SUBTÍTULO (BAD ENDING) */
+        h2 {
+            /* Color de ALARMA */
+            color: #cc0000; 
+            font-size: clamp(0.9em, 2.5vw, 1.2em); 
+            font-weight: 500;
+            margin-top: 0; 
+            margin-bottom: 25px; 
+            text-align: center;
+            opacity: 0.95;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* Resaltados (strong) en Rojo vivo */
+        strong, .resaltado {
+            color: #ff3333;
+            font-weight: bold;
+            text-shadow: 0 0 5px rgba(255, 51, 51, 0.5);
+        }
+
+        p {
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin: 15px 0;
+            text-align: justify;
+        }
+        
+        .voice-line {
+            margin-top: 25px;
+            font-style: italic;
+            font-weight: bold;
+        }
+
+        /* Voz de Disparia (mantenida en #ff9999, pero el tono de la escena es oscuro) */
+        .disparia-voice { 
+            color: #ff9999; 
+            text-shadow: 0 0 8px rgba(255, 153, 153, 0.8);
+            display: block;
+            padding: 10px;
+        }
+
+        /* Botón de ALARMA/ERROR */
+        button {
+            margin-top: 30px;
+            padding: 12px 25px;
+            font-size: 1.1em;
+            background-color: #660000; /* Rojo muy oscuro, casi borgoña */
+            border: 2px solid #cc0000;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s, transform 0.2s;
+            display: block; 
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        button:hover {
+            background-color: #800000;
+            transform: scale(1.02);
+            box-shadow: 0 0 10px #cc0000;
+        }
+    </style>
+</head>
+<body>
+    <div class="dialogue-box final-box">
+        <h1>El Vacío de la Amplitud</h1>
+        <h2>Disparia — Bad Ending</h2>
+        
+        <p>Intentaste la <strong>Amplitud</strong> sin el conocimiento. El <strong>Rango</strong> se expande más allá de tu capacidad de percibir, y la puerta te consume.</p>
+        <p>No despiertas. Tu conciencia se ha dispersado. Eres el aire, el sonido, la sombra. No tienes forma, ni límites, ni memoria. Estás atrapado en un <strong>Rango Infinito</strong> de la pesadilla, incapaz de volverte un Punto de identidad.</p>
+        <p>Disparia grita, su voz desvaneciéndose en el ruido blanco.</p>
+        <p class="voice-line disparia-voice">Demasiado libre. Te has vuelto un fantasma en el sueño, sin la precisión para volver a ser tú mismo.</p>
+        
+        <button onclick="window.location.href='../../index.html'">Volver a Empezar</button>
+    </div>
+</body>
+  </html>
+      
