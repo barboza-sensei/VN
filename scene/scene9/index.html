@@ -47,6 +47,8 @@
     .equalis-voice { color: #aaffff; text-shadow: 0 0 5px rgba(170, 255, 255, 0.4); } 
     .disparia-voice { color: #ff9999; text-shadow: 0 0 5px rgba(255, 153, 153, 0.4); } 
     .old-man-voice { color: #ffcc66; text-shadow: 0 0 5px rgba(255, 204, 102, 0.4); } 
+    /* NUEVO: Color para la voz de Equalis/Disparia fusionada */
+    .dual-voice { color: #E0BBE4; text-shadow: 0 0 8px rgba(224, 187, 228, 0.7); font-style: italic; }
   </style>
 </head>
 
@@ -117,13 +119,13 @@
     
     // Transiciones narrativas entre fases (AJUSTADAS)
     const narrativeTransition = [
-        // Después de Fase 1 (Precisión) -> Lanzamos el diálogo de Disparia y luego el Desafío 2
+        // Después de Fase 1 (Precisión) -> Diálogo de Disparia para presentar el segundo desafío
         { state: 1, content: [
             { type: 'voice', speaker: 'Disparia', content: "¡Ahora mira aquí! La **Cerradura de Amplitud** exige el **Rango**. Es la **Desigualdad**. Define la naturaleza de su solución."}
         ]},
-        // Después de Fase 2 (Amplitud) -> Lanzamos el texto de la Elección Final
+        // Después de Fase 2 (Amplitud) -> Diálogo de la Voz Dual para la Elección Final
         { state: 2, content: [
-            { type: 'narrative', content: "Has comprendido la verdad de ambas cerraduras. La Puerta Flotante está lista para abrirse. Una voz dual resuena por última vez." }
+            { type: 'voice', speaker: 'Equalis/Disparia', content: "La voz dual resuena: Has comprendido la verdad de ambas cerraduras. La Puerta Flotante está lista para abrirse. **Tu elección definirá el final.**"}
         ]}
     ];
 
@@ -161,6 +163,7 @@
             let voiceClass;
             if (speaker.toLowerCase() === 'equalis') { voiceClass = 'equalis-voice'; } 
             else if (speaker.toLowerCase() === 'disparia') { voiceClass = 'disparia-voice'; } 
+            else if (speaker.toLowerCase() === 'equalis/disparia') { voiceClass = 'dual-voice'; } 
             else { voiceClass = 'resaltado'; }
             textEl.innerHTML = `<span class="${voiceClass}">${speaker}: ${content}</span>`;
         } else {
@@ -171,7 +174,6 @@
         void textEl.offsetWidth; 
     }
 
-    // Índice para recorrer los diálogos de transición
     let transitionLineIndex = 0;
 
     function startChallenge() {
@@ -236,7 +238,7 @@
         const transition = narrativeTransition.find(t => t.state === challengeState);
         
         if (transition && transitionLineIndex < transition.content.length) {
-            // Mostrar la siguiente línea de transición
+            // Mostrar la siguiente línea de transición (ej. diálogo de Disparia después de Fase 1)
             const lineData = transition.content[transitionLineIndex];
             
             let content = formatText(lineData.content);
@@ -246,6 +248,7 @@
                 let voiceClass;
                 if (speaker.toLowerCase() === 'equalis') { voiceClass = 'equalis-voice'; } 
                 else if (speaker.toLowerCase() === 'disparia') { voiceClass = 'disparia-voice'; } 
+                else if (speaker.toLowerCase() === 'equalis/disparia') { voiceClass = 'dual-voice'; }
                 else { voiceClass = 'resaltado'; }
                 textEl.innerHTML = `<span class="${voiceClass}">${speaker}: ${content}</span>`;
             } else {
@@ -265,10 +268,10 @@
         textEl.innerHTML = `<p class="challenge-question fade-text">${formatText(question)}</p>`;
         choicesEl.innerHTML = "";
         
-        // Diálogo de Equalis/Disparia adaptado a la puntuación del jugador (guía final)
+        // Guía final de la voz dual adaptada a la puntuación del jugador
         const scoreNarrative = score >= 0 
-            ? `<p><span class="equalis-voice">Equalis: Has honrado la Lógica. Elige la Precisión, el Punto.</span></p>`
-            : `<p><span class="disparia-voice">Disparia: Has coqueteado con el Caos. Elige la Amplitud, el Rango.</span></p>`;
+            ? `<p><span class="dual-voice">La voz dual te susurra: Tu camino ha sido regido por la Lógica. Elige la Precisión, el Punto.</span></p>`
+            : `<p><span class="dual-voice">La voz dual te susurra: Tu camino ha abrazado el Caos. Elige la Amplitud, el Rango.</span></p>`;
         
         textEl.innerHTML += scoreNarrative;
         
@@ -318,4 +321,5 @@
     window.onload = showLine;
   </script>
 </body>
-</html>
+  </html>
+  
