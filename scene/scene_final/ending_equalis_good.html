@@ -9,20 +9,20 @@
         /* 1. ESTILOS DEL CUERPO (ATMOESFERA DE ORDEN) */
         /* -------------------------------------------------------------------- */
         body {
-            /* Fondo de orden/paz */
             background-image: url('assets/bg/final_orden.png'); 
             background-size: cover;
             background-position: center;
-            background-color: #050a10; /* Color base muy oscuro, casi negro-azul */
+            background-color: #050a10; 
             background-attachment: fixed;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             padding: 20px;
+            /* FUENTE ESTÁNDAR: Sustitución de Google Font */
+            font-family: Georgia, serif; 
         }
 
-        /* Capa de tinte azul/cian sutil sobre el fondo */
         body::before {
             content: '';
             position: fixed;
@@ -30,7 +30,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 10, 30, 0.5); /* Tinte azul oscuro */
+            background: rgba(0, 10, 30, 0.5);
             z-index: -1; 
         }
 
@@ -38,17 +38,18 @@
         /* 2. CAJA DE DIÁLOGO (SOLUCIÓN/PUNTO FIJO) */
         /* -------------------------------------------------------------------- */
         .final-box {
-            /* Estilo de la caja central */
-            background-color: rgba(5, 15, 25, 0.98); /* Fondo casi negro, con tinte azul */
+            background-color: rgba(5, 15, 25, 0.98); 
             padding: 40px;
             border-radius: 10px;
             max-width: 650px;
             width: 90%;
-            box-shadow: 0 0 30px rgba(170, 255, 255, 0.6), 0 0 10px rgba(170, 255, 255, 0.8); /* Doble sombra cian */
-            border: 2px solid #aaffff; /* Borde de Equalis */
+            box-shadow: 0 0 30px rgba(170, 255, 255, 0.6), 0 0 10px rgba(170, 255, 255, 0.8); 
+            border: 2px solid #aaffff;
             animation: fadeInBox 2s ease-out forwards;
             color: #f0f0f0;
-            text-align: center;
+            
+            /* CORRECCIÓN 3: Alineación a la izquierda para el texto principal */
+            text-align: left; 
         }
 
         @keyframes fadeInBox {
@@ -60,43 +61,56 @@
         /* 3. TIPOGRAFÍA Y ESTILOS ESPECÍFICOS */
         /* -------------------------------------------------------------------- */
         h1 {
-            color: #aaffff; /* Cian de Equalis */
+            color: #aaffff; 
             font-size: clamp(2em, 6vw, 3em);
             text-shadow: 0 0 15px #66ccff;
             margin-bottom: 30px;
+            /* Hacemos una excepción para el título: debe estar centrado */
+            text-align: center; 
+        }
+        
+        /* CORRECCIÓN 2: Estilo para los términos en negrita (doble asterisco) */
+        strong, .resaltado {
+            color: #aaffff; /* Color cian para que resalte */
+            font-weight: bold;
+            text-shadow: 0 0 5px rgba(170, 255, 255, 0.5);
         }
 
         p {
             font-size: 1.1em;
             line-height: 1.6;
             margin: 15px 0;
+            text-align: justify; /* Justificado se ve mejor en bloques largos */
         }
-
+        
+        /* La voz de Equalis y la línea de diálogo */
         .voice-line {
             margin-top: 25px;
             font-style: italic;
             font-weight: bold;
         }
 
-        /* Aseguramos que la voz de Equalis resalte */
         .equalis-voice { 
             color: #aaffff; 
             text-shadow: 0 0 8px rgba(170, 255, 255, 0.8);
-            display: block; /* Para que ocupe su propia línea con el margen de arriba */
-            padding: 10px;
+            display: block;
+            padding: 10px 0;
         }
 
-        /* Estilo para el botón de volver (asumiendo que hereda .button del style.css) */
         button {
             margin-top: 30px;
             padding: 12px 25px;
             font-size: 1.1em;
-            background-color: #0088aa; /* Color sólido de Equalis */
+            background-color: #0088aa; 
             border: 2px solid #aaffff;
             color: white;
             cursor: pointer;
             border-radius: 5px;
             transition: background-color 0.3s, transform 0.2s;
+            /* Centramos el botón */
+            display: block; 
+            margin-left: auto;
+            margin-right: auto;
         }
 
         button:hover {
@@ -109,12 +123,11 @@
 <body>
     <div class="dialogue-box final-box">
         <h1>Despertar Lógico</h1>
-        <p>Aceptaste la **Precisión** con maestría. La Puerta Flotante se vuelve una luz cálida y familiar.</p>
+        <p>Aceptaste la <strong>Precisión</strong> con maestría. La Puerta Flotante se vuelve una luz cálida y familiar.</p>
         <p>Despiertas. Estás en tu propia cama. Afuera, la calle es tranquila, los pájaros cantan con ritmos perfectamente medidos. En la mesa de noche, una taza de café humea. Todo está en un orden sereno y absoluto, tal como lo definiste.</p>
-        <p>Equalis sonríe, su voz ahora tu pensamiento</p>
-        <p class="voice-line equalis-voice">El sueño ha terminado. Tu realidad es la ecuación resuelta, el **Punto Fijo** que buscabas. No hay variables. Hay paz.</p>
+        <p>Equalis sonríe, su voz ahora tu pensamiento.</p>
+        <p class="voice-line equalis-voice">El sueño ha terminado. Tu realidad es la ecuación resuelta, el <strong>Punto Fijo</strong> que buscabas. No hay variables. Hay paz.</p>
         <button onclick="window.location.href='../../index.html'">Volver a Empezar</button>
     </div>
 </body>
-    </html>
-    
+</html>
