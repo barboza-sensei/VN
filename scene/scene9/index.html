@@ -8,6 +8,7 @@
   <style>
     /* Estilos base (Mantenidos) */
     body {
+        /* IMAGEN INICIAL (Puerta flotante) */
         background-image: url('assets/bg/puerta_flotante.png'); 
         background-color: #0c0c1a;
         background-size: cover;
@@ -42,7 +43,7 @@
     #nextBtn::after { content: none !important; visibility: hidden; }
     #nextBtn { text-indent: 0; overflow: visible; }
 
-    /* DEFINICIÓN DE COLORES Y BARRA LATERAL (Fuerzo el estilo de barra aquí para garantizar la visualización) */
+    /* DEFINICIÓN DE COLORES Y BARRA LATERAL */
     
     /* Variables de Color (para la barra y el texto) */
     .equalis-voice { --voice-color: #aaffff; color: var(--voice-color); text-shadow: 0 0 5px rgba(170, 255, 255, 0.4); } 
@@ -51,11 +52,11 @@
     /* Voz Dual: Fusión de colores (Magenta/Púrpura) */
     .dual-voice { --voice-color: #E0BBE4; color: var(--voice-color); text-shadow: 0 0 8px rgba(224, 187, 228, 0.7); font-style: italic; }
     
-    /* APLICACIÓN DE LA BARRA LATERAL AL CONTENEDOR DE VOZ */
+    /* APLICACIÓN DE LA BARRA LATERAL AL CONTENEDOR DE VOZ (Garantizado) */
     .voice-line { 
-        border-left: 3px solid var(--voice-color); /* Usa el color específico de la voz */
+        border-left: 3px solid var(--voice-color); 
         padding-left: 10px;
-        margin-left: 0; /* Asegura que la barra esté bien pegada */
+        margin-left: 0;
     }
   </style>
 </head>
@@ -120,11 +121,10 @@
         ]
     };
     
-    // Transiciones narrativas entre fases (CORREGIDO: Disparia restaurada, Voz Dual separada)
+    // Transiciones narrativas entre fases (CORREGIDO Y CONFIRMADO)
     const narrativeTransition = [
         // state: 1 (Después de Fase 1) -> Diálogo de Disparia para presentar el segundo desafío
         { state: 1, content: [
-            // ESTA FUE LA LÍNEA QUE SE HABÍA PERDIDO
             { type: 'voice', speaker: 'Disparia', content: "¡Ahora mira aquí! La **Cerradura de Amplitud** exige el **Rango**. Es la **Desigualdad**. Define la naturaleza de su solución."}
         ]},
         // state: 2 (Después de Fase 2) -> Diálogo de la Voz Dual (en tres líneas)
@@ -237,12 +237,12 @@
             resultContent = (phase === 1) ? challengeData.phase1.failure : challengeData.phase2.failure;
         }
         
-        // Generar el objeto de la línea de retroalimentación
         const feedbackLine = { type: 'voice', speaker: speaker, content: resultContent };
-        renderTextLine(feedbackLine); // Usar la función renderTextLine para aplicar el estilo de voz
+        renderTextLine(feedbackLine);
         choicesEl.innerHTML = ''; 
         
         nextBtn.style.display = 'inline-flex';
+        // Despues de la retroalimentación, siempre queremos avanzar a la transición
         nextBtn.onclick = handleTransition;
     }
 
@@ -252,11 +252,12 @@
         if (transition && transitionLineIndex < transition.content.length) {
             const lineData = transition.content[transitionLineIndex];
             
-            renderTextLine(lineData); // Usar la función unificada para renderizar
+            renderTextLine(lineData);
             
             transitionLineIndex++;
             nextBtn.style.display = 'inline-flex';
         } else {
+            // Si la transición de ese estado se ha agotado (p. ej., después de la línea 3 del state: 2)
             startChallenge();
         }
     }
@@ -266,7 +267,7 @@
         textEl.innerHTML = `<p class="challenge-question fade-text">${formatText(question)}</p>`;
         choicesEl.innerHTML = "";
         
-        // El mensaje de voz dual neutro (ya cubierto por la transición state: 2, por lo que este campo se deja limpio)
+        // No hay diálogo de voz dual aquí; el diálogo se maneja por la transición de 3 pasos (state: 2)
         
         choices.forEach(choice => {
             const btn = document.createElement("button");
