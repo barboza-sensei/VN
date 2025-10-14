@@ -9,7 +9,7 @@
     /* Estilos locales para la atmósfera de esta escena */
     body {
         /* IMAGEN INICIAL (Reloj Detenido) */
-        background-image: url('assets/bg/reloj_detenido.png'); 
+        background-image: url('assets/bg/reloj_detenido.jpg'); 
         background-color: #0c0c1a;
         background-size: cover;
         background-position: center;
@@ -30,7 +30,7 @@
         width: 90%; max-width: 800px; padding: 1.5em;
         background-color: rgba(15, 15, 15, 0.3); 
         border: 1px solid rgba(255, 255, 255, 0.1); 
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); border-radius: 5px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
     }
     #choices { display: flex; flex-direction: column; gap: 0; margin-top: 15px; }
     .choice-btn {
@@ -61,8 +61,8 @@
   <script>
     let score = parseInt(localStorage.getItem('score') || 0);
 
-    const IMG_GENERAL = 'assets/bg/reloj_detenido.png';
-    const IMG_DESAFIO = 'assets/bg/base_reloj_desafio.png';
+    const IMG_GENERAL = 'assets/bg/reloj_detenido.jpg';
+    const IMG_DESAFIO = 'assets/bg/base_reloj_desafio.jpg';
 
     function formatText(content) {
         return content.replace(/\*\*(.*?)\*\*/g, '<span class="resaltado">$1</span>');
