@@ -273,25 +273,65 @@
         });
     }
 
-    function handleFinalChoice(choice) {
-        Array.from(choicesEl.children).forEach(btn => btn.disabled = true);
-        
-        let transitionData;
-        if (choice.isChoiceA) {
-            transitionData = challengeData.finalChoice.transitionA;
-        } else {
-            transitionData = challengeData.finalChoice.transitionB;
-        }
+function handleFinalChoice(choice) { 
+	Array.from(choicesEl.children).forEach(btn => btn.disabled = true); 
+	
+	let finalFile = ""; 
 
-        textEl.innerHTML = transitionData.text; 
-        choicesEl.innerHTML = ''; 
-        
-        nextBtn.style.display = 'inline-flex';
-        nextBtn.onclick = () => {
-            localStorage.setItem('score', score); 
-            goTo(transitionData.nextScene);
-        };
-    }
+	// 1. Determinar la CALIFICACIÓN (Eje Horizontal) 
+	let quality; 
+	if (score >= 7) { // Umbral para Good (ajustar si es necesario) 
+		quality = "Good"; 
+	} else if (score >= 4) { // Umbral para Neutral 
+		quality = "Neutral"; 
+	} else { // Umbral para Bad 
+		quality = "Bad"; 
+	} 
+	// 2. Determinar la RUTA (Eje Vertical) y el archivo final 
+	if (choice.isChoiceA) { 
+		// RUTA EQUALIS (Destino Singular) 
+		switch(quality) { 
+			case "Good": 
+				finalFile = "ending_equalis_good.html"; // E1 
+				break; 
+			case "Neutral": 
+				finalFile = "ending_equalis_neutral.html"; // E2 
+				break; 
+			case "Bad": 
+				finalFile = "ending_equalis_bad.html"; // E3 
+				break; 
+		}	 
+	} else { // RUTA DISPARIA (Camino Infinito) 
+		switch(quality) { 
+			case "Good": 
+				finalFile = "ending_disparia_good.html"; // D1 
+				break; 
+			case "Neutral": 
+				finalFile = "ending_disparia_neutral.html"; // D2 
+				break; 
+			case "Bad": 
+				finalFile = "ending_disparia_bad.html"; // D3 
+				break; 
+		} 
+	} 
+	
+	// Mostrar el texto de la transición ANTES de ir al final 
+	let transitionText = choice.isChoiceA 
+		? challengeData.finalChoice.transitionA.text 
+		: challengeData.finalChoice.transitionB.text; 
+
+	textEl.innerHTML = transitionText; 
+	choicesEl.innerHTML = ''; 
+	
+	nextBtn.style.display = 'inline-flex'; 
+	nextBtn.onclick = () => { 
+		// Guardamos el puntaje final (opcional, si los finales lo usan) 
+		localStorage.setItem('score', score); 
+		// Navegar al archivo de final específico 
+		goTo(`../scene_final/${finalFile}`); 
+	};
+}
+
 
     function goTo(relativePath) {
         const base = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
