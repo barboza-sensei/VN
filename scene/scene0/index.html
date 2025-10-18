@@ -9,7 +9,7 @@
     /* Estilos locales para la atmósfera de esta escena */
     body {
         /* IMAGEN INICIAL (Imagen 1) */
-        background-image: url('assets/bg/calle_oscura_sin_luces_inicio.png'); 
+        background-image: url('assets/bg/calle_oscura_sin_luces_inicio.jpg'); 
         background-color: #0d0d0d;
         background-size: cover; 
         background-position: center;
@@ -86,7 +86,7 @@
       id: 0,
       title: "La calle sin principio",
       text: [
-        { type: 'narrative', content: "Despertás de pie, en el centro exacto de la calle. No hay rastro de si estabas caminando, ni memoria de haber llegado aquí."}, // i=0
+        { type: 'narrative', content: "Despertás de pie, en el centro exacto de la calle. Intentás recordar de dónde venís o hacia dónde ibas, pero tu mente esta en blanco, no lográs recordar nada."}, // i=0
         { type: 'narrative', content: "La calle es una línea perfecta, fríamente recta, que se extiende hasta desvanecerse en la oscuridad."}, // i=1
         { type: 'narrative', content: "Los faroles son meros bocetos de metal, estructuras desnudas y sin luz."}, // i=2
         { type: 'narrative', content: "Una brisa tenue, predecible, te empuja con una insistencia sutil hacia adelante."}, // i=3
@@ -95,8 +95,8 @@
         { type: 'voice', speaker: 'Murmullo', content: "La elección define el primer movimiento en esta realidad."} // i=6 (Mantiene Imagen 2)
       ],
       choices: [
-        { text: "Doblar a la izquierda (La Grieta en el Patrón)", nextScene: "../scene1/index.html" },
-        { text: "Doblar a la derecha (El Callejón Orgánico)", nextScene: "../scene1/index.html" }
+        { text: "Doblar a la izquierda (Esquina)", nextScene: "../scene1/index.html" },
+        { text: "Doblar a la derecha (Callejón)", nextScene: "../scene1/index.html" }
       ]
     };
 
@@ -107,9 +107,9 @@
     let i = 0;
     
     // Rutas de imagen
-    const IMG_GENERAL = 'assets/bg/calle_oscura_sin_luces_inicio.png';
+    const IMG_GENERAL = 'assets/bg/calle_oscura_sin_luces_inicio.jpg';
     const IMG_CALLEJON = 'assets/bg/calle_oscura_sin_luces_cerca_callejon.png'; 
-    // const IMG_CALLEJON = 'assets/bg/calle_oscura_sin_luces_cerca_callejon.png'; // Usaremos IMG_GENERAL como fallback
+    const IMG_ESQUINA = 'assets/bg/calle_oscura_sin_luces_cerca_esquina.jpg';
 
     function changeBackground(imageUrl) {
         document.body.style.backgroundImage = `url('${imageUrl}')`;
@@ -123,10 +123,10 @@
       // LÓGICA DE CAMBIO DE FONDO EJECUTADA
       if (i === 4) { 
           // Al llegar a la descripción de la callejon, mostramos la vista más cercana/de detalle (Imagen 2)
-          changeBackground(IMG_CALLEJON);
+          changeBackground(IMG_ESQUINA);
       } else if (i === 5) {
           // Si el jugador tuviera la Imagen 3, la cambiaríamos aquí. Por ahora, usamos la Imagen 2 como fallback, ya que es la vista más cercana.
-          // changeBackground(IMG_CALLEJON); 
+          changeBackground(IMG_CALLEJON); 
       }
       // Nota: Si solo tiene dos fondos, es más eficiente usar la imagen 2 para las descripciones y la elección.
 
