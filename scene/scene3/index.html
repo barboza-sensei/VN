@@ -30,7 +30,7 @@
         width: 90%; max-width: 800px; padding: 1.5em;
         background-color: rgba(15, 15, 15, 0.3); 
         border: 1px solid rgba(255, 255, 255, 0.1); 
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); border-radius: 5px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
     }
     #choices { display: flex; flex-direction: column; gap: 0; margin-top: 15px; }
     .choice-btn {
@@ -62,7 +62,7 @@
     let score = parseInt(localStorage.getItem('score') || 0);
 
     const IMG_GENERAL = 'assets/bg/espejo_roto.png';
-    const IMG_DESAFIO = 'assets/bg/espejo_desafio.png';
+    const IMG_DESAFIO = 'assets/bg/espejo_desafio.jpg';
 
     function formatText(content) {
         return content.replace(/\*\*(.*?)\*\*/g, '<span class="resaltado">$1</span>');
@@ -80,14 +80,14 @@
         { type: 'narrative', content: "El suelo vuelve a ser asfalto mojado. El camino es ahora una serie de **esquinas que se multiplican**, ofreciendo un número imposible de giros. La sensación de laberinto se intensifica."}, // i=0
         { type: 'narrative', content: "En la siguiente esquina, apoyado contra una pared carcomida, hay un espejo grande y anticuado. Refleja la calle, pero invertida y ligeramente distorsionada."}, // i=1 (IMG_GENERAL)
         { type: 'voice', speaker: 'Equalis', content: "Lo que ves no es la verdad, sino la **inversión**. El Caos intenta engañarte con una imagen doble. Debes restaurar el orden a través de la inversión lógica."}, // i=2
-        { type: 'narrative', content: "Te acercás. En la superficie del espejo, una fórmula aparece como si alguien la escribiera con vapor: '-2x + 1 < 5'."}, // i=3
+        { type: 'narrative', content: "Te acercás. En la superficie del espejo, una fórmula aparece como si alguien la escribiera con una luz cegadora: '-2x + 1 < 5'."}, // i=3
         
         // ¡DISPARIA HACE SU VOZ MÁS CLARA Y NOMBRADA!
         { type: 'voice', speaker: 'Disparia', content: "Sí, ríndete a la **Negación**. Mi error es tu libertad. Esa sonrisa en el cristal, es la tuya, liberada de la aburrida verdad."}, // i=4 (IMG_DESAFIO)
-        { type: 'narrative', content: "Tu reflejo sonríe antes de que vos mismo lo hagas. Sientes una voz cálida, pero errática, que contrasta brutalmente con la frialdad de Equalis."}, // i=5
+        { type: 'narrative', content: "Tu reflejo sonríe antes de que vos mismo lo hagas. Sientes una voz cálida, pero errática, que contrasta brutalmente con la frialdad de  la primera que escuchaste."}, // i=5
         
         { type: 'challenge', 
-          question: "Fórmula de la Inversión: -2x + 1 < 5 ¿Qué rango de valores 'x' satisface la condición **correcta**?", 
+          question: "¿Qué rango de valores de 'x' satisface la condición **correcta** para ‘-2x + 1 < 5’?",
           answer: "x > -2", 
           success: "Equalis: La inversión ha sido controlada. La Lógica ha superado la Negación. (+1 Lógica).", 
           // Nombre de Disparia en el mensaje de fallo
