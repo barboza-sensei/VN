@@ -9,7 +9,7 @@
     /* Estilos locales para la atmósfera de esta escena */
     body {
         /* IMAGEN INICIAL (Marquesina Antigua) */
-        background-image: url('assets/bg/marquesina_antigua.png'); 
+        background-image: url('assets/bg/marquesina_antigua.jpg'); 
         background-color: #0c0c1a;
         background-size: cover;
         background-position: center;
@@ -28,9 +28,9 @@
     #main-dialogue-box {
         position: absolute; bottom: 5vh; left: 50%; transform: translateX(-50%);
         width: 90%; max-width: 800px; padding: 1.5em;
-        background-color: rgba(15, 15, 15, 0.9); 
+        background-color: rgba(15, 15, 15, 0.3); 
         border: 1px solid rgba(255, 255, 255, 0.1); 
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); border-radius: 5px; 
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
     }
     #choices { display: flex; flex-direction: column; gap: 0; margin-top: 15px; }
     .choice-btn {
@@ -107,7 +107,7 @@
   <script>
     let score = parseInt(localStorage.getItem('score') || 0);
 
-    const IMG_GENERAL = 'assets/bg/marquesina_antigua.png';
+    const IMG_GENERAL = 'assets/bg/marquesina_antigua.jpg';
     const IMG_DESAFIO = 'assets/bg/puerta_ecuacion.png';
 
     function formatText(content) {
@@ -125,11 +125,11 @@
         { type: 'narrative', content: "El sendero se curva una última vez y te deja frente a una imponente estructura: un viejo teatro abandonado. Su marquesina antigua titila descontroladamente."},
         { type: 'narrative', content: "En el cartel, letras de neón cambian de orden sin parar, creando una sensación de **secuencia rota**."},
         { type: 'voice', speaker: 'Equalis', content: "Cada paso cuenta, pero solo si los das en el **orden** correcto. El proceso es la única llave."},
-        { type: 'voice', speaker: 'Disparia', content: "La voz invisible de Disparia te llega como un eco burlón: '¿Por qué seguir el orden cuando la locura es más divertida?'"},
+        { type: 'voice', speaker: 'Disparia', content: "¿Por qué seguir el orden cuando la locura es más divertida?"},
         { type: 'narrative', content: "En la puerta, una ecuación fragmentada ha sido grabada. Debes resolverla paso a paso para abrirla: (3x − 2)/4 + 5 = 8."},
         
         { type: 'challenge', 
-          question: "Ordená los pasos de forma correcta para despejar 'x' y abrir la puerta. (Recordá invertir el orden de las operaciones: de afuera hacia adentro).", 
+          question: "Ordená los pasos de forma correcta para despejar 'x' y abrir la puerta.", 
           steps: [
             { text: "Restar 5 en ambos lados", index: 0 }, 
             { text: "Multiplicar por 4", index: 1 }, 
@@ -175,7 +175,7 @@
       choicesEl.classList.remove('ordering-mode'); 
       choicesEl.style.padding = '0'; 
       choicesEl.style.border = 'none'; 
-      choicesEl.style.borderTop = '1px solid rgba(255, 255, 255, 0.1)'; 
+      choicesEl.style.borderTop = '1px solid rgba(255, 255, 255, 0)'; 
       choicesEl.style.gap = '0'; 
 
       let content = formatText(lineData.content);
