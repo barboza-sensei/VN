@@ -78,17 +78,17 @@
       title: "El Reloj Detenido",
       text: [
         // LÍNEA DE CONTINUIDAD
-        { type: 'narrative', content: "El camino anterior se sella, ya sea fundiéndose en luz o colapsando en la oscuridad. Siguiendo un eco metálico distante, emergés a una plaza extraña."}, // i=0
+        { type: 'narrative', content: "A tus ojos les cuesta acostumbrarse nuevamente a la luz del ambiente.Confiando en la providencia más que en tu visión avanzaste. Siguiendo un eco metálico distante, emergés a una plaza extraña."}, // i=0
         { type: 'narrative', content: "En el centro se alza una torre gigantesca. Un reloj en su cúspide marca las tres, pero sus agujas tiemblan, incapaces de avanzar. Un eco metálico repite una frase: 'Solo la **distinción** mueve el tiempo.'"}, // i=1 (CAMBIO DE FONDO AQUÍ)
         { type: 'voice', speaker: 'Equalis', content: "El tiempo no puede fluir sin una **distinción** clara. El orden se ha fragmentado. Debes restaurar el principio de la Relación."}, // i=2
-        { type: 'narrative', content: "Te acercás a la base de la torre. La piedra está gastada y, grabada toscamente, hay una fórmula sin sentido: 3x - 6 = 9."}, // i=3
-        { type: 'narrative', content: "Este no es un problema de números. Es un problema de **definición**."}, // i=4
+        { type: 'narrative', content: "Te acercás a la base de la torre.  La piedra está gastada. En lo alto de la torre, bajo el reloj, y grabada toscamente, hay una fórmula a la que no encuentras sentido: 3x - 6 = 9."}, // i=3
+        { type: 'narrative', content: "De algún modo estás seguro de una cosa. Este no es un problema de números. Es un problema de **definición**."}, // i=4
         { type: 'challenge', 
           // DESAFÍO: PREGUNTA TEÓRICA
-          question: "¿Qué símbolo matemático es esencialmente diferente en la naturaleza de una **Inecuación** (Desigualdad), diferenciándola de una **Ecuación** simple?", 
+          question: "¿Qué símbolo matemático es esencialmente diferente en la naturaleza de una **Inecuación**, diferenciándola de una **Ecuación** simple?", 
           answer: "Símbolo de desigualdad", 
           success: "Equalis: La distinción es el ancla. La Relación ha sido restaurada. (+1 Lógica).", 
-          failure: "Murmullo Averso: La confusión es un regalo. La niebla se hace más densa. (-1 Lógica).", 
+          failure: "Murmullo: La confusión es un regalo. La niebla se hace más densa. (-1 Lógica).", 
           transitionSuccess: { text: "El reloj emite un chasquido. Las agujas avanzan un segundo, y el suelo vibra mientras el tiempo intenta moverse. El camino continúa.", nextScene: "../scene3/index.html" },
           transitionFail: { text: "El reloj retrocede una hora. La plaza se siente más pequeña y hostil. Te alejas, sin mirar atrás.", nextScene: "../scene3/index.html" }, 
           choices: [
