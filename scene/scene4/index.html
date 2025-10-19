@@ -28,10 +28,9 @@
     #main-dialogue-box {
         position: absolute; bottom: 5vh; left: 50%; transform: translateX(-50%);
         width: 90%; max-width: 800px; padding: 1.5em;
-        background-color: rgba(15, 15, 15, 0.9); 
+        background-color: rgba(15, 15, 15, 0.3); 
         border: 1px solid rgba(255, 255, 255, 0.1); 
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4), 0 0 10px rgba(170, 255, 255, 0.1); /* Agrego el neón sutil */
-        border-radius: 8px; /* Redondeo de borde para consistencia */
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
     }
     #choices { display: flex; flex-direction: column; gap: 0; margin-top: 15px; }
     .choice-btn {
@@ -84,10 +83,10 @@
         // LÍNEA DE CONTINUIDAD
         { type: 'narrative', content: "El sendero marcado por el polvo luminoso te lleva a una gran plaza vacía. Es una plaza de invierno, **sin hojas** y con una quietud total."}, // i=0
         { type: 'narrative', content: "Un anciano de rostro serio y tranquilo te mira fijamente desde un banco de hierro. Es la primera figura humana que ves claramente."}, // i=1 (IMG_GENERAL)
-        { type: 'voice', speaker: 'Anciano', content: "—Todo número tiene su **equilibrio**, dice, con una voz que suena a papel seco. La igualdad es la única paz que existe."}, // i=2
+        { type: 'voice', speaker: 'Anciano', content: "—Todo número tiene su **equilibrio**—, dice, con una voz que suena a papel seco. —La igualdad es la única paz que existe.—"}, // i=2
         { type: 'voice', speaker: 'Equalis', content: "La estabilidad final solo se logra donde los pesos son idénticos. Resuelve esta balanza, o el Caos la romperá."}, // i=3
-        { type: 'narrative', content: "El anciano extiende un dedo y escribe la fórmula en el aire con una luz tenue: 'x + 2 = 2x − 3'."}, // i=4 (IMG_DESAFIO)
-        { type: 'voice', speaker: 'Anciano', content: "¿Quién está del otro lado de la balanza?"}, // i=5
+        { type: 'narrative', content: "El anciano extiende un dedo y escribe la fórmula en el aire con una ligereza que la hace casi imperceptible: 'x + 2 = 2x − 3'."}, // i=4 (IMG_DESAFIO)
+        { type: 'voice', speaker: 'Anciano', content: "¿Qué se esconde del otro lado de la balanza?"}, // i=5
         
         { type: 'challenge', 
           question: "¿Qué valor de 'x' devuelve el equilibrio a la balanza: x + 2 = 2x − 3?", 
