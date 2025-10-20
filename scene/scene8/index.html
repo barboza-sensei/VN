@@ -31,7 +31,7 @@
         width: 90%; max-width: 800px; padding: 1.5em;
         background-color: rgba(15, 15, 15, 0.3); 
         border: 1px solid rgba(255, 255, 255, 0.1); 
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); border-radius: 5px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
     }
     #choices { display: flex; flex-direction: column; gap: 0; margin-top: 15px; }
     .choice-btn {
@@ -82,11 +82,11 @@
       text: [
         { type: 'narrative', content: "Entras a un pasaje de ladrillo. El ambiente gélido y húmedo absorbe el sonido, pero tu presencia rompe la calma."}, 
         { type: 'voice', speaker: 'Equalis', content: "El eco de este lugar distorsiona el **equilibrio** en una **desigualdad**."}, 
-        { type: 'voice', speaker: 'Disparia', content: "¡Interesante! ¿Por qué complicarse? La dirección del camino es clara. **Solo tienes que invertir su polaridad (dejarlo positivo) y mantener el rumbo**."}, // ERROR SUGERIDO POR DISPARIA (Cambiar el signo de x, mantener la desigualdad)
-        { type: 'narrative', content: "La humedad del túnel se condensa sobre el ladrillo, formando un **goteo negro y aceitoso que revela una incisión en la pared**: el estado crítico. **-3x < 6**"}, 
+        { type: 'voice', speaker: 'Disparia', content: "¡Interesante! ¿Por qué complicarse? La dirección del camino es clara. **Solo tienes que invertir su polaridad y mantener el rumbo**."}, // ERROR SUGERIDO POR DISPARIA (Cambiar el signo de x, mantener la desigualdad)
+        { type: 'narrative', content: "La humedad del túnel se condensa sobre el ladrillo, formando un **goteo negro y aceitoso que revela una incisión luminosa en la pared**: **-3x < 6**"}, 
         { type: 'voice', speaker: 'Equalis', content: "Esa **oscura atadura** que sujeta la incógnita tiene **polaridad negativa**. ¿Cuál es la ley que rige la dirección de la desigualdad al liberarla?"}, 
         { type: 'challenge', 
-          question: "La **atadura** es $\\mathbf{-3}$. Al forzar su liberación, ¿qué efecto tiene su **polaridad** sobre la dirección del camino desigual?", 
+          question: "La **atadura** es **-3**. Al forzar su liberación, ¿qué efecto tiene su **polaridad** sobre la dirección del camino desigual?", 
           answer: "La regla es que el signo de la desigualdad debe invertirse (cambiar de < a >) cuando se divide o multiplica por un número negativo.",
           success: "Equalis: La ley de la desigualdad ha sido honrada. La dirección se invierte ante la polaridad opuesta. (+1 Lógica).", 
           failure: "Disparia: ¡Un suspiro! Esos pequeños errores son los que hacen la vida interesante. El Caos agradece la confusión. (-1 Lógica).",
