@@ -26,13 +26,16 @@
         width: 90%; max-width: 800px; padding: 1.5em;
         background-color: rgba(15, 15, 15, 0.3); 
         border: 1px solid rgba(255, 255, 255, 0.1); 
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); border-radius: 5px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
     }
     #choices { display: flex; flex-direction: column; gap: 0; margin-top: 15px; }
     .choice-btn {
         background: rgba(0, 0, 0, 0.4); border: none; border-radius: 0; color: #f0f0f0;
         padding: 12px 15px; font-size: 1.1em; text-align: left; transition: all 0.2s ease;
         cursor: pointer; border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
+    }
+	.choice-btn:hover, .choice-btn:focus {
+        background: rgba(40, 40, 40, 0.6); box-shadow: 0 0 0 1px #aaffff; color: #aaffff; outline: none; 
     }
     #nextBtn { text-indent: 0; overflow: visible; }
     
@@ -98,7 +101,7 @@
         },
         phase2: {
             question: "Al referirse a la **Cerradura de Amplitud (Desigualdad)**, ¿cuál es la naturaleza de su conjunto solución en la recta real?",
-            answer: "Es un conjunto de soluciones infinito y continuo, representado por un intervalo o rayo.",
+            answer: "Es un conjunto de soluciones infinito y continuo, representado por un intervalo.",
             success: "El Caos te sonríe. Has abrazado la naturaleza del **Rango** infinito. (+1 Lógica).",
             failure: "¡Qué aburrido! Confundiste el **Rango** con un simple punto. El desorden es continuo. (-1 Lógica).",
             choices: [
@@ -112,7 +115,7 @@
             transitionA: { text: "Aceptas el Destino Singular. La Cerradura de Precisión se ilumina.", nextScene: "../scene_final/ending_equalis.html" },
             transitionB: { text: "Aceptas el Camino Infinito. La Cerradura de Amplitud se enciende.", nextScene: "../scene_final/ending_disparia.html" },
             choices: [
-                { text: "Elijo la **Precisión** de la Igualdad (El Punto / Destino Singular).", isChoiceA: true },
+                { text: "Elijo la <strong>Precisión</strong> de la Igualdad (El Punto / Destino Singular).", isChoiceA: true },
                 { text: "Elijo la **Amplitud** de la Desigualdad (El Rango / Camino Infinito).", isChoiceB: true }
             ]
         }
