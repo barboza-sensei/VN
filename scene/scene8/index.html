@@ -6,8 +6,9 @@
   <title>Escena 8 — El Eco del Túnel</title>
   <link rel="stylesheet" href="../../style.css" />
   <style>
-    /* Estilos omitidos por brevedad, asumiendo que están correctos */
-    /* Estilos locales para la atmósfera de esta escena */
+    /* -------------------------------------------------------------------- */
+    /* 1. ESTILOS DE ATMÓSFERA */
+    /* -------------------------------------------------------------------- */
     body {
         /* IMAGEN INICIAL (Túnel Ladrillo) */
         background-image: url('assets/bg/tunel_ladrillo.png'); 
@@ -23,15 +24,16 @@
         text-shadow: 0 0 5px rgba(255, 255, 255, 0.4);
     }
     
-    /* ******************************************************* */
-    /* ESTILOS ESTÉTICOS MANTENIDOS (COHERENCIA) */
-    /* ******************************************************* */
+    /* -------------------------------------------------------------------- */
+    /* 2. ESTILOS DE DIÁLOGO Y BOTONES (Adaptados del sistema general) */
+    /* -------------------------------------------------------------------- */
     #main-dialogue-box {
         position: absolute; bottom: 5vh; left: 50%; transform: translateX(-50%);
         width: 90%; max-width: 800px; padding: 1.5em;
         background-color: rgba(15, 15, 15, 0.3); 
         border: 1px solid rgba(255, 255, 255, 0.1); 
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+        border-radius: 5px; 
     }
     #choices { display: flex; flex-direction: column; gap: 0; margin-top: 15px; }
     .choice-btn {
@@ -46,7 +48,7 @@
     #nextBtn::after { content: none !important; visibility: hidden; }
     #nextBtn { text-indent: 0; overflow: visible; }
 
-    /* COLORES DE VOZ */
+    /* COLORES DE VOZ (Asumidos) */
     .equalis-voice { color: #aaffff; text-shadow: 0 0 5px rgba(170, 255, 255, 0.4); } 
     .disparia-voice { color: #ff9999; text-shadow: 0 0 5px rgba(255, 153, 153, 0.4); } 
     .old-man-voice { color: #ffcc66; text-shadow: 0 0 5px rgba(255, 204, 102, 0.4); } 
@@ -62,11 +64,50 @@
   </div>
 
   <script>
+    // --------------------------------------------------
+    // 1. INICIALIZACIÓN Y CONFIGURACIÓN
+    // --------------------------------------------------
     let score = parseInt(localStorage.getItem('score') || 0);
 
     const IMG_GENERAL = 'assets/bg/tunel_ladrillo.png';
-    const IMG_DESAFIO = 'assets/bg/ecuacion_rebotando.png';
+    const IMG_DESAFIO = 'assets/bg/ecuacion_rebotando.png'; // Usado para mostrar la ecuación
 
+    const textEl = document.getElementById("text");
+    const choicesEl = document.getElementById("choices");
+    const nextBtn = document.getElementById("nextBtn");
+    
+    let currentLine = 0; 
+
+    // --- DATA DE LA ESCENA 8 ---
+    const scene8 = {
+      id: 8,
+      title: "El eco del túnel",
+      text: [
+        { type: 'narrative', content: "Entras a un pasaje de ladrillo. El ambiente gélido y húmedo absorbe el sonido, pero tu presencia rompe la calma."}, 
+        { type: 'voice', speaker: 'Equalis', content: "El eco de este lugar distorsiona el **equilibrio** en una **desigualdad**."}, 
+        { type: 'voice', speaker: 'Disparia', content: "¡Interesante! ¿Por qué complicarse? La dirección del camino es clara. **Solo tienes que invertir su polaridad y mantener el rumbo**."}, 
+        { type: 'narrative', content: "La humedad del túnel se condensa sobre el ladrillo, formando un **goteo negro y aceitoso que revela una incisión luminosa en la pared**: **-3x < 6**"}, 
+        { type: 'voice', speaker: 'Equalis', content: "Esa **oscura atadura** que sujeta la incógnita tiene **polaridad negativa**. ¿Cuál es la ley que rige la dirección de la desigualdad al liberarla?"}, 
+        { type: 'challenge', 
+          question: "La **atadura** es **-3**. Al forzar su liberación, ¿qué efecto tiene su **polaridad** sobre la dirección del camino desigual?", 
+          success: "Equalis: La ley de la desigualdad ha sido honrada. La dirección se invierte ante la polaridad opuesta. (+1 Lógica).", 
+          failure: "Disparia: ¡Un suspiro! Esos pequeños errores son los que hacen la vida interesante. El Caos agradece la confusión. (-1 Lógica).",
+          transitionSuccess: { text: "El eco se apaga. Una puerta familiar aparece adelante, brillante y sólida.", nextScene: "../scene9/index.html" },
+          transitionFail: { text: "El eco te responde con tu propio nombre, repetido mil veces, y el túnel se alarga.", nextScene: "../scene9/index.html" },
+          choices: [
+              { text: "La polaridad negativa del elemento no afecta la dirección, solo el valor de la incógnita.", isCorrect: false }, 
+              { text: "La dirección del camino desigual debe invertirse (cambiar de < a >) cuando se aplica la operación de un elemento de polaridad negativa.", isCorrect: true }, 
+              { text: "La atadura negativa convierte la desigualdad estricta (<) en una no estricta (≤).", isCorrect: false }
+          ]
+        }
+      ]
+    };
+    
+    const sceneData = scene8.text; 
+
+    // --------------------------------------------------
+    // 2. FUNCIONES DE UTILIDAD
+    // --------------------------------------------------
     function formatText(content) {
         return content.replace(/\*\*(.*?)\*\*/g, '<span class="resaltado">$1</span>');
     }
@@ -75,43 +116,13 @@
         document.body.style.backgroundImage = `url('${imageUrl}')`;
     }
 
-    // --- DATA DE LA ESCENA 8 (Diálogos y Metáforas Puras) ---
-    const scene8 = {
-      id: 8,
-      title: "El eco del túnel",
-      text: [
-        { type: 'narrative', content: "Entras a un pasaje de ladrillo. El ambiente gélido y húmedo absorbe el sonido, pero tu presencia rompe la calma."}, 
-        { type: 'voice', speaker: 'Equalis', content: "El eco de este lugar distorsiona el **equilibrio** en una **desigualdad**."}, 
-        { type: 'voice', speaker: 'Disparia', content: "¡Interesante! ¿Por qué complicarse? La dirección del camino es clara. **Solo tienes que invertir su polaridad y mantener el rumbo**."}, // ERROR SUGERIDO POR DISPARIA (Cambiar el signo de x, mantener la desigualdad)
-        { type: 'narrative', content: "La humedad del túnel se condensa sobre el ladrillo, formando un **goteo negro y aceitoso que revela una incisión luminosa en la pared**: **-3x < 6**"}, 
-        { type: 'voice', speaker: 'Equalis', content: "Esa **oscura atadura** que sujeta la incógnita tiene **polaridad negativa**. ¿Cuál es la ley que rige la dirección de la desigualdad al liberarla?"}, 
-        { type: 'challenge', 
-          question: "La **atadura** es **-3**. Al forzar su liberación, ¿qué efecto tiene su **polaridad** sobre la dirección del camino desigual?", 
-          answer: "La regla es que el signo de la desigualdad debe invertirse (cambiar de < a >) cuando se divide o multiplica por un número negativo.",
-          success: "Equalis: La ley de la desigualdad ha sido honrada. La dirección se invierte ante la polaridad opuesta. (+1 Lógica).", 
-          failure: "Disparia: ¡Un suspiro! Esos pequeños errores son los que hacen la vida interesante. El Caos agradece la confusión. (-1 Lógica).",
-          transitionSuccess: { text: "El eco se apaga. Una puerta familiar aparece adelante, brillante y sólida.", nextScene: "../scene9/index.html" },
-          transitionFail: { text: "El eco te responde con tu propio nombre, repetido mil veces, y el túnel se alarga.", nextScene: "../scene9/index.html" },
-          choices: [
-              // La opción incorrecta que refleja la sugerencia de Disparia
-              { text: "La polaridad negativa del elemento no afecta la dirección, solo el valor de la incógnita.", isCorrect: false }, 
-              { text: "La dirección del camino desigual debe invertirse (cambiar de < a >) cuando se aplica la operación de un elemento de polaridad negativa.", isCorrect: true }, 
-              { text: "La atadura negativa convierte la desigualdad estricta (<) en una no estricta (≤).", isCorrect: false }
-          ]
-        }
-      ]
-    };
-
-    const textEl = document.getElementById("text");
-    const choicesEl = document.getElementById("choices");
-    const nextBtn = document.getElementById("nextBtn");
-    
-    let currentLine = 0; 
-    const sceneData = scene8.text; 
-
+    // --------------------------------------------------
+    // 3. FLUJO PRINCIPAL DE LA ESCENA
+    // --------------------------------------------------
     function showLine() {
       if (currentLine >= sceneData.length) return;
 
+      // Lógica de cambio de fondo según el diálogo
       if (currentLine === 0) { 
         changeBackground(IMG_GENERAL);
       } else if (currentLine === 3) { 
@@ -153,7 +164,7 @@
     function renderChallenge(data) {
         let questionContent = formatText(data.question);
         
-        // Reemplaza las líneas de la ecuación con <br>
+        // Reemplaza los saltos de línea con <br>
         questionContent = questionContent.replace(/\n/g, '<br>');
 
         textEl.innerHTML = `<p class="challenge-question fade-text">${questionContent}</p>`;
@@ -164,19 +175,27 @@
             const btn = document.createElement("button");
             btn.textContent = choice.text;
             btn.className = 'choice-btn'; 
+            // Pasamos el texto de la opción para identificarla más tarde
             btn.onclick = () => checkAnswer(data, choice.text); 
             choicesEl.appendChild(btn);
         });
     }
 
+    // --------------------------------------------------
+    // 4. FUNCIÓN DE RESPUESTA Y VALIDACIÓN (CORREGIDA)
+    // --------------------------------------------------
     function checkAnswer(data, userAnswerText) {
         Array.from(choicesEl.children).forEach(btn => btn.disabled = true);
         
         let resultText;
         let transitionData;
         
-        const isCorrect = userAnswerText === data.answer;
-        
+        // 🚨 CORRECCIÓN: Buscamos en el array de opciones cuál fue seleccionada 
+        // y verificamos su propiedad isCorrect.
+        const chosenOption = data.choices.find(choice => choice.text === userAnswerText);
+        const isCorrect = chosenOption ? chosenOption.isCorrect : false;
+
+        // Lógica de puntaje y feedback
         if (isCorrect) {
             score += 1; 
             resultText = `<span class="equalis-voice fade-text">${formatText(data.success)}</span>`;
@@ -190,9 +209,11 @@
         textEl.innerHTML = resultText;
         choicesEl.innerHTML = ''; 
         
+        // Configuración del botón para la transición
         nextBtn.style.display = 'inline-flex';
         nextBtn.onclick = () => {
             textEl.textContent = transitionData.text; 
+            // Segundo click para guardar score y navegar
             nextBtn.onclick = () => {
                 localStorage.setItem('score', score); 
                 goTo(transitionData.nextScene);
