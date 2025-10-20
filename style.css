@@ -1,6 +1,6 @@
 /* ==== ESTILO GLOBAL UNIFICADO ==== */
 
-@import url('https://fonts.googleapis.com/css2?family=Georgia&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Georgia&display=swap'); <--- ELIMINADA POR PROBLEMAS DE COMPATIBILIDAD */
 
 :root {
   --bg-color: #0b0c10;
@@ -19,7 +19,8 @@
 body {
   background: var(--bg-color) url('assets/bg.jpg') center/cover no-repeat fixed; /* Añadido 'fixed' para mejor efecto de fondo */
   color: var(--text-color);
-  font-family: 'Georgia', serif;
+  /* 🚨 CAMBIO DE FUENTE: Uso de pila de fuentes segura que imita a Georgia */
+  font-family: Georgia, 'Times New Roman', Times, serif; 
   display: flex;
   justify-content: center;
   align-items: center;
@@ -256,4 +257,5 @@ button:hover {
 @keyframes fadeText {
   from { opacity: 0; transform: translateY(5px); }
   to { opacity: 1; transform: translateY(0); }
-}
+  }
+  
