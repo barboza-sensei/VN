@@ -8,12 +8,18 @@ let isDyslexiaMode = localStorage.getItem('dyslexiaMode') === 'true';
 // --- Funciones de Control Global ---
 
 function applyDyslexiaModeState() {
+    // 🚨 CLAVE: Aplica la clase inmediatamente para persistencia
     if (isDyslexiaMode) {
-        document.body.classList.add('dyslexia-mode');
+        document.body.classList.add('dyslexia-mode'); 
     } else {
         document.body.classList.remove('dyslexia-mode');
     }
 }
+
+// 🚨 CLAVE: Llama inmediatamente al inicio del script para aplicar el estado guardado
+// antes de que se cargue cualquier contenido de la escena.
+applyDyslexiaModeState(); 
+
 
 function toggleDyslexiaMode() {
     isDyslexiaMode = !isDyslexiaMode;
@@ -32,12 +38,8 @@ function toggleDyslexiaMode() {
 function initializeAudioState() {
     const musicPlayer = document.getElementById('backgroundMusic');
     if (musicPlayer) {
+        // Solo aplica el estado de silencio guardado. NO intenta reproducción automática.
         musicPlayer.muted = isMuted;
-        if (!isMuted) {
-            musicPlayer.play().catch(error => {
-                console.log("Audio play blocked by browser. User interaction needed.");
-            });
-        }
     }
 }
 
@@ -50,8 +52,12 @@ function toggleMute() {
 
     if (musicPlayer) {
         musicPlayer.muted = isMuted;
+        
         if (!isMuted) {
-            musicPlayer.play().catch(e => console.log("Play on unmute failed:", e));
+            // 🚨 SOLUCIÓN AUDIO: Intentar REPRODUCIR al desmutear (se usa el clic del usuario).
+            musicPlayer.play().catch(e => console.error("Play on unmute failed:", e));
+        } else {
+            musicPlayer.pause();
         }
     }
     
@@ -67,9 +73,9 @@ function toggleMute() {
 }
 
 function createGlobalButtons() {
-    // Inicializar el botón de Mute (que ya existe en index.html)
     const muteButton = document.getElementById('muteButton');
     if (muteButton) {
+        // Inicializar icono y clase
         if (isMuted) {
             muteButton.classList.add('muted');
             muteButton.innerHTML = '<i class="fas fa-volume-mute"></i>';
@@ -78,11 +84,9 @@ function createGlobalButtons() {
             muteButton.innerHTML = '<i class="fas fa-volume-up"></i>';
         }
         muteButton.addEventListener('click', toggleMute);
-        // Usar la clase global de CSS
         muteButton.classList.add('global-control-btn'); 
     }
 
-    // Inicializar el botón de Modo Dislexia (que ya existe en index.html)
     const dyslexiaButton = document.getElementById('dyslexia-mode-button');
     if (dyslexiaButton) {
         dyslexiaButton.innerHTML = isDyslexiaMode ? 'Aa' : 'A';
@@ -91,7 +95,6 @@ function createGlobalButtons() {
             dyslexiaButton.classList.add('active');
         }
         dyslexiaButton.addEventListener('click', toggleDyslexiaMode);
-        // Usar la clase global de CSS
         dyslexiaButton.classList.add('global-control-btn');
     }
 }
@@ -113,13 +116,19 @@ const choicesDiv = document.getElementById('choices');
 const nextBtn = document.getElementById('nextBtn');
 const answerInput = document.getElementById('answerInput');
 
-// Función para inicializar el motor del juego
+// Función para inicializar el motor del juego (Solo en escenas de juego)
 async function loadStory() {
-  // Solo cargar el JSON si estamos en una escena de juego (donde existe #narrative)
+  // Si no encuentra el contenedor (#narrative), asume que está en la intro.
   if (!narrative) return; 
 
-  const res = await fetch('story.json');
-  storyData = await res.json();
+  try {
+      const res = await fetch('story.json');
+      storyData = await res.json();
+  } catch (error) {
+      console.error("Error al cargar story.json:", error);
+      narrative.textContent = "Error: No se pudo cargar el archivo de la historia.";
+      return;
+  }
   
   const submitBtn = document.getElementById('submitBtn');
   if (submitBtn) {
@@ -131,20 +140,17 @@ async function loadStory() {
 // --- UTILIDADES ---
 
 function resetUI() {
-    inputArea.style.display = 'none';
-    choicesDiv.innerHTML = '';
-    nextBtn.style.display = 'none';
+    if (inputArea) inputArea.style.display = 'none';
+    if (choicesDiv) choicesDiv.innerHTML = '';
+    if (nextBtn) nextBtn.style.display = 'none';
     if (answerInput) answerInput.value = '';
 }
 
 function showText(scene) {
     if (!narrative || !question) return;
 
-    // Aplicar el efecto fade-text a los contenedores
     narrative.classList.remove('fade-text');
     question.classList.remove('fade-text');
-    
-    // Forzar reflow para reiniciar la animación
     void narrative.offsetWidth; 
     void question.offsetWidth;
 
@@ -193,7 +199,6 @@ function showScene(scene) {
 }
 
 function handleOrderingScene(scene) {
-    // ... (La lógica de ordering es extensa, se mantiene igual que la versión anterior) ...
     const container = document.createElement('div');
     container.classList.add('ordering-container');
     choicesDiv.appendChild(container);
@@ -313,17 +318,15 @@ function showFinal() {
 
 
 // ====================================================================
-// === INICIALIZACIÓN (Se ejecuta al cargar el DOM) ===
+// === INICIALIZACIÓN DE SCRIPTS ===
 // ====================================================================
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Inicializar y crear los botones globales (Mute/Dislexia)
-    applyDyslexiaModeState();
+    // Inicializar audio y botones globales
     createGlobalButtons();
     initializeAudioState();
     
-    // 2. Cargar el motor del juego (solo si está en una escena de juego)
-    // El motor usa elementos específicos (#narrative, etc.) que NO están en index.html
+    // Iniciar el motor del juego (solo se ejecutará en escenas de juego)
     loadStory(); 
 });
-  
+        
