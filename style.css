@@ -1,12 +1,10 @@
 /* ==== ESTILO GLOBAL UNIFICADO ==== */
 
-/* 🚨 NO se utilizan @import url() de Google Fonts por problemas de compatibilidad */
-
 :root {
   --bg-color: #0b0c10;
   --text-color: #f8f8f2;
   --accent-color: #a7c7ff; /* Azul/Cian frío */
-  --box-bg: rgba(20, 20, 30, 0.9); /* Aumentado la opacidad para mejor lectura */
+  --box-bg: rgba(20, 20, 30, 0.9); 
   /* Variables para las voces */
   --equalis-color: var(--accent-color);
   --disparia-color: #ff9933; /* Naranja/Ámbar cálido */
@@ -26,7 +24,7 @@ body {
   align-items: center;
   min-height: 100vh;
   margin: 0;
-  overflow: hidden; /* Se usa para la intro; en escenas interiores cambiar a auto si es necesario */
+  overflow: hidden; 
   transition: background 1s ease-in-out;
 }
 
@@ -269,7 +267,7 @@ button:hover {
 /* ==== MODO DISLEXIA (CAMBIO DE FUENTE) ==== */
 
 .dyslexia-mode, .dyslexia-mode * {
-  /* 🚨 FUENTE SEGURA: Usa Verdana por su alta legibilidad y compatibilidad */
+  /* FUENTE SEGURA: Verdana para alta legibilidad y compatibilidad */
   font-family: Verdana, Arial, sans-serif !important; 
   line-height: 1.8 !important; 
   letter-spacing: 0.05em !important;
@@ -286,6 +284,8 @@ button:hover {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    /* 🚨 SOLUCIÓN VIDEO: Fuerza el centrado para coincidir con el background */
+    object-position: center center; 
     z-index: 5;
     opacity: 0; 
     transition: opacity 1s ease-in-out;
@@ -351,5 +351,4 @@ button:hover {
 @keyframes fadeText {
   from { opacity: 0; transform: translateY(5px); }
   to { opacity: 1; transform: translateY(0); }
-  }
-  
+}
