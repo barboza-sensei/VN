@@ -4,13 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sueño Algebraico</title>
-  <link rel="stylesheet" href="style.css">
   
-  <link href="https://fonts.googleapis.com/css2?family=Georgia&family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css"> 
+  
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet">
   
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
   <style>
+    /* ------------------------------------------------------------------ */
+    /* ESTILOS LOCALES (Sobrescriben o complementan a style.css)          */
+    /* ------------------------------------------------------------------ */
     body {
       background: url('assets/bg/intro_noche.png') center/cover no-repeat;
       display: flex;
@@ -22,10 +26,11 @@
       background-color: black;
       overflow-x: hidden;
       overflow-y: auto;
-      font-family: 'Georgia', serif; 
+      
+      /* La fuente base (Georgia, Times New Roman) se aplica en style.css al body */
+      
       padding: 1em 0;
-      /* Necesario para posicionar el botón de silencio */
-      position: relative;
+      position: relative; /* Necesario para los botones fijos */
     }
 
     h1 {
@@ -36,6 +41,7 @@
       animation: pulse 3s infinite;
       font-size: clamp(2em, 8vw, 3em); 
       margin-top: 1em;
+      transition: opacity 0.5s; /* Para la transición al iniciar */
     }
 
     @keyframes pulse {
@@ -50,6 +56,7 @@
       margin-top: 2em;
       width: 90%; 
       max-width: 300px; 
+      transition: opacity 0.5s; /* Para la transición al iniciar */
     }
 
     .menu-btn {
@@ -84,95 +91,89 @@
       font-size: 0.8em;
       width: 100%; 
       text-align: center;
+      transition: opacity 0.5s; /* Para la transición al iniciar */
     }
 
-    /* ------------------------------------------------------------------ */
-    /* ESTILOS DEL BOTÓN DE SILENCIO */
-    /* ------------------------------------------------------------------ */
-    #muteButton {
-        position: fixed; /* Fijo en la pantalla */
-        bottom: 20px;
-        right: 20px;
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        border: none;
-        cursor: pointer;
-        transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.2em;
-        z-index: 100; /* Asegura que esté por encima de otros elementos */
-        
-        /* Estado por defecto (No silenciado - Azul Grisáceo) */
-        background-color: rgba(68, 85, 102, 0.8); /* Azul grisáceo oscuro */
-        color: #f0f0f0;
-        box-shadow: 0 0 10px rgba(68, 85, 102, 0.5);
-    }
-
-    #muteButton.muted {
-        /* Estado Silenciado (Rojo Grisáceo) */
-        background-color: rgba(102, 68, 68, 0.8); /* Rojo grisáceo oscuro */
-        color: #ff9999;
-        box-shadow: 0 0 10px rgba(102, 68, 68, 0.5);
-    }
-
-    #muteButton:hover {
-        opacity: 0.9;
-    }
+    /* NOTA: Los estilos de muteButton, dyslexiaButton, transition-video y black-overlay 
+        se recomienda que estén en style.css para ser globales.
+    */
   </style>
 </head>
 <body>
   
   <audio id="backgroundMusic" src="assets/sfx/ambient-loop.wav" autoplay loop></audio>
 
-  <h1>Sueño Algebraico</h1>
+  <h1 id="intro-title">Sueño Algebraico</h1>
 
   <div id="menu">
-    <button class="menu-btn" onclick="startGame()">Iniciar</button>
+    <button id="startGameBtn" class="menu-btn">Iniciar</button>
     <button class="menu-btn" onclick="window.location.href='credits.html'">Créditos</button>
   </div>
 
-  <footer>Un proyecto didáctico gamificado</footer>
+  <footer id="intro-footer">Un proyecto didáctico gamificado</footer>
   
   <button id="muteButton" title="Silenciar/Activar Música">
       <i class="fas fa-volume-up"></i>
   </button>
+  <button id="dyslexia-mode-button" title="Activar/Desactivar Modo Dislexia">A</button>
 
 
+  <video id="transition-video" muted playsinline preload="auto">
+      <source src="assets/video/vortex_transition.mp4" type="video/mp4"> 
+  </video>
+  <div id="black-overlay"></div> 
+  
+
+  <script src="global.js"></script> 
+  
   <script>
-    const music = document.getElementById('backgroundMusic');
-    const muteButton = document.getElementById('muteButton');
+    document.getElementById('startGameBtn').addEventListener('click', startTransition);
+    
+    // Función de Transición Cinematográfica
+    function startTransition() {
+        const startButton = document.getElementById('startGameBtn');
+        const menuContainer = document.getElementById('menu');
+        const introTitle = document.getElementById('intro-title');
+        const introFooter = document.getElementById('intro-footer');
+        const video = document.getElementById('transition-video');
+        const blackOverlay = document.getElementById('black-overlay');
+        
+        // Desactivar el botón y ocultar la UI con una transición suave
+        startButton.disabled = true;
+        menuContainer.style.opacity = 0;
+        introTitle.style.opacity = 0;
+        introFooter.style.opacity = 0;
+        
+        // 1. Mostrar el video (opacidad 1) e iniciar
+        video.style.opacity = 1;
+        video.currentTime = 0;
+        video.play().catch(error => {
+            console.error("Error al reproducir el video:", error);
+            // Fallback si el navegador no permite reproducir
+            blackOverlay.style.opacity = 1; 
+            setTimeout(navigateToNextScene, 1000);
+        });
 
-    // Nota: Los navegadores modernos a menudo requieren interacción del usuario (un clic) 
-    // para que el 'autoplay' funcione. Si la música no arranca, es por esa restricción.
-    // El botón de silencio manejará la primera interacción si es necesaria.
+        // 2. Orquestación del Fundido a Negro y Navegación
+        const fadeStartTime = 4000; // Iniciar fundido a los 4 segundos
+        const navigationTime = 5000; // Navegar cuando el fundido sea total (5 segundos)
+        
+        // Iniciar el Fundido a Negro
+        setTimeout(() => {
+            if (blackOverlay) {
+                blackOverlay.style.opacity = 1; 
+            }
+            // Pausar el video para enmascarar su final abrupto
+            video.pause(); 
+        }, fadeStartTime);
 
-    function toggleMute() {
-        if (music.muted) {
-            // Activar (Unmute)
-            music.muted = false;
-            muteButton.classList.remove('muted');
-            muteButton.innerHTML = '<i class="fas fa-volume-up"></i>';
-            // Intentar reproducir si fue bloqueado inicialmente por el navegador
-            music.play().catch(e => {
-                console.log("El navegador bloqueó la reproducción automática. Clic para activar.");
-            });
-        } else {
-            // Silenciar (Mute)
-            music.muted = true;
-            muteButton.classList.add('muted');
-            muteButton.innerHTML = '<i class="fas fa-volume-mute"></i>';
-        }
+        // Navegar a la siguiente escena
+        setTimeout(navigateToNextScene, navigationTime);
     }
 
-    // 3. LÓGICA DE CONTROL DEL SONIDO
-    muteButton.addEventListener('click', toggleMute);
-
-    function startGame() {
-      // Aquí comienza la historia
-      window.location.href = 'scene/scene0/index.html';
+    function navigateToNextScene() {
+        // Redirigir a la primera escena del juego (Asegúrate de que esta ruta sea correcta)
+        window.location.href = 'scene/scene0/index.html'; 
     }
   </script>
 </body>
