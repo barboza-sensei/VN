@@ -1,7 +1,5 @@
 /* ==== ESTILO GLOBAL UNIFICADO ==== */
 
-/* @import url('https://fonts.googleapis.com/css2?family=Georgia&display=swap'); <--- ELIMINADA POR PROBLEMAS DE COMPATIBILIDAD */
-
 :root {
   --bg-color: #0b0c10;
   --text-color: #f8f8f2;
@@ -17,16 +15,16 @@
 /* ==== ESTRUCTURA GENERAL ==== */
 
 body {
-  background: var(--bg-color) url('assets/bg.jpg') center/cover no-repeat fixed; /* Añadido 'fixed' para mejor efecto de fondo */
+  background: var(--bg-color) url('assets/bg.jpg') center/cover no-repeat fixed; 
   color: var(--text-color);
-  /* 🚨 CAMBIO DE FUENTE: Uso de pila de fuentes segura que imita a Georgia */
+  /* FUENTE BASE: Pila segura que imita a Georgia */
   font-family: Georgia, 'Times New Roman', Times, serif; 
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh; /* Usar min-height para manejar mejor el contenido */
+  min-height: 100vh;
   margin: 0;
-  overflow: hidden;
+  overflow: hidden; /* Se usa para la intro; en escenas interiores podría cambiarse a auto */
   transition: background 1s ease-in-out;
 }
 
@@ -38,9 +36,10 @@ body {
   border-radius: 12px;
   max-width: 600px;
   width: 90%;
-  box-shadow: 0 0 25px rgba(255, 255, 255, 0.15); /* Sombra más pronunciada */
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.15); 
   position: relative;
-  box-sizing: border-box; /* Asegura que padding no afecte el 90% del width */
+  box-sizing: border-box; 
+  transition: opacity 0.5s ease-in-out; /* Para fundido entre escenas */
 }
 
 /* ==== TEXTO Y NARRATIVA ==== */
@@ -79,7 +78,7 @@ body {
 #input-area {
   margin-top: 1.5rem;
   padding: 1rem;
-  background: rgba(30, 30, 45, 0.95); /* Ligeramente más opaco que el box-bg */
+  background: rgba(30, 30, 45, 0.95); 
   border-radius: 8px;
   display: flex;
   flex-direction: column;
@@ -102,7 +101,7 @@ body {
   color: var(--text-color);
   font-family: inherit;
   font-size: 1rem;
-  box-sizing: border-box; /* Asegura que el padding no desborde el 100% de width */
+  box-sizing: border-box; 
 }
 
 /* ==== BOTONES GENERALES (Incluye choices y checkBtn) ==== */
@@ -151,7 +150,7 @@ button:hover {
   cursor: pointer;
   transition: opacity 0.3s, transform 0.2s;
   padding: 0.5rem;
-  border: none; /* Asegurar que no tenga borde de botón general */
+  border: none; 
 }
 
 #nextBtn:hover {
@@ -163,7 +162,6 @@ button:hover {
   content: '›';
   font-weight: bold;
 }
-
 
 /* ==== ORDENAMIENTO (ORDERING) ==== */
 
@@ -211,16 +209,109 @@ button:hover {
   text-align: center;
 }
 
+/* ------------------------------------------------------------------ */
+/* ==== ESTILOS DE CONTROL GLOBAL Y ACCESIBILIDAD ==== */
+/* ------------------------------------------------------------------ */
+
+/* Contenedor Base para los Botones Fijos */
+.global-control-btn {
+    position: fixed; 
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2em;
+    z-index: 999;
+    /* Estilo por defecto */
+    background-color: rgba(68, 85, 102, 0.8);
+    color: #f0f0f0;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.global-control-btn:hover {
+    background-color: rgba(90, 110, 130, 0.9);
+}
+
+/* 1. Botón de Mute */
+#muteButton {
+    bottom: 20px;
+    right: 20px;
+}
+
+#muteButton.muted {
+    /* Estado Silenciado */
+    background-color: rgba(102, 68, 68, 0.8); 
+    color: #ff9999;
+    box-shadow: 0 0 10px rgba(102, 68, 68, 0.5);
+}
+
+/* 2. Botón de Modo Dislexia */
+#dyslexia-mode-button {
+    bottom: 80px; 
+    right: 20px;
+    font-size: 1.4em; 
+}
+
+#dyslexia-mode-button.active {
+    /* Estado Activo */
+    background-color: rgba(102, 68, 68, 0.8); 
+    color: #ff9999;
+    box-shadow: 0 0 10px rgba(102, 68, 68, 0.5);
+}
+
+/* ==== MODO DISLEXIA (CAMBIO DE FUENTE) ==== */
+
+.dyslexia-mode, .dyslexia-mode * {
+  /* FUENTE DE ALTA LEGIBILIDAD */
+  font-family: Arial, Verdana, sans-serif !important; 
+  line-height: 1.8 !important; 
+  letter-spacing: 0.05em !important;
+}
+
+/* ------------------------------------------------------------------ */
+/* ==== ESTILOS DE TRANSICIÓN CINEMATOGRÁFICA (Solo en la Intro) ==== */
+/* ------------------------------------------------------------------ */
+
+#transition-video {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 5;
+    opacity: 0; 
+    transition: opacity 1s ease-in-out;
+    pointer-events: none;
+}
+
+#black-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    opacity: 0;             
+    z-index: 10000;         /* Capa superior para el fundido */
+    transition: opacity 1s ease-in-out; 
+    pointer-events: none;
+}
+
 /* ==== MEDIA QUERIES PARA RESPONSIVIDAD (Móviles) ==== */
 
 @media (max-width: 700px) {
   /* Ajuste del Contenedor Principal */
   .scene {
-    width: 95%; /* Ocupar más espacio horizontal */
-    padding: 1.2rem; /* Reducir el padding */
-    border-radius: 0; /* Opcional: hacer que ocupe todo el ancho en el borde */
+    width: 95%; 
+    padding: 1.2rem; 
     max-height: 100vh;
-    overflow-y: auto; /* Permitir scroll si el contenido es demasiado largo */
+    overflow-y: auto; 
   }
 
   /* Ajuste de Fuente para mejor visualización en móvil */
@@ -236,15 +327,21 @@ button:hover {
   
   /* Ajuste del Botón de Continuar para facilitar el toque */
   #nextBtn {
-    font-size: 2.5rem; /* Botón más grande */
+    font-size: 2.5rem; 
     right: 0.2rem;
     bottom: 0.2rem;
-    opacity: 1; /* Siempre visible y táctil */
+    opacity: 1;
   }
   
   /* Ajuste de Botones de Elección (hacerlos más altos y fáciles de presionar) */
   button {
     padding: 0.8rem 1.2rem;
+  }
+
+  /* Ajuste de botones de control global en móvil */
+  .global-control-btn {
+    width: 45px;
+    height: 45px;
   }
 }
 
