@@ -2,8 +2,24 @@
 // === MÓDULO 1: ESTADO GLOBAL (Accesibilidad y Audio) ===
 // ====================================================================
 
+// 🚨 CAMBIO DE ESTADO INICIAL: La música comienza SILENCIADA si no hay estado guardado.
+// isMuted = true si localStorage es 'true' O si no hay estado guardado (null).
 let isMuted = localStorage.getItem('gameMuted') === 'true';
+if (localStorage.getItem('gameMuted') === null) {
+    isMuted = true;
+}
+
 let isDyslexiaMode = localStorage.getItem('dyslexiaMode') === 'true';
+
+// 🚨 NUEVO: La voz/narración comienza INACTIVA si no hay estado guardado.
+let isVoiceActive = localStorage.getItem('gameVoiceActive') === 'true'; 
+if (localStorage.getItem('gameVoiceActive') === null) {
+    isVoiceActive = false;
+}
+
+// 🚨 NUEVO: Referencia global para la pista de audio de la narración actual.
+let currentNarrativeAudio = null; 
+
 
 // --- Funciones de Control Global ---
 
@@ -16,8 +32,7 @@ function applyDyslexiaModeState() {
     }
 }
 
-// 🚨 CLAVE: Llama inmediatamente al inicio del script para aplicar el estado guardado
-// antes de que se cargue cualquier contenido de la escena.
+// CLAVE: Llama inmediatamente al inicio del script para aplicar el estado guardado
 applyDyslexiaModeState(); 
 
 
@@ -38,9 +53,10 @@ function toggleDyslexiaMode() {
 function initializeAudioState() {
     const musicPlayer = document.getElementById('backgroundMusic');
     if (musicPlayer) {
-        // Solo aplica el estado de silencio guardado. NO intenta reproducción automática.
+        // Aplica el estado de silencio (que ahora es TRUE por defecto)
         musicPlayer.muted = isMuted;
     }
+    // No hay que inicializar la voz aquí, ya que se maneja en showText.
 }
 
 function toggleMute() {
@@ -54,7 +70,7 @@ function toggleMute() {
         musicPlayer.muted = isMuted;
         
         if (!isMuted) {
-            // 🚨 SOLUCIÓN AUDIO: Intentar REPRODUCIR al desmutear (se usa el clic del usuario).
+            // Intentar reproducir al desmutear
             musicPlayer.play().catch(e => console.error("Play on unmute failed:", e));
         } else {
             musicPlayer.pause();
@@ -62,26 +78,49 @@ function toggleMute() {
     }
     
     if (muteButton) {
+        // Actualiza el icono y la clase visual
         if (isMuted) {
             muteButton.classList.add('muted');
             muteButton.innerHTML = '<i class="fas fa-volume-mute"></i>';
+            muteButton.title = 'Silenciar/Activar Música (Silenciada)';
         } else {
             muteButton.classList.remove('muted');
             muteButton.innerHTML = '<i class="fas fa-volume-up"></i>';
+            muteButton.title = 'Silenciar/Activar Música (Activada)';
         }
+    }
+}
+
+// 🚨 NUEVA FUNCIÓN: Alternar las pistas de voz
+function toggleVoice() {
+    isVoiceActive = !isVoiceActive;
+    localStorage.setItem('gameVoiceActive', isVoiceActive);
+    
+    // Si se desactiva, detener la reproducción de inmediato.
+    if (!isVoiceActive && currentNarrativeAudio) {
+        currentNarrativeAudio.pause();
+        currentNarrativeAudio = null;
+    }
+
+    const btn = document.getElementById('voiceButton');
+    if (btn) {
+        btn.classList.toggle('active');
+        btn.title = isVoiceActive ? 'Voz/Narración (ON)' : 'Voz/Narración (OFF)';
     }
 }
 
 function createGlobalButtons() {
     const muteButton = document.getElementById('muteButton');
     if (muteButton) {
-        // Inicializar icono y clase
+        // Inicializar icono y clase (Ahora refleja el estado inicial de isMuted=true)
         if (isMuted) {
             muteButton.classList.add('muted');
             muteButton.innerHTML = '<i class="fas fa-volume-mute"></i>';
+            muteButton.title = 'Silenciar/Activar Música (Silenciada)';
         } else {
             muteButton.classList.remove('muted');
             muteButton.innerHTML = '<i class="fas fa-volume-up"></i>';
+            muteButton.title = 'Silenciar/Activar Música (Activada)';
         }
         muteButton.addEventListener('click', toggleMute);
         muteButton.classList.add('global-control-btn'); 
@@ -96,6 +135,17 @@ function createGlobalButtons() {
         }
         dyslexiaButton.addEventListener('click', toggleDyslexiaMode);
         dyslexiaButton.classList.add('global-control-btn');
+    }
+
+    // 🚨 NUEVO: Inicializar el botón de Voz/Narración
+    const voiceButton = document.getElementById('voiceButton');
+    if (voiceButton) {
+        if (isVoiceActive) {
+            voiceButton.classList.add('active');
+        }
+        voiceButton.title = isVoiceActive ? 'Voz/Narración (ON)' : 'Voz/Narración (OFF)';
+        voiceButton.addEventListener('click', toggleVoice);
+        voiceButton.classList.add('global-control-btn');
     }
 }
 
@@ -118,7 +168,6 @@ const answerInput = document.getElementById('answerInput');
 
 // Función para inicializar el motor del juego (Solo en escenas de juego)
 async function loadStory() {
-  // Si no encuentra el contenedor (#narrative), asume que está en la intro.
   if (!narrative) return; 
 
   try {
@@ -149,6 +198,12 @@ function resetUI() {
 function showText(scene) {
     if (!narrative || !question) return;
 
+    // 🚨 Detener el audio narrativo anterior
+    if (currentNarrativeAudio) {
+        currentNarrativeAudio.pause(); 
+        currentNarrativeAudio = null;
+    }
+
     narrative.classList.remove('fade-text');
     question.classList.remove('fade-text');
     void narrative.offsetWidth; 
@@ -159,6 +214,15 @@ function showText(scene) {
 
     narrative.classList.add('fade-text');
     question.classList.add('fade-text');
+    
+    // 🚨 NUEVA LÓGICA DE REPRODUCCIÓN DE VOZ 🚨
+    if (isVoiceActive && scene.audioPath) {
+        currentNarrativeAudio = new Audio(scene.audioPath);
+        
+        currentNarrativeAudio.play().catch(e => {
+            console.warn("No se pudo reproducir la narración (Error/Archivo no encontrado):", e);
+        });
+    }
 }
 
 // --- LÓGICA DE ESCENAS ---
@@ -173,7 +237,11 @@ function showScene(scene) {
     scene.choices.forEach(choice => {
       const btn = document.createElement('button');
       btn.textContent = choice.text;
-      btn.onclick = () => loadNextScene(choice.nextScene);
+      // 🚨 Detener la voz al hacer clic en una opción
+      btn.onclick = () => {
+          if (currentNarrativeAudio) currentNarrativeAudio.pause();
+          loadNextScene(choice.nextScene);
+      };
       choicesDiv.appendChild(btn);
     });
     return;
@@ -194,7 +262,11 @@ function showScene(scene) {
   // --- Escenas de narrativa simple (Continuar) ---
   if (scene.nextScene) {
       nextBtn.style.display = 'block';
-      nextBtn.onclick = () => loadNextScene(scene.nextScene);
+      // 🚨 Detener la voz al hacer clic en Siguiente
+      nextBtn.onclick = () => {
+          if (currentNarrativeAudio) currentNarrativeAudio.pause();
+          loadNextScene(scene.nextScene);
+      };
   }
 }
 
@@ -256,7 +328,11 @@ function handleOrderingScene(scene) {
         
         setTimeout(() => {
             nextBtn.style.display = 'block';
-            nextBtn.onclick = () => loadNextScene(scene.nextScene);
+            // 🚨 Detener la voz al hacer clic en Siguiente
+            nextBtn.onclick = () => {
+                if (currentNarrativeAudio) currentNarrativeAudio.pause();
+                loadNextScene(scene.nextScene);
+            };
         }, 1200);
     });
 
@@ -283,7 +359,11 @@ function checkAnswer() {
 
   setTimeout(() => {
     nextBtn.style.display = 'block';
-    nextBtn.onclick = () => loadNextScene(currentScene.nextScene);
+    // 🚨 Detener la voz al hacer clic en Siguiente
+    nextBtn.onclick = () => {
+        if (currentNarrativeAudio) currentNarrativeAudio.pause();
+        loadNextScene(currentScene.nextScene);
+    };
   }, 1000);
 }
 
@@ -304,6 +384,12 @@ function loadNextScene(id) {
 
 function showFinal() {
   resetUI();
+  
+  // 🚨 Detener cualquier audio narrativo en el final
+  if (currentNarrativeAudio) {
+      currentNarrativeAudio.pause();
+      currentNarrativeAudio = null;
+  }
   
   let ending;
   if (score >= 7) ending = storyData.finals.good;
