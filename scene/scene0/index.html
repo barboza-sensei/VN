@@ -11,7 +11,7 @@
   <style>
     /* Estilos locales para la atmósfera de esta escena */
     body {
-        /* 🚨 RUTA CORREGIDA: Hacia la imagen de fondo */
+        /* RUTA CORREGIDA */
         background-image: url('assets/bg/calle_oscura_sin_luces_inicio.jpg'); 
         background-color: #0d0d0d;
         background-size: cover; 
@@ -164,7 +164,6 @@
 
       let i = 0;
       
-      // Rutas de imagen
       const IMG_GENERAL = 'assets/bg/calle_oscura_sin_luces_inicio.jpg'; 
       const IMG_CALLEJON = 'assets/bg/calle_oscura_sin_luces_cerca_callejon.png'; 
       const IMG_ESQUINA = 'assets/bg/calle_oscura_sin_luces_cerca_esquina.jpg'; 
@@ -172,11 +171,11 @@
       // ******************************************************
       // CONFIGURACIÓN DE AUDIO LOCAL
       // ******************************************************
-      // 🚨 RUTA CORREGIDA: Hacia la carpeta de voces
+      // RUTA CORREGIDA
       const VOICE_PATH = 'assets/voice/'; 
       let currentAudio = null; 
 
-      // Referencia a la música de fondo que game.js silenciará/activará
+      // Referencia a la música de fondo
       let backgroundMusic = document.getElementById('backgroundMusic');
       
       function changeBackground(imageUrl) {
@@ -195,6 +194,7 @@
         stopCurrentAudio(); 
           
         if (i >= scene0.text.length) {
+            nextBtn.style.display = 'none';
             return;
         }
         
@@ -208,7 +208,7 @@
         const lineData = scene0.text[i];
         textEl.className = 'fade-text';
 
-        // Muestra el texto
+        // 🚨 Muestra el texto (siempre debe mostrarse)
         if (lineData.type === 'voice') {
             const voiceClass = 'disparia-voice';
             textEl.innerHTML = `<span class="${voiceClass}">${lineData.speaker}: ${lineData.content}</span>`;
@@ -216,15 +216,23 @@
             textEl.textContent = lineData.content;
         }
 
-        // 🚨 INTEGRACIÓN DE VOZ: Usar la variable global 'isVoiceActive' de game.js
-        if (typeof isVoiceActive !== 'undefined' && isVoiceActive && lineData.audio) {
+        // 🚨 INTEGRACIÓN DE VOZ Y CONTROL DE NEXT BUTTON 🚨
+        // Verificamos si la variable global isVoiceActive está definida Y activa
+        const shouldPlayVoice = typeof isVoiceActive !== 'undefined' && isVoiceActive;
+        const hasAudio = lineData.audio;
+        
+        if (shouldPlayVoice && hasAudio) {
+            // Caso 1: Voz ON y Audio disponible -> Reproducir y deshabilitar Next
             currentAudio = new Audio(VOICE_PATH + lineData.audio); 
             
-            currentAudio.play().catch(error => {
-                console.log("No se pudo iniciar la reproducción de audio de voz:", error);
+            // Usamos .then/.catch para manejar la reproducción asíncrona y errores
+            currentAudio.play().then(() => {
+                nextBtn.disabled = true;
+            }).catch(error => {
+                console.warn("No se pudo reproducir la voz. Habilitando Next.", error);
+                // Si la reproducción falla (p.ej., audio no existe o error del navegador)
+                nextBtn.disabled = false;
             });
-            
-            nextBtn.disabled = true;
             
             currentAudio.onended = () => {
                 nextBtn.disabled = false;
@@ -232,15 +240,17 @@
                     showChoices();
                 }
             };
+
         } else {
-            // Si la voz está INACTIVA, o no hay audio
+            // Caso 2: Voz OFF, Audio no disponible, o global.js aún no cargó -> Habilitar Next inmediatamente
             nextBtn.disabled = false;
             if (i === scene0.text.length - 1) {
                 showChoices();
             }
         }
 
-        nextBtn.style.display = i < scene0.text.length - 1 ? "inline-flex" : "none";
+        // Mostrar u ocultar el botón de avance
+        nextBtn.style.display = i < scene0.text.length - 1 || i === scene0.text.length - 1 && !nextBtn.disabled ? "inline-flex" : "none";
         
         void textEl.offsetWidth; 
       }
@@ -275,15 +285,15 @@
         window.location.href = resolved;
       }
       
-      // Iniciar la escena después de que todo el DOM y game.js se hayan cargado.
+      // Iniciar la escena después de que todo el DOM y global.js se hayan cargado.
       document.addEventListener('DOMContentLoaded', () => {
-          // Ya que game.js no tiene un motor de historia para esta escena, 
-          // simplemente iniciamos nuestra secuencia local después de que game.js 
-          // haya aplicado los modos de accesibilidad (Dyslexia, Mute, Voz).
-          showLine();
+          // 🚨 AÑADIMOS UN LIGERO RETRASO para asegurar que global.js haya terminado
+          // de inicializar TODAS sus variables (incluyendo isVoiceActive) antes de llamar a showLine().
+          setTimeout(showLine, 50); 
       });
 
     </script>
 
 </body>
-</html>
+  </html>
+  
