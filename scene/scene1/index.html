@@ -120,9 +120,10 @@
         if (shouldPlayVoice && audioFileName) {
             currentAudio = new Audio(VOICE_PATH + audioFileName); 
             
-            currentAudio.play().then(() => {
-                nextBtnElement.disabled = true;
-            }).catch(error => {
+            // Si hay audio, deshabilitamos el botón hasta que termine.
+            nextBtnElement.disabled = true;
+
+            currentAudio.play().catch(error => {
                 console.warn("No se pudo reproducir la voz. Habilitando Next.", error);
                 nextBtnElement.disabled = false;
                 if (callback) callback();
@@ -133,6 +134,7 @@
                 if (callback) callback();
             };
         } else {
+            // Si no hay audio, el botón se habilita inmediatamente.
             nextBtnElement.disabled = false;
             if (callback) callback();
         }
@@ -174,7 +176,7 @@
             if (!isMuted) {
                 backgroundMusic.loop = true; 
                 backgroundMusic.play().catch(e => {
-                    // console.warn("Error al intentar reproducir BGM:", e);
+                    // Fallo silencioso de Autoplay
                 });
             }
         }
@@ -238,7 +240,9 @@
     function showLine() {
       stopCurrentAudio();
       
+      // Limpiamos elecciones y reiniciamos el onclick a la función normal
       choicesEl.innerHTML = '';
+      nextBtnElement.onclick = advanceLine; 
       nextBtnElement.style.display = 'none';
 
       if (currentLine >= sceneData.length) return;
@@ -246,7 +250,7 @@
       const lineData = sceneData[currentLine];
       
       // Lógica de CAMBIO DE FONDO Y BGM
-      if (currentLine <= 0) {
+      if (currentLine <= 1) {
         changeBackground(IMG_GENERAL);
         updateBGM(BGM_FOOTSTEPS); // BGM para i=0 y i=1
       } else if (currentLine >= 2) { 
@@ -273,9 +277,11 @@
       }
       
       // Lógica de Audio y Control de NextBtn
-      playVoice(hasAudio);
+      playVoice(hasAudio, () => {
+          // Habilita el botón 'Next' una vez que el audio (o la simulación de audio) termina.
+          nextBtnElement.style.display = 'inline-flex';
+      });
       
-      nextBtnElement.style.display = 'inline-flex';
       void textEl.offsetWidth; 
     }
 
@@ -285,10 +291,11 @@
         textEl.innerHTML = `<p class="challenge-question fade-text">${formatText(data.question)}</p>`;
         
         choicesEl.innerHTML = ""; 
-        
-        // 🚨 REPRODUCIR AUDIO DE PREGUNTA
+        nextBtnElement.style.display = 'none'; // Aseguramos que el NextBtn esté oculto
+
+        // REPRODUCIR AUDIO DE PREGUNTA
+        // El callback habilita las opciones *después* de que el audio termina.
         playVoice(data.audioQuestion, () => {
-            // Habilita las opciones solo después de que el audio de la pregunta termine
             data.choices.forEach(choice => {
                 const btn = document.createElement("button");
                 btn.textContent = choice.text;
@@ -312,21 +319,22 @@
             score += 1; 
             resultText = `<span class="equalis-voice fade-text">${data.success}</span>`;
             transitionData = data.transitionSuccess;
-            resultAudio = data.audioSuccess; // 🚨 Audio de éxito
+            resultAudio = data.audioSuccess; 
         } else {
             score -= 1; 
             resultText = `<span class="disparia-voice fade-text">${data.failure}</span>`;
             transitionData = data.transitionFail;
-            resultAudio = data.audioFailure; // 🚨 Audio de fallo
+            resultAudio = data.audioFailure; 
         }
 
         textEl.innerHTML = resultText;
         choicesEl.innerHTML = ''; 
         
-        // 🚨 REPRODUCIR AUDIO DE ÉXITO/FALLO
+        // REPRODUCIR AUDIO DE ÉXITO/FALLO
         playVoice(resultAudio, () => {
-             // Después del audio de éxito/fallo, mostrar el botón de transición.
+             // Después del audio de éxito/fallo, mostramos el botón.
             nextBtnElement.style.display = 'inline-flex';
+            // Asignamos la acción específica para la transición
             nextBtnElement.onclick = () => {
                 handleTransition(transitionData);
             }
@@ -336,42 +344,49 @@
     function handleTransition(transitionData) {
         stopCurrentAudio();
         
-        // Mostrar texto de transición (primera pulsación)
+        // Primera acción al hacer clic: mostrar el texto de transición
         textEl.textContent = transitionData.text; 
 
-        // 🚨 REPRODUCIR AUDIO DE TRANSICIÓN
+        // Deshabilitamos temporalmente el botón para el audio de transición.
+        nextBtnElement.disabled = true;
+        nextBtnElement.style.display = 'inline-flex'; // Aseguramos que sea visible
+
+        // REPRODUCIR AUDIO DE TRANSICIÓN
         playVoice(transitionData.audio, () => {
-            // Ir a la siguiente escena (segunda pulsación, o después del audio)
-            localStorage.setItem('score', score); 
-            goTo(transitionData.nextScene);
+            // Callback: El audio ha terminado.
+            // La acción final del botón es ir a la siguiente escena
+            nextBtnElement.onclick = () => {
+                localStorage.setItem('score', score); 
+                goTo(transitionData.nextScene);
+            };
+            // Habilitamos el botón para el CLIC FINAL. (playVoice ya lo hizo, pero lo repetimos por claridad)
+            nextBtnElement.disabled = false;
         });
         
-        // Deshabilitamos el botón para evitar doble clic durante la transición
-        nextBtnElement.disabled = true; 
+    }
+    
+    // Función central para avanzar línea (separada para mejor gestión de listeners)
+    function advanceLine() {
+        // Manejo de la primera interacción (Autoplay BGM)
+        if (!hasInteracted) {
+            hasInteracted = true;
+            updateBGM(currentBGM); 
+        }
+        
+        if (!nextBtnElement.disabled) {
+            stopCurrentAudio();
+            currentLine++;
+            showLine();
+        }
     }
     
     // --- EVENT LISTENERS E INICIALIZACIÓN ---
 
-    nextBtnElement.addEventListener("click", () => {
-      // Primera interacción: Habilitamos la reproducción del BGM
-      if (!hasInteracted) {
-          hasInteracted = true;
-          updateBGM(currentBGM); 
-      }
-      
-      if (!nextBtnElement.disabled) {
-          // Si currentLine es la línea del desafío (índice 6), la lógica de showLine/checkAnswer 
-          // debe manejar el flujo, no avanzar la línea automáticamente.
-          if (currentLine < sceneData.length - 1) {
-              stopCurrentAudio();
-              currentLine++;
-              showLine();
-          } else {
-              // Este caso debe ser manejado por handleTransition, pero lo mantenemos por seguridad.
-              showLine(); 
-          }
-      }
-    });
+    // 🚨 CRÍTICO: El listener principal DEBE usar el 'onclick' del elemento, no addEventListener, 
+    // para que las funciones de desafío puedan SOBREESCRIBIRLO temporalmente con la transición.
+
+    // Inicializamos el onclick a la función de avance normal
+    nextBtnElement.onclick = advanceLine; 
     
     document.addEventListener('DOMContentLoaded', () => {
         // Establecemos la fuente y preparamos el audio inicial (footsteps)
