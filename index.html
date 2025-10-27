@@ -94,9 +94,7 @@
       transition: opacity 0.5s; /* Para la transición al iniciar */
     }
 
-    /* NOTA: Los estilos de muteButton, dyslexiaButton, transition-video y black-overlay 
-        se recomienda que estén en style.css para ser globales.
-    */
+    /* NOTA: Los estilos de los botones de control global y transiciones están en style.css. */
   </style>
 </head>
 <body>
@@ -112,10 +110,13 @@
 
   <footer id="intro-footer">Un proyecto didáctico gamificado</footer>
   
-  <button id="muteButton" title="Silenciar/Activar Música">
-      <i class="fas fa-volume-up"></i>
+  <button id="muteButton" class="global-control-btn muted" title="Silenciar/Activar Música">
+      <i class="fas fa-volume-mute"></i>
   </button>
-  <button id="dyslexia-mode-button" title="Activar/Desactivar Modo Dislexia">A</button>
+  <button id="dyslexia-mode-button" class="global-control-btn" title="Activar/Desactivar Modo Dislexia">A</button>
+  <button id="voiceButton" class="global-control-btn" title="Activar/Desactivar Voz/Narración">
+      <i class="fas fa-microphone"></i>
+  </button>
 
 
   <video id="transition-video" muted playsinline preload="auto">
