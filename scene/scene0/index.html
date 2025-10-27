@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   
   <style>
-    /* Estilos omitidos por brevedad */
+    /* Estilos locales para la atmósfera de esta escena */
     body {
         /* Usando la ruta proporcionada */
         background-image: url('assets/bg/calle_oscura_sin_luces_inicio.jpg'); 
@@ -87,9 +87,11 @@
         cursor: default;
     }
 
+    /* 🚨 CORRECCIÓN DOBLE FLECHA: Oculta la flecha que usa el seudoelemento */
     #nextBtn::after {
-        content: '›' !important; 
-        visibility: visible !important;
+        content: '' !important; 
+        visibility: hidden !important; 
+        display: none !important;
     }
 
     #choices {
@@ -158,18 +160,11 @@
         ]
       };
 
-      // 🚨 CORRECCIÓN CRÍTICA DE DECLARACIÓN DE VARIABLES 🚨
-      // Usamos los nombres de variables globales de global.js o mapeamos los nuestros.
-      
-      // Mapeo de nuestros IDs a las variables globales de global.js.
-      // global.js usa 'narrative' (asumimos que es tu #text) y 'choicesDiv' (tu #choices).
-      // nextBtn (el botón Siguiente) y backgroundMusic ya son globales/DOM, pero los re-referenciamos para claridad:
+      // Referencias locales a elementos del DOM. No usamos const/let para nextBtn, 
+      // sino un nuevo nombre, para evitar conflictos con global.js.
       const textEl = document.getElementById("text"); 
       const choicesEl = document.getElementById("choices");
-      
-      // NextBtn ya está definido como const en global.js. Para usarlo aquí, asumimos que
-      // global.js lo hizo global (window.nextBtn) o que solo lo necesitas referenciar:
-      const nextBtnElement = document.getElementById("nextBtn"); // Usamos un nuevo nombre local
+      const nextBtnElement = document.getElementById("nextBtn"); 
       
       let i = 0; // Contador de línea, debe ser local.
       
@@ -197,6 +192,10 @@
 
       function showLine() {
         stopCurrentAudio(); 
+        
+        // 🚨 CORRECCIÓN DE LÓGICA: Limpia la interfaz de opciones/desafíos que global.js pudo haber dejado activa.
+        // Esto previene que el botón "Next" local se vea afectado por lógica externa.
+        if (choicesEl) choicesEl.innerHTML = ''; 
           
         if (i >= scene0.text.length) {
             nextBtnElement.style.display = 'none';
@@ -224,7 +223,6 @@
         }
 
         // 🚨 LÓGICA DE VOZ Y CONTROL DE NEXT BUTTON 🚨
-        // Usamos la variable global 'isVoiceActive' de global.js
         const shouldPlayVoice = typeof isVoiceActive !== 'undefined' && isVoiceActive;
         const hasAudio = lineData.audio;
         
@@ -290,14 +288,11 @@
       }
       
       document.addEventListener('DOMContentLoaded', () => {
-          // Aseguramos que la función global loadStory() no se ejecute
-          // y que solo se inicie nuestra lógica de escena.
-          // Si global.js tiene una función de inicialización que está disponible,
-          // podríamos llamarla, pero por ahora, solo showLine().
           showLine();
       });
 
     </script>
 
 </body>
-</html>
+  </html>
+  
