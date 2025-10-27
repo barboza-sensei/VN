@@ -96,9 +96,8 @@
 
   <script src="../../global.js"></script>
 
-  <script>
+<script>
     // 🚨 CORRECCIÓN CRÍTICA: Eliminamos 'let' para evitar el error 'score has already been declared'.
-    // Usamos la variable 'score' declarada en global.js y reasignamos el valor de localStorage.
     score = parseInt(localStorage.getItem('score') || 0);
 
     const IMG_GENERAL = 'assets/bg/laberinto_urbano.png';
@@ -112,6 +111,8 @@
     let currentAudio = null; // Audio de la línea de diálogo
     let currentBGM = BGM_FOOTSTEPS; // Pista de BGM actual
     let backgroundMusic = document.getElementById('backgroundMusic');
+    // Nuevo flag para la primera interacción
+    let hasInteracted = false; 
 
     // --- FUNCIONES DE UTILIDAD ---
     function formatText(content) {
@@ -134,27 +135,32 @@
         if (!backgroundMusic) return;
 
         // Solo cambiar si la ruta es diferente
+        // Nota: backgroundMusic.src siempre devuelve la URL completa, por eso usamos .includes()
         if (backgroundMusic.src.includes(newBGMPath) && backgroundMusic.paused === false) {
             return; 
         }
-
-        // Obtener el estado de 'mute' de global.js
-        const isMuted = typeof window.isMuted !== 'undefined' ? window.isMuted : false;
-
+        
         // Pausar y cambiar la fuente
         backgroundMusic.pause();
         backgroundMusic.src = newBGMPath;
         currentBGM = newBGMPath;
         
-        // Solo reproducir si no está silenciado
-        if (!isMuted) {
-            backgroundMusic.play().catch(e => console.warn("Error al reproducir BGM:", e));
+        // 🚨 SOLO INTENTAR REPRODUCIR SI YA HUBO INTERACCIÓN
+        if (hasInteracted) {
+             // Obtener el estado de 'mute' de global.js
+            const isMuted = typeof window.isMuted !== 'undefined' ? window.isMuted : false;
+            
+            if (!isMuted) {
+                backgroundMusic.loop = true; // Aseguramos que se repita
+                backgroundMusic.play().catch(e => console.warn("Error al intentar reproducir BGM:", e));
+            }
         }
     }
 
 
     function goTo(relativePath) {
         stopCurrentAudio();
+        // Si global.js maneja backgroundMusic, podríamos necesitar detenerlo aquí.
         const base = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
         const resolved = new URL(relativePath, base).href;
         window.location.href = resolved;
@@ -281,12 +287,10 @@
         let transitionData;
         
         if (userAnswer === data.answer) {
-            // Modificación directa de la variable global 'score'
             score += 1; 
             resultText = `<span class="equalis-voice fade-text">${data.success}</span>`;
             transitionData = data.transitionSuccess;
         } else {
-            // Modificación directa de la variable global 'score'
             score -= 1; 
             resultText = `<span class="disparia-voice fade-text">${data.failure}</span>`;
             transitionData = data.transitionFail;
@@ -310,6 +314,13 @@
     // --- EVENT LISTENERS E INICIALIZACIÓN ---
 
     nextBtnElement.addEventListener("click", () => {
+      // 🚨 Primera interacción: Habilitamos la reproducción del BGM
+      if (!hasInteracted) {
+          hasInteracted = true;
+          // Esto llama a updateBGM, que ahora sí intentará reproducir el audio.
+          updateBGM(currentBGM); 
+      }
+      
       if (!nextBtnElement.disabled) {
           stopCurrentAudio();
           currentLine++;
@@ -318,10 +329,10 @@
     });
     
     document.addEventListener('DOMContentLoaded', () => {
+        // Solo establecemos la fuente de la música al inicio, pero NO intentamos reproducir.
         updateBGM(BGM_FOOTSTEPS); 
         showLine();
     });
   </script>
 </body>
-  </html>
-  
+</html>
