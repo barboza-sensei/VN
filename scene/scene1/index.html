@@ -81,7 +81,7 @@
     #choices .choice-btn:last-child { border-bottom: none; }
 
     .equalis-voice { color: #aaffff; font-weight: bold; } 
-    .disparia-voice { color: #ff9933; font-weight: bold; } 
+    .disparia-voice { color: #ff9999; font-weight: bold; } 
     .challenge-question { font-size: 1.2em; }
   </style>
 </head>
@@ -97,7 +97,9 @@
   <script src="../../global.js"></script>
 
   <script>
-    let score = parseInt(localStorage.getItem('score') || 0);
+    // 🚨 CORRECCIÓN CRÍTICA: Eliminamos 'let' para evitar el error 'score has already been declared'.
+    // Usamos la variable 'score' declarada en global.js y reasignamos el valor de localStorage.
+    score = parseInt(localStorage.getItem('score') || 0);
 
     const IMG_GENERAL = 'assets/bg/laberinto_urbano.png';
     const IMG_DESAFIO = 'assets/bg/cartel_luminoso_desafio.png';
@@ -153,7 +155,6 @@
 
     function goTo(relativePath) {
         stopCurrentAudio();
-        // No detenemos la música de fondo aquí, ya que la siguiente escena lo hará si es necesario.
         const base = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
         const resolved = new URL(relativePath, base).href;
         window.location.href = resolved;
@@ -169,7 +170,7 @@
         { type: 'narrative', audio: '01_03.wav', content: "Una luz roja y pálida parpadea con insistencia en un cartel sobre una pared. No es un anuncio, es una **instrucción**."}, // i=2 (CAMBIO DE FONDO Y BGM AQUÍ)
         { type: 'narrative', audio: '01_04.wav', content: "Hay charcos en el suelo. El reflejo del cartel en el agua parece más nítido que el cartel mismo; son las letras reflejadas las que parecen encenderse solas."}, // i=3
         { type: 'voice', speaker: 'Equalis', audio: '01_05e.mp3', content: "El camino solo se revela ante la **Verdad**. Resuelve esta inconsistencia. Solo la **Lógica** te devolverá la realidad."}, // i=4
-        { type: 'narrative', audio: '01_06.wav', content: "El Murmullo Averso está cerca, esperando que falles. Hay un número escondido entre los destellos. Si lo hallás, el cartel se abrirá como una puerta."}, // i=5
+        { type: 'narrative', audio: '01_06.wav', content: "Sentís otra presencia a lo lejos, esperando que falles. Hay un número escondido entre los destellos. Si lo hallás, el cartel se abrirá como una puerta."}, // i=5
         { type: 'challenge', 
           question: "El enigma del cartel es: 2x + 3 = 7 ¿Qué valor de 'x' revela el camino?", 
           answer: 2, 
@@ -236,7 +237,6 @@
       
       // Lógica de Audio y Control de NextBtn
       if (shouldPlayVoice && hasAudio) {
-          // Asumimos que la ruta de la voz está correcta
           currentAudio = new Audio(VOICE_PATH + lineData.audio); 
           
           currentAudio.play().then(() => {
@@ -281,10 +281,12 @@
         let transitionData;
         
         if (userAnswer === data.answer) {
+            // Modificación directa de la variable global 'score'
             score += 1; 
             resultText = `<span class="equalis-voice fade-text">${data.success}</span>`;
             transitionData = data.transitionSuccess;
         } else {
+            // Modificación directa de la variable global 'score'
             score -= 1; 
             resultText = `<span class="disparia-voice fade-text">${data.failure}</span>`;
             transitionData = data.transitionFail;
@@ -308,7 +310,6 @@
     // --- EVENT LISTENERS E INICIALIZACIÓN ---
 
     nextBtnElement.addEventListener("click", () => {
-      // Solo avanzar si el botón no está deshabilitado por el audio de voz
       if (!nextBtnElement.disabled) {
           stopCurrentAudio();
           currentLine++;
@@ -317,10 +318,10 @@
     });
     
     document.addEventListener('DOMContentLoaded', () => {
-        // Aseguramos que el BGM se establezca al inicio.
         updateBGM(BGM_FOOTSTEPS); 
         showLine();
     });
   </script>
 </body>
-</html>
+  </html>
+  
