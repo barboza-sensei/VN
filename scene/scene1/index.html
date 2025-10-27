@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Escena 1 — El Cartel Luminoso</title>
   <link rel="stylesheet" href="../../style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   
   <style>
     /* Estilos locales para la atmósfera de esta escena */
@@ -14,7 +15,11 @@
         background-color: #0c0c1a;
         background-size: cover;
         background-position: center;
-        transition: background-image 1s ease-in-out; /* Mantenemos la transición */
+        transition: background-image 1s ease-in-out; 
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        align-items: flex-end; /* Alinea la caja de diálogo en la parte inferior */
     }
     
     .resaltado {
@@ -24,8 +29,16 @@
     }
     
     /* ******************************************************* */
-    /* ESTILOS ESTÉTICOS MANTENIDOS */
+    /* ESTILOS ESTÉTICOS MANTENIDOS Y CORREGIDOS PARA NEXTBTN */
     /* ******************************************************* */
+    .dialogue-box { 
+        position: relative;
+        color: #f0f0f0;
+        font-family: 'Georgia', serif;
+        line-height: 1.6;
+        z-index: 100;
+    }
+
     #main-dialogue-box {
         position: absolute; bottom: 5vh; left: 50%; transform: translateX(-50%);
         width: 90%; max-width: 800px; padding: 1.5em;
@@ -33,6 +46,29 @@
         border: 1px solid rgba(255, 255, 255, 0.1); 
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
     }
+
+    #nextBtn { 
+        position: absolute;
+        bottom: 1.5em;
+        right: 1.5em;
+        background: transparent;
+        border: none;
+        color: #f0f0f0;
+        font-size: 1.8em;
+        cursor: pointer;
+        padding: 0;
+        transition: color 0.2s ease, opacity 0.2s ease;
+        opacity: 1;
+        
+        text-indent: 0; 
+        overflow: visible; 
+    }
+    
+    #nextBtn:disabled { opacity: 0.3; cursor: default; }
+    
+    /* CORRECCIÓN: Evita el conflicto con el estilo ::after de global.js */
+    #nextBtn::after { content: '' !important; visibility: hidden !important; display: none !important; }
+
     #choices { display: flex; flex-direction: column; gap: 0; margin-top: 15px; }
     .choice-btn {
         background: rgba(0, 0, 0, 0.4); border: none; border-radius: 0; color: #f0f0f0;
@@ -43,11 +79,10 @@
         background: rgba(40, 40, 40, 0.6); box-shadow: 0 0 0 1px #aaffff; color: #aaffff; outline: none; 
     }
     #choices .choice-btn:last-child { border-bottom: none; }
-    #nextBtn::after { content: none !important; visibility: hidden; }
-    #nextBtn { text-indent: 0; overflow: visible; }
 
-    .equalis-voice { color: #aaffff; } 
-    .disparia-voice { color: #ff9999; } 
+    .equalis-voice { color: #aaffff; font-weight: bold; } 
+    .disparia-voice { color: #ff9933; font-weight: bold; } 
+    .challenge-question { font-size: 1.2em; }
   </style>
 </head>
 
@@ -56,15 +91,27 @@
     <p id="text"></p>
     
     <div id="choices"></div>
-    <button id="nextBtn" title="Continuar">➤</button> 
+    <button id="nextBtn" style="display: none;" title="Continuar">➤</button> 
   </div>
+
+  <script src="../../global.js"></script>
 
   <script>
     let score = parseInt(localStorage.getItem('score') || 0);
 
     const IMG_GENERAL = 'assets/bg/laberinto_urbano.png';
     const IMG_DESAFIO = 'assets/bg/cartel_luminoso_desafio.png';
+    const VOICE_PATH = 'assets/voice/'; 
+    
+    // --- RUTAS DE MÚSICA DE FONDO (BGM) ---
+    const BGM_FOOTSTEPS = 'assets/sfx/footsteps.wav';
+    const BGM_LIGHTS = 'assets/sfx/lights-flickering.wav';
+    
+    let currentAudio = null; // Audio de la línea de diálogo
+    let currentBGM = BGM_FOOTSTEPS; // Pista de BGM actual
+    let backgroundMusic = document.getElementById('backgroundMusic');
 
+    // --- FUNCIONES DE UTILIDAD ---
     function formatText(content) {
         return content.replace(/\*\*(.*?)\*\*/g, '<span class="resaltado">$1</span>');
     }
@@ -73,19 +120,57 @@
         document.body.style.backgroundImage = `url('${imageUrl}')`;
     }
 
+    function stopCurrentAudio() {
+        if (currentAudio) {
+            currentAudio.pause();
+            currentAudio.currentTime = 0;
+            currentAudio = null;
+        }
+    }
+    
+    function updateBGM(newBGMPath) {
+        if (!backgroundMusic) return;
+
+        // Solo cambiar si la ruta es diferente
+        if (backgroundMusic.src.includes(newBGMPath) && backgroundMusic.paused === false) {
+            return; 
+        }
+
+        // Obtener el estado de 'mute' de global.js
+        const isMuted = typeof window.isMuted !== 'undefined' ? window.isMuted : false;
+
+        // Pausar y cambiar la fuente
+        backgroundMusic.pause();
+        backgroundMusic.src = newBGMPath;
+        currentBGM = newBGMPath;
+        
+        // Solo reproducir si no está silenciado
+        if (!isMuted) {
+            backgroundMusic.play().catch(e => console.warn("Error al reproducir BGM:", e));
+        }
+    }
+
+
+    function goTo(relativePath) {
+        stopCurrentAudio();
+        // No detenemos la música de fondo aquí, ya que la siguiente escena lo hará si es necesario.
+        const base = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+        const resolved = new URL(relativePath, base).href;
+        window.location.href = resolved;
+    }
+    
     // --- DATA DE LA ESCENA 1 ---
     const scene1 = {
       id: 1,
       title: "El Cartel Luminoso",
       text: [
-        { type: 'narrative', content: "El giro no trae alivio. Seguis caminando pesadamente, con la sensación que tiempo y espacio pierden sentido a cada paso que das. Estás atrapado en un laberinto hecho de la misma calle repetida."}, // i=0
-        { type: 'narrative', content: "El aire es frío, y la luz es artificial y muerta. Buscás desesperadamente una salida, un punto de referencia que no sea una repetición vacía."}, // i=1
-        { type: 'narrative', content: "Una luz roja y pálida parpadea con insistencia en un cartel sobre una pared. No es un anuncio, es una **instrucción**."}, // i=2 (CAMBIO DE FONDO AQUÍ)
-        { type: 'narrative', content: "Hay charcos en el suelo. El reflejo del cartel en el agua parece más nítido que el cartel mismo; son las letras reflejadas las que parecen encenderse solas."}, // i=3
-        { type: 'voice', speaker: 'Equalis', content: "El camino solo se revela ante la **Verdad**. Resuelve esta inconsistencia. Solo la **Lógica** te devolverá la realidad."}, // i=4
-        { type: 'narrative', content: "El Murmullo Averso está cerca, esperando que falles. Hay un número escondido entre los destellos. Si lo hallás, el cartel se abrirá como una puerta."}, // i=5
+        { type: 'narrative', audio: '01_01.wav', content: "El giro no trae alivio. Seguis caminando pesadamente, con la sensación que tiempo y espacio pierden sentido a cada paso que das. Estás atrapado en un laberinto hecho de la misma calle repetida."}, // i=0
+        { type: 'narrative', audio: '01_02.wav', content: "El aire es frío, y la luz es artificial y muerta. Buscás desesperadamente una salida, un punto de referencia que no sea una repetición vacía."}, // i=1
+        { type: 'narrative', audio: '01_03.wav', content: "Una luz roja y pálida parpadea con insistencia en un cartel sobre una pared. No es un anuncio, es una **instrucción**."}, // i=2 (CAMBIO DE FONDO Y BGM AQUÍ)
+        { type: 'narrative', audio: '01_04.wav', content: "Hay charcos en el suelo. El reflejo del cartel en el agua parece más nítido que el cartel mismo; son las letras reflejadas las que parecen encenderse solas."}, // i=3
+        { type: 'voice', speaker: 'Equalis', audio: '01_05e.mp3', content: "El camino solo se revela ante la **Verdad**. Resuelve esta inconsistencia. Solo la **Lógica** te devolverá la realidad."}, // i=4
+        { type: 'narrative', audio: '01_06.wav', content: "El Murmullo Averso está cerca, esperando que falles. Hay un número escondido entre los destellos. Si lo hallás, el cartel se abrirá como una puerta."}, // i=5
         { type: 'challenge', 
-          // DESAFÍO: ECUACIÓN SIMPLIFICADA
           question: "El enigma del cartel es: 2x + 3 = 7 ¿Qué valor de 'x' revela el camino?", 
           answer: 2, 
           success: "Equalis: Un paso más cerca. (+1 Lógica).", 
@@ -101,31 +186,46 @@
       ]
     };
 
+    // 🚨 Referencias al DOM (evitando conflictos de 'const' con global.js)
     const textEl = document.getElementById("text");
     const choicesEl = document.getElementById("choices");
-    const nextBtn = document.getElementById("nextBtn");
+    const nextBtnElement = document.getElementById("nextBtn");
     
     let currentLine = 0; 
     const sceneData = scene1.text; 
 
+    // --- FUNCIONES PRINCIPALES DE FLUJO ---
     function showLine() {
+      stopCurrentAudio();
+      
+      // Limpiamos elecciones y ocultamos el botón de antemano.
+      choicesEl.innerHTML = '';
+      nextBtnElement.style.display = 'none';
+
       if (currentLine >= sceneData.length) return;
 
-      if (currentLine === 2) { 
-        // CAMBIO DE FONDO: Al mencionar el cartel por primera vez
+      const lineData = sceneData[currentLine];
+      
+      // Lógica de CAMBIO DE FONDO Y BGM
+      if (currentLine <= 1) {
+        changeBackground(IMG_GENERAL);
+        updateBGM(BGM_FOOTSTEPS); // BGM para i=0 y i=1
+      } else if (currentLine >= 2) { 
         changeBackground(IMG_DESAFIO);
+        updateBGM(BGM_LIGHTS); // BGM para i=2 en adelante
       }
       
-      const lineData = sceneData[currentLine];
-      textEl.className = 'fade-text'; 
-
+      // Lógica de Desafío
       if (lineData.type === 'challenge') {
           renderChallenge(lineData);
-          nextBtn.style.display = 'none'; 
           return; 
       }
       
+      // Lógica de Narrativa/Voz
+      textEl.className = 'fade-text'; 
       let content = formatText(lineData.content);
+      const shouldPlayVoice = typeof isVoiceActive !== 'undefined' && isVoiceActive;
+      const hasAudio = lineData.audio;
 
       if (lineData.speaker) {
           const voiceClass = lineData.speaker.toLowerCase() === 'equalis' ? 'equalis-voice' : 'disparia-voice';
@@ -134,9 +234,30 @@
           textEl.innerHTML = content;
       }
       
-      nextBtn.style.display = 'inline-flex';
+      // Lógica de Audio y Control de NextBtn
+      if (shouldPlayVoice && hasAudio) {
+          // Asumimos que la ruta de la voz está correcta
+          currentAudio = new Audio(VOICE_PATH + lineData.audio); 
+          
+          currentAudio.play().then(() => {
+              nextBtnElement.disabled = true;
+          }).catch(error => {
+              console.warn("No se pudo reproducir la voz. Habilitando Next.", error);
+              nextBtnElement.disabled = false;
+          });
+          
+          currentAudio.onended = () => {
+              nextBtnElement.disabled = false;
+          };
+      } else {
+          nextBtnElement.disabled = false;
+      }
+      
+      nextBtnElement.style.display = 'inline-flex';
       void textEl.offsetWidth; 
     }
+
+    // --- LÓGICA DE DESAFÍO ---
 
     function renderChallenge(data) {
         textEl.innerHTML = `<p class="challenge-question fade-text">${formatText(data.question)}</p>`;
@@ -153,6 +274,7 @@
     }
 
     function checkAnswer(data, userAnswer) {
+        stopCurrentAudio(); 
         Array.from(choicesEl.children).forEach(btn => btn.disabled = true);
         
         let resultText;
@@ -171,28 +293,34 @@
         textEl.innerHTML = resultText;
         choicesEl.innerHTML = ''; 
         
-        nextBtn.style.display = 'inline-flex';
-        nextBtn.onclick = () => {
+        nextBtnElement.style.display = 'inline-flex';
+        nextBtnElement.onclick = () => {
+            // Mostrar texto de transición (primera pulsación)
             textEl.textContent = transitionData.text; 
-            nextBtn.onclick = () => {
+            nextBtnElement.onclick = () => {
+                // Ir a la siguiente escena (segunda pulsación)
                 localStorage.setItem('score', score); 
                 goTo(transitionData.nextScene);
             }
         };
     }
-
-    function goTo(relativePath) {
-        const base = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
-        const resolved = new URL(relativePath, base).href;
-        window.location.href = resolved;
-    }
     
-    nextBtn.addEventListener("click", () => {
-      currentLine++;
-      showLine();
+    // --- EVENT LISTENERS E INICIALIZACIÓN ---
+
+    nextBtnElement.addEventListener("click", () => {
+      // Solo avanzar si el botón no está deshabilitado por el audio de voz
+      if (!nextBtnElement.disabled) {
+          stopCurrentAudio();
+          currentLine++;
+          showLine();
+      }
     });
     
-    window.onload = showLine;
+    document.addEventListener('DOMContentLoaded', () => {
+        // Aseguramos que el BGM se establezca al inicio.
+        updateBGM(BGM_FOOTSTEPS); 
+        showLine();
+    });
   </script>
 </body>
 </html>
