@@ -9,8 +9,9 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   
   <style>
-    /* Estilos omitidos por brevedad, asumiendo que son correctos */
+    /* Estilos omitidos por brevedad */
     body {
+        /* Usando la ruta proporcionada */
         background-image: url('assets/bg/calle_oscura_sin_luces_inicio.jpg'); 
         background-color: #0d0d0d;
         background-size: cover; 
@@ -137,7 +138,7 @@
 
     <script>
       // ******************************************************
-      // ESTRUCTURA DE LA ESCENA CON ARCHIVOS DE AUDIO ASOCIADOS
+      // ESTRUCTURA DE LA ESCENA 
       // ******************************************************
       const scene0 = {
         id: 0,
@@ -157,26 +158,28 @@
         ]
       };
 
-      // 🚨 CORRECCIÓN CRÍTICA DE VARIABLES GLOBALES: 
-      // Si global.js ya declaró textEl, choicesEl, nextBtn, e i, 
-      // NO debemos usar 'const' o 'let' aquí, solo asignarlas.
+      // 🚨 CORRECCIÓN CRÍTICA DE DECLARACIÓN DE VARIABLES 🚨
+      // Usamos los nombres de variables globales de global.js o mapeamos los nuestros.
       
-      // Intentamos referenciar los elementos del DOM. Si global.js NO los declaró,
-      // esto funcionará. Si SÍ los declaró, esta parte debe ser omitida o global.js debe exportarlos.
-      // Suponemos que estos SELECTORES son locales a esta escena:
-      const textEl = document.getElementById("text");
+      // Mapeo de nuestros IDs a las variables globales de global.js.
+      // global.js usa 'narrative' (asumimos que es tu #text) y 'choicesDiv' (tu #choices).
+      // nextBtn (el botón Siguiente) y backgroundMusic ya son globales/DOM, pero los re-referenciamos para claridad:
+      const textEl = document.getElementById("text"); 
       const choicesEl = document.getElementById("choices");
-      const nextBtn = document.getElementById("nextBtn");
-      let i = 0; // i (índice de línea) es casi siempre local, pero si global.js lo usa, cámbialo a 'i = 0;'
-
+      
+      // NextBtn ya está definido como const en global.js. Para usarlo aquí, asumimos que
+      // global.js lo hizo global (window.nextBtn) o que solo lo necesitas referenciar:
+      const nextBtnElement = document.getElementById("nextBtn"); // Usamos un nuevo nombre local
+      
+      let i = 0; // Contador de línea, debe ser local.
+      
       // Rutas de imagen (usando las rutas que me indicaste)
       const IMG_GENERAL = 'assets/bg/calle_oscura_sin_luces_inicio.jpg'; 
       const IMG_CALLEJON = 'assets/bg/calle_oscura_sin_luces_cerca_callejon.png'; 
       const IMG_ESQUINA = 'assets/bg/calle_oscura_sin_luces_cerca_esquina.jpg'; 
       
-      // RUTA DE VOZ
       const VOICE_PATH = 'assets/voice/'; 
-      let currentAudio = null; 
+      let currentAudio = null; // Audio local (no conflicto con currentNarrativeAudio de global.js)
 
       let backgroundMusic = document.getElementById('backgroundMusic');
       
@@ -196,7 +199,7 @@
         stopCurrentAudio(); 
           
         if (i >= scene0.text.length) {
-            nextBtn.style.display = 'none';
+            nextBtnElement.style.display = 'none';
             return;
         }
         
@@ -220,23 +223,23 @@
             textEl.textContent = lineData.content;
         }
 
-        // 🚨 RE-INTEGRACIÓN DE VOZ (basada en el flujo simplificado) 🚨
-        // Usamos una verificación más flexible de la variable global 'isVoiceActive'
-        const shouldPlayVoice = (typeof isVoiceActive !== 'undefined' && isVoiceActive) || (typeof window.isVoiceActive !== 'undefined' && window.isVoiceActive);
+        // 🚨 LÓGICA DE VOZ Y CONTROL DE NEXT BUTTON 🚨
+        // Usamos la variable global 'isVoiceActive' de global.js
+        const shouldPlayVoice = typeof isVoiceActive !== 'undefined' && isVoiceActive;
         const hasAudio = lineData.audio;
         
         if (shouldPlayVoice && hasAudio) {
             currentAudio = new Audio(VOICE_PATH + lineData.audio); 
             
             currentAudio.play().then(() => {
-                nextBtn.disabled = true;
+                nextBtnElement.disabled = true;
             }).catch(error => {
-                console.warn("No se pudo reproducir la voz (Error de media). Habilitando Next.", error);
-                nextBtn.disabled = false;
+                console.warn("No se pudo reproducir la voz. Habilitando Next.", error);
+                nextBtnElement.disabled = false;
             });
             
             currentAudio.onended = () => {
-                nextBtn.disabled = false;
+                nextBtnElement.disabled = false;
                 if (i === scene0.text.length - 1) {
                     showChoices();
                 }
@@ -244,19 +247,19 @@
 
         } else {
             // Caso: Voz OFF o sin Audio -> Habilitar Next inmediatamente
-            nextBtn.disabled = false;
+            nextBtnElement.disabled = false;
             if (i === scene0.text.length - 1) {
                 showChoices();
             }
         }
 
         // Mostrar u ocultar el botón de avance
-        nextBtn.style.display = i < scene0.text.length - 1 || i === scene0.text.length - 1 && !nextBtn.disabled ? "inline-flex" : "none";
+        nextBtnElement.style.display = i < scene0.text.length - 1 || i === scene0.text.length - 1 && !nextBtnElement.disabled ? "inline-flex" : "none";
         
         void textEl.offsetWidth; 
       }
 
-      nextBtn.addEventListener("click", () => {
+      nextBtnElement.addEventListener("click", () => {
         stopCurrentAudio(); 
         if (i < scene0.text.length - 1) {
           i++;
@@ -273,7 +276,7 @@
           btn.onclick = () => goTo(c.nextScene);
           choicesEl.appendChild(btn);
         });
-        nextBtn.style.display = 'none'; 
+        nextBtnElement.style.display = 'none'; 
       }
 
       function goTo(relativePath) {
@@ -287,12 +290,14 @@
       }
       
       document.addEventListener('DOMContentLoaded', () => {
-          // Ya no necesitamos setTimeout, ya que el error de 'declared' era sincrónico.
+          // Aseguramos que la función global loadStory() no se ejecute
+          // y que solo se inicie nuestra lógica de escena.
+          // Si global.js tiene una función de inicialización que está disponible,
+          // podríamos llamarla, pero por ahora, solo showLine().
           showLine();
       });
 
     </script>
 
 </body>
-  </html>
-  
+</html>
