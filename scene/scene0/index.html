@@ -4,11 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Escena 0 — La calle sin principio</title>
+  
   <link rel="stylesheet" href="../../style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  
   <style>
     /* Estilos locales para la atmósfera de esta escena */
     body {
-        /* IMAGEN INICIAL (Imagen 1) */
+        /* 🚨 RUTA CORREGIDA: Hacia la imagen de fondo */
         background-image: url('assets/bg/calle_oscura_sin_luces_inicio.jpg'); 
         background-color: #0d0d0d;
         background-size: cover; 
@@ -20,7 +23,6 @@
         align-items: flex-end; /* Alinea la caja de diálogo en la parte inferior */
     }
     
-    /* Inicio de los estilos previamente omitidos (ahora completos) */
     .dialogue-box {
         position: relative;
         color: #f0f0f0;
@@ -29,7 +31,7 @@
         z-index: 100;
     }
 
-    #main-dialogue-box {
+    #main-dialogue-box { 
         position: absolute; 
         bottom: 5vh; 
         left: 50%;
@@ -43,7 +45,7 @@
     }
     
     #text {
-        min-height: 2.5em; /* Asegura espacio si el texto es corto */
+        min-height: 2.5em; 
         margin: 0 0 15px 0;
         font-size: 1.2em;
         opacity: 1;
@@ -51,7 +53,7 @@
     }
 
     #text.fade-text {
-        opacity: 1; /* Transición visual para texto */
+        opacity: 1; 
     }
     
     .disparia-voice {
@@ -72,7 +74,6 @@
         transition: color 0.2s ease, opacity 0.2s ease;
         opacity: 1;
         
-        /* Asegura que no se muestre el contenido del pseudo-elemento */
         text-indent: 0; 
         overflow: visible; 
     }
@@ -87,11 +88,9 @@
     }
 
     #nextBtn::after {
-        content: none !important; /* Desactiva el content del pseudo-elemento */
-        visibility: hidden;
+        content: '›' !important; 
+        visibility: visible !important;
     }
-    /* Fin de los estilos previamente omitidos */
-
 
     #choices {
         display: flex;
@@ -127,186 +126,164 @@
 </head>
 
 <body>
-  <div class="dialogue-box" id="main-dialogue-box">
-    <p id="text"></p>
-    <div id="choices"></div>
-    <button id="nextBtn" title="Continuar">➤</button> 
-  </div>
+    <audio id="backgroundMusic" src="assets/sfx/footsteps.wav" autoplay loop></audio>
 
-  <script src="../../global.js"></script>
+    <div class="dialogue-box" id="main-dialogue-box">
+        <p id="text"></p>
+        <div id="choices"></div>
+        <button id="nextBtn" style="display: none;" title="Continuar">➤</button> 
+    </div>
 
-  <script>
-    // ******************************************************
-    // ESTRUCTURA DE LA ESCENA CON ARCHIVOS DE AUDIO ASOCIADOS
-    // ******************************************************
-    const scene0 = {
-      id: 0,
-      title: "La calle sin principio",
-      text: [
-        { type: 'narrative', audio: '00_01.wav', content: "Despertás de pie, en el centro exacto de la calle. Intentás recordar de dónde venís o hacia dónde ibas, pero tu mente esta en blanco, no lográs recordar nada."}, // i=0
-        { type: 'narrative', audio: '00_02.wav', content: "La calle es una línea perfecta, fríamente recta, que se extiende hasta desvanecerse en la oscuridad."}, // i=1
-        { type: 'narrative', audio: '00_03.wav', content: "Los faroles son meros bocetos de metal, estructuras desnudas y sin luz."}, // i=2
-        { type: 'narrative', audio: '00_04.wav', content: "Una brisa tenue, predecible, te empuja con una insistencia sutil hacia adelante."}, // i=3
-        { type: 'narrative', audio: '00_05.wav', content: "A tu izquierda, la esquina. Una vidriera opaca, rota por una grieta que parece un error en el patrón del mundo."}, // i=4 (Cambia a Imagen 2)
-        { type: 'narrative', audio: '00_06.wav', content: "A tu derecha, un callejón estrecho y oscuro. Su hedor a lluvia antigua es lo único que ancla este lugar a lo orgánico."}, // i=5 (Mantiene Imagen 2, ya que Imagen 3 no está)
-        { type: 'voice', speaker: 'Murmullo', audio: '00_07d.mp3', content: "La elección define el primer movimiento en esta realidad."} // i=6 (LÍNEA DE AUDIO FINAL)
-      ],
-      choices: [
-        { text: "Doblar a la izquierda (Esquina)", nextScene: "../scene1/index.html" },
-        { text: "Doblar a la derecha (Callejón)", nextScene: "../scene1/index.html" }
-      ]
-    };
+    <script src="../../global.js"></script> 
 
-    const textEl = document.getElementById("text");
-    const choicesEl = document.getElementById("choices");
-    const nextBtn = document.getElementById("nextBtn");
+    <script>
+      // ******************************************************
+      // ESTRUCTURA DE LA ESCENA CON ARCHIVOS DE AUDIO ASOCIADOS
+      // ******************************************************
+      const scene0 = {
+        id: 0,
+        title: "La calle sin principio",
+        text: [
+          { type: 'narrative', audio: '00_01.wav', content: "Despertás de pie, en el centro exacto de la calle. Intentás recordar de dónde venís o hacia dónde ibas, pero tu mente esta en blanco, no lográs recordar nada."}, 
+          { type: 'narrative', audio: '00_02.wav', content: "La calle es una línea perfecta, fríamente recta, que se extiende hasta desvanecerse en la oscuridad."}, 
+          { type: 'narrative', audio: '00_03.wav', content: "Los faroles son meros bocetos de metal, estructuras desnudas y sin luz."}, 
+          { type: 'narrative', audio: '00_04.wav', content: "Una brisa tenue, predecible, te empuja con una insistencia sutil hacia adelante."}, 
+          { type: 'narrative', audio: '00_05.wav', content: "A tu izquierda, la esquina. Una vidriera opaca, rota por una grieta que parece un error en el patrón del mundo."}, 
+          { type: 'narrative', audio: '00_06.wav', content: "A tu derecha, un callejón estrecho y oscuro. Su hedor a lluvia antigua es lo único que ancla este lugar a lo orgánico."}, 
+          { type: 'voice', speaker: 'Murmullo', audio: '00_07d.mp3', content: "La elección define el primer movimiento en esta realidad."} 
+        ],
+        choices: [
+          { text: "Doblar a la izquierda (Esquina)", nextScene: "../scene1/index.html" },
+          { text: "Doblar a la derecha (Callejón)", nextScene: "../scene1/index.html" }
+        ]
+      };
 
-    let i = 0;
-    
-    // Rutas de imagen
-    const IMG_GENERAL = 'assets/bg/calle_oscura_sin_luces_inicio.jpg';
-    const IMG_CALLEJON = 'assets/bg/calle_oscura_sin_luces_cerca_callejon.png'; 
-    const IMG_ESQUINA = 'assets/bg/calle_oscura_sin_luces_cerca_esquina.jpg';
-    
-    // ******************************************************
-    // CONFIGURACIÓN DE AUDIO
-    // ******************************************************
-    // 1. RUTA DE VOZ CORREGIDA (relativa al index.html)
-    const VOICE_PATH = 'assets/voice/'; 
-    let currentAudio = null; 
+      const textEl = document.getElementById("text");
+      const choicesEl = document.getElementById("choices");
+      const nextBtn = document.getElementById("nextBtn");
 
-    // 2. Música de fondo (BGM)
-    const BGM_PATH = 'assets/sfx/footsteps.wav';
-    const BGM_VOLUME = 0.3; // 30%
-    let backgroundMusic = null;
-    
-    // Inicia la música de fondo: en loop y con volumen al 50%
-    function startBackgroundMusic() {
-        if (!backgroundMusic) {
-            backgroundMusic = new Audio(BGM_PATH);
-            backgroundMusic.volume = BGM_VOLUME;
-            backgroundMusic.loop = true; // Bucle activado
+      let i = 0;
+      
+      // Rutas de imagen
+      const IMG_GENERAL = 'assets/bg/calle_oscura_sin_luces_inicio.jpg'; 
+      const IMG_CALLEJON = 'assets/bg/calle_oscura_sin_luces_cerca_callejon.png'; 
+      const IMG_ESQUINA = 'assets/bg/calle_oscura_sin_luces_cerca_esquina.jpg'; 
+      
+      // ******************************************************
+      // CONFIGURACIÓN DE AUDIO LOCAL
+      // ******************************************************
+      // 🚨 RUTA CORREGIDA: Hacia la carpeta de voces
+      const VOICE_PATH = 'assets/voice/'; 
+      let currentAudio = null; 
+
+      // Referencia a la música de fondo que game.js silenciará/activará
+      let backgroundMusic = document.getElementById('backgroundMusic');
+      
+      function changeBackground(imageUrl) {
+          document.body.style.backgroundImage = `url('${imageUrl}')`;
+      }
+
+      function stopCurrentAudio() {
+          if (currentAudio) {
+              currentAudio.pause();
+              currentAudio.currentTime = 0;
+              currentAudio = null;
+          }
+      }
+
+      function showLine() {
+        stopCurrentAudio(); 
+          
+        if (i >= scene0.text.length) {
+            return;
+        }
+        
+        // LÓGICA DE CAMBIO DE FONDO 
+        if (i === 4) { 
+            changeBackground(IMG_ESQUINA);
+        } else if (i === 5) {
+            changeBackground(IMG_CALLEJON); 
+        }
+        
+        const lineData = scene0.text[i];
+        textEl.className = 'fade-text';
+
+        // Muestra el texto
+        if (lineData.type === 'voice') {
+            const voiceClass = 'disparia-voice';
+            textEl.innerHTML = `<span class="${voiceClass}">${lineData.speaker}: ${lineData.content}</span>`;
+        } else {
+            textEl.textContent = lineData.content;
+        }
+
+        // 🚨 INTEGRACIÓN DE VOZ: Usar la variable global 'isVoiceActive' de game.js
+        if (typeof isVoiceActive !== 'undefined' && isVoiceActive && lineData.audio) {
+            currentAudio = new Audio(VOICE_PATH + lineData.audio); 
             
-            // Intenta reproducir. (Puede fallar en navegadores sin interacción del usuario).
-            backgroundMusic.play().catch(error => {
-                console.log("No se pudo iniciar la Música de Fondo automáticamente:", error);
+            currentAudio.play().catch(error => {
+                console.log("No se pudo iniciar la reproducción de audio de voz:", error);
             });
+            
+            nextBtn.disabled = true;
+            
+            currentAudio.onended = () => {
+                nextBtn.disabled = false;
+                if (i === scene0.text.length - 1) {
+                    showChoices();
+                }
+            };
+        } else {
+            // Si la voz está INACTIVA, o no hay audio
+            nextBtn.disabled = false;
+            if (i === scene0.text.length - 1) {
+                showChoices();
+            }
         }
-    }
 
-    function changeBackground(imageUrl) {
-        document.body.style.backgroundImage = `url('${imageUrl}')`;
-    }
+        nextBtn.style.display = i < scene0.text.length - 1 ? "inline-flex" : "none";
+        
+        void textEl.offsetWidth; 
+      }
 
-    // Detiene y resetea cualquier audio de voz activo
-    function stopCurrentAudio() {
-        if (currentAudio) {
-            currentAudio.pause();
-            currentAudio.currentTime = 0;
-            currentAudio = null;
+      nextBtn.addEventListener("click", () => {
+        stopCurrentAudio(); 
+        if (i < scene0.text.length - 1) {
+          i++;
+          showLine();
         }
-    }
-
-    function showLine() {
-      // Detiene el audio anterior
-      stopCurrentAudio(); 
-        
-      if (i >= scene0.text.length) {
-          return;
-      }
-      
-      // LÓGICA DE CAMBIO DE FONDO 
-      if (i === 4) { 
-          changeBackground(IMG_ESQUINA);
-      } else if (i === 5) {
-          changeBackground(IMG_CALLEJON); 
-      }
-      
-      const lineData = scene0.text[i];
-      textEl.className = 'fade-text';
-
-      // Muestra el texto
-      if (lineData.type === 'voice') {
-          const voiceClass = 'disparia-voice';
-          textEl.innerHTML = `<span class="${voiceClass}">${lineData.speaker}: ${lineData.content}</span>`;
-      } else {
-          textEl.textContent = lineData.content;
-      }
-
-      // IMPLEMENTACIÓN DE REPRODUCCIÓN DE AUDIO (para TODAS las líneas)
-      if (lineData.audio) {
-          // Usa la ruta 'assets/voice/' + nombre del archivo
-          currentAudio = new Audio(VOICE_PATH + lineData.audio); 
-          
-          currentAudio.play().catch(error => {
-              console.log("No se pudo iniciar la reproducción de audio de voz:", error);
-          });
-          
-          // Deshabilita el botón 'Siguiente' mientras el audio está sonando.
-          nextBtn.disabled = true;
-          
-          // Habilita el botón 'Siguiente' al finalizar el audio.
-          currentAudio.onended = () => {
-              nextBtn.disabled = false;
-              // Muestra las opciones si es la última línea
-              if (i === scene0.text.length - 1) {
-                  showChoices();
-              }
-          };
-      } else {
-          // Fallback: Si no hay audio, el botón está habilitado por defecto.
-          nextBtn.disabled = false;
-      }
-
-      // Oculta el botón 'Siguiente' en la última línea (se gestiona con la lógica de opciones)
-      nextBtn.style.display = i < scene0.text.length - 1 ? "inline-flex" : "none";
-
-      if (i === scene0.text.length - 1 && !lineData.audio) {
-          // Caso de última línea sin audio: muestra opciones inmediatamente
-          showChoices();
-      }
-      
-      void textEl.offsetWidth; 
-    }
-
-    nextBtn.addEventListener("click", () => {
-      // Permite al usuario avanzar antes de que termine el audio (si lo desea)
-      stopCurrentAudio(); 
-        
-      if (i < scene0.text.length - 1) {
-        i++;
-        showLine();
-      }
-    });
-
-    function showChoices() {
-      choicesEl.innerHTML = "";
-      scene0.choices.forEach(c => {
-        const btn = document.createElement("button");
-        btn.textContent = c.text;
-        btn.className = 'choice-btn'; 
-        btn.onclick = () => goTo(c.nextScene);
-        choicesEl.appendChild(btn);
       });
-    }
 
-    function goTo(relativePath) {
-      // Detiene la música de fondo al navegar a la siguiente escena
-      if (backgroundMusic) {
-          backgroundMusic.pause();
+      function showChoices() {
+        choicesEl.innerHTML = "";
+        scene0.choices.forEach(c => {
+          const btn = document.createElement("button");
+          btn.textContent = c.text;
+          btn.className = 'choice-btn'; 
+          btn.onclick = () => goTo(c.nextScene);
+          choicesEl.appendChild(btn);
+        });
+        nextBtn.style.display = 'none'; 
+      }
+
+      function goTo(relativePath) {
+        if (backgroundMusic) {
+            backgroundMusic.pause();
+        }
+        
+        const base = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+        const resolved = new URL(relativePath, base).href;
+        window.location.href = resolved;
       }
       
-      const base = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
-      const resolved = new URL(relativePath, base).href;
-      window.location.href = resolved;
-    }
+      // Iniciar la escena después de que todo el DOM y game.js se hayan cargado.
+      document.addEventListener('DOMContentLoaded', () => {
+          // Ya que game.js no tiene un motor de historia para esta escena, 
+          // simplemente iniciamos nuestra secuencia local después de que game.js 
+          // haya aplicado los modos de accesibilidad (Dyslexia, Mute, Voz).
+          showLine();
+      });
 
-    // Inicia la música de fondo y la línea de diálogo al cargar la ventana
-    window.onload = () => {
-        startBackgroundMusic(); 
-        showLine();
-    }
-  </script>
+    </script>
+
 </body>
-  </html>
-  
+</html>
