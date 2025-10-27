@@ -11,7 +11,7 @@
   <style>
     /* Estilos locales para la atmósfera de esta escena */
     body {
-        /* RUTA CORREGIDA */
+        /* Usando la ruta proporcionada */
         background-image: url('assets/bg/calle_oscura_sin_luces_inicio.jpg'); 
         background-color: #0d0d0d;
         background-size: cover; 
@@ -168,38 +168,26 @@
       const IMG_CALLEJON = 'assets/bg/calle_oscura_sin_luces_cerca_callejon.png'; 
       const IMG_ESQUINA = 'assets/bg/calle_oscura_sin_luces_cerca_esquina.jpg'; 
       
-      // ******************************************************
-      // CONFIGURACIÓN DE AUDIO LOCAL
-      // ******************************************************
-      // RUTA CORREGIDA
       const VOICE_PATH = 'assets/voice/'; 
       let currentAudio = null; 
 
-      // Referencia a la música de fondo
       let backgroundMusic = document.getElementById('backgroundMusic');
       
       function changeBackground(imageUrl) {
           document.body.style.backgroundImage = `url('${imageUrl}')`;
       }
 
-      function stopCurrentAudio() {
-          if (currentAudio) {
-              currentAudio.pause();
-              currentAudio.currentTime = 0;
-              currentAudio = null;
-          }
-      }
-
       function showLine() {
-        stopCurrentAudio(); 
           
         if (i >= scene0.text.length) {
             nextBtn.style.display = 'none';
             return;
         }
         
-        // LÓGICA DE CAMBIO DE FONDO 
-        if (i === 4) { 
+        // 🚨 Aplicar fondo inicial para la primera línea y luego los cambios
+        if (i === 0) {
+             changeBackground(IMG_GENERAL);
+        } else if (i === 4) { 
             changeBackground(IMG_ESQUINA);
         } else if (i === 5) {
             changeBackground(IMG_CALLEJON); 
@@ -208,55 +196,31 @@
         const lineData = scene0.text[i];
         textEl.className = 'fade-text';
 
-        // 🚨 Muestra el texto (siempre debe mostrarse)
+        // 🚨 Lógica de renderizado de texto 🚨
         if (lineData.type === 'voice') {
             const voiceClass = 'disparia-voice';
+            // Usamos innerHTML solo para el tipo 'voice' que necesita el <span>
             textEl.innerHTML = `<span class="${voiceClass}">${lineData.speaker}: ${lineData.content}</span>`;
         } else {
+            // Usamos textContent para la narrativa simple (más seguro)
             textEl.textContent = lineData.content;
         }
 
-        // 🚨 INTEGRACIÓN DE VOZ Y CONTROL DE NEXT BUTTON 🚨
-        // Verificamos si la variable global isVoiceActive está definida Y activa
-        const shouldPlayVoice = typeof isVoiceActive !== 'undefined' && isVoiceActive;
-        const hasAudio = lineData.audio;
+        // 🚨 LÓGICA DE AVANCE SIMPLIFICADA (TEXTO PURO) 🚨
+        nextBtn.disabled = false;
         
-        if (shouldPlayVoice && hasAudio) {
-            // Caso 1: Voz ON y Audio disponible -> Reproducir y deshabilitar Next
-            currentAudio = new Audio(VOICE_PATH + lineData.audio); 
-            
-            // Usamos .then/.catch para manejar la reproducción asíncrona y errores
-            currentAudio.play().then(() => {
-                nextBtn.disabled = true;
-            }).catch(error => {
-                console.warn("No se pudo reproducir la voz. Habilitando Next.", error);
-                // Si la reproducción falla (p.ej., audio no existe o error del navegador)
-                nextBtn.disabled = false;
-            });
-            
-            currentAudio.onended = () => {
-                nextBtn.disabled = false;
-                if (i === scene0.text.length - 1) {
-                    showChoices();
-                }
-            };
-
+        if (i === scene0.text.length - 1) {
+            showChoices();
         } else {
-            // Caso 2: Voz OFF, Audio no disponible, o global.js aún no cargó -> Habilitar Next inmediatamente
-            nextBtn.disabled = false;
-            if (i === scene0.text.length - 1) {
-                showChoices();
-            }
+            nextBtn.style.display = "inline-flex";
         }
-
-        // Mostrar u ocultar el botón de avance
-        nextBtn.style.display = i < scene0.text.length - 1 || i === scene0.text.length - 1 && !nextBtn.disabled ? "inline-flex" : "none";
         
+        // Reiniciar la transición CSS para asegurar que el texto se muestre
         void textEl.offsetWidth; 
       }
 
       nextBtn.addEventListener("click", () => {
-        stopCurrentAudio(); 
+        // stopCurrentAudio(); // Ya no está
         if (i < scene0.text.length - 1) {
           i++;
           showLine();
@@ -285,15 +249,13 @@
         window.location.href = resolved;
       }
       
-      // Iniciar la escena después de que todo el DOM y global.js se hayan cargado.
+      // Iniciar la escena inmediatamente después de que el DOM esté listo.
       document.addEventListener('DOMContentLoaded', () => {
-          // 🚨 AÑADIMOS UN LIGERO RETRASO para asegurar que global.js haya terminado
-          // de inicializar TODAS sus variables (incluyendo isVoiceActive) antes de llamar a showLine().
-          setTimeout(showLine, 50); 
+          // El script global.js ya se cargó, ahora iniciamos la escena local.
+          showLine();
       });
 
     </script>
 
 </body>
-  </html>
-  
+</html>
