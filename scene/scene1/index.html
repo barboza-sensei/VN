@@ -19,7 +19,7 @@
         margin: 0;
         height: 100vh;
         display: flex;
-        align-items: flex-end; /* Alinea la caja de diálogo en la parte inferior */
+        align-items: flex-end; 
     }
     
     .resaltado {
@@ -28,9 +28,7 @@
         text-shadow: 0 0 5px rgba(255, 255, 255, 0.4);
     }
     
-    /* ******************************************************* */
-    /* ESTILOS ESTÉTICOS MANTENIDOS Y CORREGIDOS PARA NEXTBTN */
-    /* ******************************************************* */
+    /* ... (Resto de estilos) ... */
     .dialogue-box { 
         position: relative;
         color: #f0f0f0;
@@ -66,7 +64,6 @@
     
     #nextBtn:disabled { opacity: 0.3; cursor: default; }
     
-    /* CORRECCIÓN: Evita el conflicto con el estilo ::after de global.js */
     #nextBtn::after { content: '' !important; visibility: hidden !important; display: none !important; }
 
     #choices { display: flex; flex-direction: column; gap: 0; margin-top: 15px; }
@@ -87,17 +84,19 @@
 </head>
 
 <body>
-  <div class="dialogue-box" id="main-dialogue-box">
-    <p id="text"></p>
-    
-    <div id="choices"></div>
-    <button id="nextBtn" style="display: none;" title="Continuar">➤</button> 
-  </div>
+    <audio id="backgroundMusic" loop></audio> 
 
-  <script src="../../global.js"></script>
+    <div class="dialogue-box" id="main-dialogue-box">
+        <p id="text"></p>
+        
+        <div id="choices"></div>
+        <button id="nextBtn" style="display: none;" title="Continuar">➤</button> 
+    </div>
 
-<script>
-    // 🚨 CORRECCIÓN CRÍTICA: Eliminamos 'let' para evitar el error 'score has already been declared'.
+    <script src="../../global.js"></script>
+
+    <script>
+    // CRÍTICO: Asignamos el valor a la variable global 'score' sin redeclararla (no 'let')
     score = parseInt(localStorage.getItem('score') || 0);
 
     const IMG_GENERAL = 'assets/bg/laberinto_urbano.png';
@@ -109,10 +108,9 @@
     const BGM_LIGHTS = 'assets/sfx/lights-flickering.wav';
     
     let currentAudio = null; // Audio de la línea de diálogo
-    let currentBGM = BGM_FOOTSTEPS; // Pista de BGM actual
+    let currentBGM = BGM_FOOTSTEPS; 
     let backgroundMusic = document.getElementById('backgroundMusic');
-    // Nuevo flag para la primera interacción
-    let hasInteracted = false; 
+    let hasInteracted = false; // Flag para manejar la restricción de autoplay
 
     // --- FUNCIONES DE UTILIDAD ---
     function formatText(content) {
@@ -134,12 +132,11 @@
     function updateBGM(newBGMPath) {
         if (!backgroundMusic) return;
 
-        // Solo cambiar si la ruta es diferente
-        // Nota: backgroundMusic.src siempre devuelve la URL completa, por eso usamos .includes()
+        // Si ya estamos reproduciendo la pista correcta, no hacer nada.
         if (backgroundMusic.src.includes(newBGMPath) && backgroundMusic.paused === false) {
             return; 
         }
-        
+
         // Pausar y cambiar la fuente
         backgroundMusic.pause();
         backgroundMusic.src = newBGMPath;
@@ -147,12 +144,14 @@
         
         // 🚨 SOLO INTENTAR REPRODUCIR SI YA HUBO INTERACCIÓN
         if (hasInteracted) {
-             // Obtener el estado de 'mute' de global.js
             const isMuted = typeof window.isMuted !== 'undefined' ? window.isMuted : false;
             
             if (!isMuted) {
-                backgroundMusic.loop = true; // Aseguramos que se repita
-                backgroundMusic.play().catch(e => console.warn("Error al intentar reproducir BGM:", e));
+                backgroundMusic.loop = true; 
+                backgroundMusic.play().catch(e => {
+                    // console.warn("Error al intentar reproducir BGM:", e);
+                    // Si falla, es probable que la interacción no haya sido suficiente, pero seguiremos.
+                });
             }
         }
     }
@@ -160,7 +159,6 @@
 
     function goTo(relativePath) {
         stopCurrentAudio();
-        // Si global.js maneja backgroundMusic, podríamos necesitar detenerlo aquí.
         const base = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
         const resolved = new URL(relativePath, base).href;
         window.location.href = resolved;
@@ -317,7 +315,7 @@
       // 🚨 Primera interacción: Habilitamos la reproducción del BGM
       if (!hasInteracted) {
           hasInteracted = true;
-          // Esto llama a updateBGM, que ahora sí intentará reproducir el audio.
+          // Intentamos reproducir el audio BGM si no está silenciado
           updateBGM(currentBGM); 
       }
       
@@ -329,10 +327,11 @@
     });
     
     document.addEventListener('DOMContentLoaded', () => {
-        // Solo establecemos la fuente de la música al inicio, pero NO intentamos reproducir.
+        // Establecemos la fuente y preparamos el audio inicial (footsteps)
         updateBGM(BGM_FOOTSTEPS); 
         showLine();
     });
   </script>
 </body>
-</html>
+  </html>
+  
